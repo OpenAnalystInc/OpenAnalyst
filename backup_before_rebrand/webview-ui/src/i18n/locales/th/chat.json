@@ -1,0 +1,390 @@
+{
+	"greeting": "Kilo Code สามารถทำอะไรให้คุณได้บ้าง?",
+	"task": {
+		"title": "งาน",
+		"seeMore": "ดูเพิ่มเติม",
+		"seeLess": "ดูน้อยลง",
+		"tokens": "โทเค็น:",
+		"cache": "แคช:",
+		"apiCost": "ค่าใช้จ่าย API:",
+		"size": "ขนาด",
+		"condenseContext": "ย่อบริบทอย่างชาญฉลาด",
+		"contextWindow": "ความยาวบริบท:",
+		"closeAndStart": "ปิดงานและเริ่มใหม่",
+		"export": "ส่งออกประวัติงาน",
+		"share": "แชร์งาน",
+		"delete": "ลบงาน (Shift + คลิกเพื่อข้ามการยืนยัน)",
+		"shareWithOrganization": "แชร์กับองค์กร",
+		"shareWithOrganizationDescription": "เฉพาะสมาชิกขององค์กรของคุณเท่านั้นที่สามารถเข้าถึงได้",
+		"sharePublicly": "แชร์แบบสาธารณะ",
+		"sharePubliclyDescription": "ทุกคนที่มีลิงก์สามารถเข้าถึงได้",
+		"connectToCloud": "เชื่อมต่อกับ Cloud",
+		"connectToCloudDescription": "เข้าสู่ระบบ Kilo Code Cloud เพื่อแชร์งาน",
+		"sharingDisabledByOrganization": "การแชร์ถูกปิดใช้งานโดยองค์กร",
+		"shareSuccessOrganization": "คัดลอกลิงก์องค์กรไปยังคลิปบอร์ดแล้ว",
+		"shareSuccessPublic": "คัดลอกลิงก์สาธารณะไปยังคลิปบอร์ดแล้ว"
+	},
+	"history": {
+		"title": "ประวัติ"
+	},
+	"unpin": "ยกเลิกการปักหมุด",
+	"pin": "ปักหมุด",
+	"retry": {
+		"title": "ลองใหม่",
+		"tooltip": "ลองดำเนินการอีกครั้ง"
+	},
+	"startNewTask": {
+		"title": "เริ่มงานใหม่",
+		"tooltip": "เริ่มงานใหม่"
+	},
+	"reportBug": {
+		"title": "รายงานข้อผิดพลาด"
+	},
+	"proceedAnyways": {
+		"title": "ดำเนินการต่อ",
+		"tooltip": "ดำเนินการต่อขณะที่คำสั่งกำลังทำงาน"
+	},
+	"save": {
+		"title": "บันทึก",
+		"tooltip": "บันทึกการเปลี่ยนแปลงไฟล์"
+	},
+	"tokenProgress": {
+		"availableSpace": "พื้นที่ว่าง: {{amount}} โทเค็น",
+		"tokensUsed": "โทเค็นที่ใช้: {{used}} จาก {{total}}",
+		"reservedForResponse": "สงวนไว้สำหรับการตอบสนองของโมเดล: {{amount}} โทเค็น"
+	},
+	"reject": {
+		"title": "ปฏิเสธ",
+		"tooltip": "ปฏิเสธการดำเนินการนี้"
+	},
+	"completeSubtaskAndReturn": "เสร็จสิ้นงานย่อยและกลับ",
+	"approve": {
+		"title": "อนุมัติ",
+		"tooltip": "อนุมัติการดำเนินการนี้"
+	},
+	"read-batch": {
+		"approve": {
+			"title": "อนุมัติทั้งหมด"
+		},
+		"deny": {
+			"title": "ปฏิเสธทั้งหมด"
+		}
+	},
+	"runCommand": {
+		"title": "รันคำสั่ง",
+		"tooltip": "ดำเนินการคำสั่งนี้"
+	},
+	"proceedWhileRunning": {
+		"title": "ดำเนินการต่อขณะทำงาน",
+		"tooltip": "ดำเนินการต่อแม้จะมีคำเตือน"
+	},
+	"killCommand": {
+		"title": "หยุดคำสั่ง",
+		"tooltip": "หยุดคำสั่งปัจจุบัน"
+	},
+	"resumeTask": {
+		"title": "ดำเนินงานต่อ",
+		"tooltip": "ดำเนินงานปัจจุบันต่อ"
+	},
+	"terminate": {
+		"title": "ยุติ",
+		"tooltip": "ยุติงานปัจจุบัน"
+	},
+	"cancel": {
+		"title": "ยกเลิก",
+		"tooltip": "ยกเลิกการดำเนินการปัจจุบัน"
+	},
+	"editMessage": {
+		"placeholder": "แก้ไขข้อความของคุณ..."
+	},
+	"scrollToBottom": "เลื่อนไปด้านล่างของแชท",
+	"about": "สร้าง รีแฟคเตอร์ และดีบักโค้ดด้วยความช่วยเหลือจาก AI ดู<DocsLink>เอกสาร</DocsLink>ของเราเพื่อเรียนรู้เพิ่มเติม",
+	"onboarding": "รายการงานของคุณในเวิร์กสเปซนี้ว่างเปล่า",
+	"rooTips": {
+		"boomerangTasks": {
+			"title": "การจัดการงาน",
+			"description": "แบ่งงานเป็นส่วนเล็กๆ ที่จัดการได้ง่าย"
+		},
+		"stickyModels": {
+			"title": "โมเดลติดหนึบ",
+			"description": "แต่ละโหมดจดจำโมเดลที่คุณใช้ล่าสุด"
+		},
+		"tools": {
+			"title": "เครื่องมือ",
+			"description": "อนุญาตให้ AI แก้ปัญหาโดยการเรียกดูเว็บ รันคำสั่ง และอื่นๆ"
+		},
+		"customizableModes": {
+			"title": "โหมดที่ปรับแต่งได้",
+			"description": "บุคลิกพิเศษที่มีพฤติกรรมและโมเดลของตัวเอง"
+		}
+	},
+	"selectMode": "เลือกโหมดสำหรับการโต้ตอบ",
+	"selectApiConfig": "เลือกการกำหนดค่า API",
+	"selectModelConfig": "เลือกโมเดล",
+	"enhancePrompt": "ปรับปรุงพรอมต์ด้วยบริบทเพิ่มเติม",
+	"enhancePromptDescription": "ปุ่ม 'ปรับปรุงพรอมต์' ช่วยปรับปรุงพรอมต์ของคุณโดยให้บริบทเพิ่มเติม ชี้แจง หรือเขียนใหม่ ลองพิมพ์พรอมต์ที่นี่และคลิกปุ่มอีกครั้งเพื่อดูว่ามันทำงานอย่างไร",
+	"modeSelector": {
+		"title": "โหมด",
+		"marketplace": "ตลาดโหมด",
+		"settings": "การตั้งค่าโหมด",
+		"description": "บุคลิกพิเศษที่ปรับแต่งพฤติกรรมของ Kilo Code",
+		"searchPlaceholder": "ค้นหาโหมด...",
+		"noResults": "ไม่พบผลลัพธ์"
+	},
+	"addImages": "เพิ่มรูปภาพในข้อความ",
+	"sendMessage": "ส่งข้อความ",
+	"stopTts": "หยุดการอ่านเสียง",
+	"typeMessage": "พิมพ์ข้อความ...",
+	"typeTask": "สร้าง ค้นหา ถามอะไรก็ได้",
+	"addContext": "@ เพื่อเพิ่มบริบท, / เพื่อเปลี่ยนโหมด",
+	"dragFiles": "กด shift ค้างเพื่อลากไฟล์",
+	"dragFilesImages": "กด shift ค้างเพื่อลากไฟล์/รูปภาพ",
+	"errorReadingFile": "ข้อผิดพลาดในการอ่านไฟล์:",
+	"noValidImages": "ไม่มีรูปภาพที่ถูกต้องถูกประมวลผล",
+	"separator": "ตัวแบ่ง",
+	"edit": "แก้ไข...",
+	"forNextMode": "สำหรับโหมดถัดไป",
+	"forPreviousMode": "สำหรับโหมดก่อนหน้า",
+	"apiRequest": {
+		"title": "คำขอ API",
+		"failed": "คำขอ API ล้มเหลว",
+		"streaming": "คำขอ API...",
+		"cancelled": "ยกเลิกคำขอ API",
+		"streamingFailed": "การสตรีม API ล้มเหลว"
+	},
+	"checkpoint": {
+		"initial": "จุดตรวจเริ่มต้น",
+		"regular": "จุดตรวจ",
+		"initializingWarning": "ยังคงเริ่มต้นจุดตรวจ... หากใช้เวลานานเกินไป คุณสามารถปิดจุดตรวจใน<settingsLink>การตั้งค่า</settingsLink>และรีสตาร์ทงานของคุณ",
+		"menu": {
+			"viewDiff": "ดูความแตกต่าง",
+			"restore": "คืนค่าจุดตรวจ",
+			"restoreFiles": "คืนค่าไฟล์",
+			"restoreFilesDescription": "คืนค่าไฟล์โปรเจ็กต์ของคุณกลับไปยังสแนปช็อตที่ถ่ายไว้ ณ จุดนี้",
+			"restoreFilesAndTask": "คืนค่าไฟล์และงาน",
+			"confirm": "ยืนยัน",
+			"cancel": "ยกเลิก",
+			"cannotUndo": "ไม่สามารถยกเลิกการดำเนินการนี้ได้",
+			"restoreFilesAndTaskDescription": "คืนค่าไฟล์โปรเจ็กต์ของคุณกลับไปยังสแนปช็อตที่ถ่ายไว้ ณ จุดนี้และลบข้อความทั้งหมดหลังจากจุดนี้"
+		},
+		"current": "ปัจจุบัน"
+	},
+	"contextCondense": {
+		"title": "ย่อบริบทแล้ว",
+		"condensing": "กำลังย่อบริบท...",
+		"errorHeader": "ไม่สามารถย่อบริบทได้",
+		"tokens": "โทเค็น"
+	},
+	"instructions": {
+		"wantsToFetch": "Kilo Code ต้องการดึงคำแนะนำโดยละเอียดเพื่อช่วยในงานปัจจุบัน"
+	},
+	"fileOperations": {
+		"wantsToRead": "Kilo Code ต้องการอ่านไฟล์นี้:",
+		"wantsToReadMultiple": "Kilo Code ต้องการอ่านหลายไฟล์:",
+		"wantsToReadAndXMore": "Kilo Code ต้องการอ่านไฟล์นี้และอีก {{count}} ไฟล์:",
+		"wantsToReadOutsideWorkspace": "Kilo Code ต้องการอ่านไฟล์นี้นอกเวิร์กสเปซ:",
+		"didRead": "Kilo Code อ่านไฟล์นี้:",
+		"wantsToEdit": "Kilo Code ต้องการแก้ไขไฟล์นี้:",
+		"wantsToEditOutsideWorkspace": "Kilo Code ต้องการแก้ไขไฟล์นี้นอกเวิร์กสเปซ:",
+		"wantsToEditProtected": "Kilo Code ต้องการแก้ไขไฟล์กำหนดค่าที่ได้รับการป้องกัน:",
+		"wantsToApplyBatchChanges": "Kilo Code ต้องการใช้การเปลี่ยนแปลงกับหลายไฟล์:",
+		"wantsToCreate": "Kilo Code ต้องการสร้างไฟล์ใหม่:",
+		"wantsToSearchReplace": "Kilo Code ต้องการค้นหาและแทนที่ในไฟล์นี้:",
+		"didSearchReplace": "Kilo Code ทำการค้นหาและแทนที่ในไฟล์นี้:",
+		"wantsToInsert": "Kilo Code ต้องการแทรกเนื้อหาลงในไฟล์นี้:",
+		"wantsToInsertWithLineNumber": "Kilo Code ต้องการแทรกเนื้อหาลงในไฟล์นี้ที่บรรทัด {{lineNumber}}:",
+		"wantsToInsertAtEnd": "Kilo Code ต้องการเพิ่มเนื้อหาที่ท้ายไฟล์นี้:"
+	},
+	"directoryOperations": {
+		"wantsToViewTopLevel": "Kilo Code ต้องการดูไฟล์ระดับบนสุดในไดเรกทอรีนี้:",
+		"didViewTopLevel": "Kilo Code ดูไฟล์ระดับบนสุดในไดเรกทอรีนี้:",
+		"wantsToViewTopLevelOutsideWorkspace": "Kilo Code ต้องการดูไฟล์ระดับบนสุดในไดเรกทอรีนี้ (นอกเวิร์กสเปซ):",
+		"didViewTopLevelOutsideWorkspace": "Kilo Code ดูไฟล์ระดับบนสุดในไดเรกทอรีนี้ (นอกเวิร์กสเปซ):",
+		"wantsToViewRecursive": "Kilo Code ต้องการดูไฟล์ทั้งหมดในไดเรกทอรีนี้แบบเรียกซ้ำ:",
+		"didViewRecursive": "Kilo Code ดูไฟล์ทั้งหมดในไดเรกทอรีนี้แบบเรียกซ้ำ:",
+		"wantsToViewRecursiveOutsideWorkspace": "Kilo Code ต้องการดูไฟล์ทั้งหมดในไดเรกทอรีนี้แบบเรียกซ้ำ (นอกเวิร์กสเปซ):",
+		"didViewRecursiveOutsideWorkspace": "Kilo Code ดูไฟล์ทั้งหมดในไดเรกทอรีนี้แบบเรียกซ้ำ (นอกเวิร์กสเปซ):",
+		"wantsToViewDefinitions": "Kilo Code ต้องการดูชื่อนิยามซอร์สโค้ดที่ใช้ในไดเรกทอรีนี้:",
+		"didViewDefinitions": "Kilo Code ดูชื่อนิยามซอร์สโค้ดที่ใช้ในไดเรกทอรีนี้:",
+		"wantsToViewDefinitionsOutsideWorkspace": "Kilo Code ต้องการดูชื่อนิยามซอร์สโค้ดที่ใช้ในไดเรกทอรีนี้ (นอกเวิร์กสเปซ):",
+		"didViewDefinitionsOutsideWorkspace": "Kilo Code ดูชื่อนิยามซอร์สโค้ดที่ใช้ในไดเรกทอรีนี้ (นอกเวิร์กสเปซ):",
+		"wantsToSearch": "Kilo Code ต้องการค้นหาในไดเรกทอรีนี้สำหรับ <code>{{regex}}</code>:",
+		"didSearch": "Kilo Code ค้นหาในไดเรกทอรีนี้สำหรับ <code>{{regex}}</code>:",
+		"wantsToSearchOutsideWorkspace": "Kilo Code ต้องการค้นหาในไดเรกทอรีนี้ (นอกเวิร์กสเปซ) สำหรับ <code>{{regex}}</code>:",
+		"didSearchOutsideWorkspace": "Kilo Code ค้นหาในไดเรกทอรีนี้ (นอกเวิร์กสเปซ) สำหรับ <code>{{regex}}</code>:"
+	},
+	"codebaseSearch": {
+		"wantsToSearch": "Kilo Code ต้องการค้นหาในโค้ดเบสสำหรับ <code>{{query}}</code>:",
+		"wantsToSearchWithPath": "Kilo Code ต้องการค้นหาในโค้ดเบสสำหรับ <code>{{query}}</code> ใน <code>{{path}}</code>:",
+		"didSearch_one": "พบ 1 ผลลัพธ์",
+		"didSearch_other": "พบ {{count}} ผลลัพธ์",
+		"resultTooltip": "คะแนนความคล้ายคลึง: {{score}} (คลิกเพื่อเปิดไฟล์)"
+	},
+	"commandOutput": "ผลลัพธ์คำสั่ง",
+	"commandExecution": {
+		"running": "กำลังทำงาน",
+		"pid": "PID: {{pid}}",
+		"exited": "ออกแล้ว ({{exitCode}})",
+		"manageCommands": "จัดการสิทธิ์คำสั่ง",
+		"commandManagementDescription": "จัดการสิทธิ์คำสั่ง: คลิก ✓ เพื่ออนุญาตให้ทำงานอัตโนมัติ ✗ เพื่อปฏิเสธการทำงาน รูปแบบสามารถเปิด/ปิดหรือลบออกจากรายการได้ <settingsLink>ดูการตั้งค่าทั้งหมด</settingsLink>",
+		"addToAllowed": "เพิ่มลงในรายการที่อนุญาต",
+		"removeFromAllowed": "ลบออกจากรายการที่อนุญาต",
+		"addToDenied": "เพิ่มลงในรายการที่ปฏิเสธ",
+		"removeFromDenied": "ลบออกจากรายการที่ปฏิเสธ",
+		"abortCommand": "ยกเลิกการทำงานของคำสั่ง",
+		"expandOutput": "ขยายผลลัพธ์",
+		"collapseOutput": "ยุบผลลัพธ์",
+		"expandManagement": "ขยายส่วนจัดการคำสั่ง",
+		"collapseManagement": "ยุบส่วนจัดการคำสั่ง"
+	},
+	"response": "การตอบสนอง",
+	"arguments": "อาร์กิวเมนต์",
+	"mcp": {
+		"wantsToUseTool": "Kilo Code ต้องการใช้เครื่องมือบนเซิร์ฟเวอร์ MCP {{serverName}}:",
+		"wantsToAccessResource": "Kilo Code ต้องการเข้าถึงทรัพยากรบนเซิร์ฟเวอร์ MCP {{serverName}}:"
+	},
+	"modes": {
+		"wantsToSwitch": "Kilo Code ต้องการเปลี่ยนเป็นโหมด {{mode}}",
+		"wantsToSwitchWithReason": "Kilo Code ต้องการเปลี่ยนเป็นโหมด {{mode}} เพราะ: {{reason}}",
+		"didSwitch": "Kilo Code เปลี่ยนเป็นโหมด {{mode}}",
+		"didSwitchWithReason": "Kilo Code เปลี่ยนเป็นโหมด {{mode}} เพราะ: {{reason}}"
+	},
+	"subtasks": {
+		"wantsToCreate": "Kilo Code ต้องการสร้างงานย่อยใหม่ในโหมด {{mode}}:",
+		"wantsToFinish": "Kilo Code ต้องการเสร็จสิ้นงานย่อยนี้",
+		"newTaskContent": "คำแนะนำงานย่อย",
+		"completionContent": "งานย่อยเสร็จสมบูรณ์",
+		"resultContent": "ผลลัพธ์งานย่อย",
+		"defaultResult": "โปรดดำเนินการต่อไปยังงานถัดไป",
+		"completionInstructions": "งานย่อยเสร็จสมบูรณ์! คุณสามารถตรวจสอบผลลัพธ์และแนะนำการแก้ไขหรือขั้นตอนถัดไป หากทุกอย่างดูดี ยืนยันเพื่อส่งผลลัพธ์กลับไปยังงานหลัก"
+	},
+	"questions": {
+		"hasQuestion": "Kilo Code มีคำถาม:"
+	},
+	"taskCompleted": "งานเสร็จสมบูรณ์",
+	"error": "ข้อผิดพลาด",
+	"diffError": {
+		"title": "การแก้ไขไม่สำเร็จ"
+	},
+	"troubleMessage": "Kilo Code กำลังมีปัญหา...",
+	"powershell": {
+		"issues": "ดูเหมือนว่าคุณกำลังมีปัญหากับ Windows PowerShell โปรดดูนี่"
+	},
+	"autoApprove": {
+		"title": "อนุมัติอัตโนมัติ:",
+		"none": "ไม่มี",
+		"description": "การอนุมัติอัตโนมัติอนุญาตให้ Kilo Code ดำเนินการโดยไม่ต้องขออนุญาต เปิดใช้งานเฉพาะสำหรับการดำเนินการที่คุณเชื่อถืออย่างเต็มที่ การกำหนดค่าโดยละเอียดเพิ่มเติมมีใน<settingsLink>การตั้งค่า</settingsLink>",
+		"selectOptionsFirst": "เลือกอย่างน้อยหนึ่งตัวเลือกด้านล่างเพื่อเปิดใช้งานการอนุมัติอัตโนมัติ",
+		"toggleAriaLabel": "สลับการอนุมัติอัตโนมัติ",
+		"disabledAriaLabel": "การอนุมัติอัตโนมัติปิดใช้งาน - เลือกตัวเลือกก่อน"
+	},
+	"announcement": {
+		"title": "🎉 เปิดตัว Kilo Code {{version}}",
+		"description": "Kilo Code {{version}} นำเสนอฟีเจอร์ใหม่ที่สำคัญและการปรับปรุงตามคำติชมของคุณ",
+		"whatsNew": "มีอะไรใหม่",
+		"feature1": "<bold>เปิดตัว Kilo Code Marketplace</bold>: ตลาดกลางเปิดให้บริการแล้ว! ค้นพบและติดตั้งโหมดและ MCP ได้ง่ายกว่าที่เคย",
+		"feature2": "<bold>โมเดล Gemini 2.5</bold>: เพิ่มการรองรับโมเดล Gemini 2.5 Pro, Flash และ Flash Lite ใหม่",
+		"feature3": "<bold>รองรับไฟล์ Excel และอื่นๆ</bold>: เพิ่มการรองรับไฟล์ Excel (.xlsx) และการแก้ไขข้อผิดพลาดและการปรับปรุงมากมาย!",
+		"hideButton": "ซ่อนประกาศ",
+		"detailsDiscussLinks": "ดูรายละเอียดเพิ่มเติมและพูดคุยใน <discordLink>Discord</discordLink> และ <redditLink>Reddit</redditLink> 🚀"
+	},
+	"reasoning": {
+		"thinking": "กำลังคิด",
+		"seconds": "{{count}} วินาที"
+	},
+	"followUpSuggest": {
+		"copyToInput": "คัดลอกไปยังอินพุต (เหมือนกับ shift + คลิก)",
+		"autoSelectCountdown": "เลือกอัตโนมัติใน {{count}} วินาที",
+		"countdownDisplay": "{{count}} วินาที"
+	},
+	"browser": {
+		"rooWantsToUse": "Kilo Code ต้องการใช้เบราว์เซอร์:",
+		"consoleLogs": "บันทึกคอนโซล",
+		"noNewLogs": "(ไม่มีบันทึกใหม่)",
+		"screenshot": "ภาพหน้าจอเบราว์เซอร์",
+		"cursor": "เคอร์เซอร์",
+		"navigation": {
+			"step": "ขั้นตอน {{current}} จาก {{total}}",
+			"previous": "ก่อนหน้า",
+			"next": "ถัดไป"
+		},
+		"sessionStarted": "เริ่มเซสชันเบราว์เซอร์",
+		"actions": {
+			"title": "การดำเนินการเรียกดู: ",
+			"launch": "เปิดเบราว์เซอร์ที่ {{url}}",
+			"click": "คลิก ({{coordinate}})",
+			"type": "พิมพ์ \"{{text}}\"",
+			"scrollDown": "เลื่อนลง",
+			"scrollUp": "เลื่อนขึ้น",
+			"close": "ปิดเบราว์เซอร์"
+		}
+	},
+	"codeblock": {
+		"tooltips": {
+			"expand": "ขยายบล็อกโค้ด",
+			"collapse": "ยุบบล็อกโค้ด",
+			"enable_wrap": "เปิดใช้งานการตัดคำ",
+			"disable_wrap": "ปิดใช้งานการตัดคำ",
+			"copy_code": "คัดลอกโค้ด"
+		}
+	},
+	"systemPromptWarning": "คำเตือน: การแทนที่พรอมต์ระบบแบบกำหนดเองเปิดใช้งานอยู่ สิ่งนี้อาจทำให้ฟังก์ชันการทำงานเสียหายอย่างรุนแรงและทำให้เกิดพฤติกรรมที่ไม่สามารถคาดเดาได้",
+	"profileViolationWarning": "โปรไฟล์ปัจจุบันละเมิดการตั้งค่าขององค์กรของคุณ",
+	"shellIntegration": {
+		"title": "คำเตือนการดำเนินการคำสั่ง",
+		"description": "คำสั่งของคุณกำลังถูกดำเนินการโดยไม่มีการรวม shell ของ VSCode terminal เพื่อปิดคำเตือนนี้ คุณสามารถปิดการรวม shell ในส่วน <strong>Terminal</strong> ของ<settingsLink>การตั้งค่า Kilo Code</settingsLink>หรือแก้ไขปัญหาการรวม VSCode terminal โดยใช้ลิงก์ด้านล่าง",
+		"troubleshooting": "คลิกที่นี่สำหรับเอกสารการรวม shell"
+	},
+	"ask": {
+		"autoApprovedRequestLimitReached": {
+			"title": "ถึงขีดจำกัดคำขอที่อนุมัติอัตโนมัติ",
+			"description": "Kilo Code ถึงขีดจำกัดการอนุมัติอัตโนมัติของ {{count}} คำขอ API คุณต้องการรีเซ็ตจำนวนและดำเนินการต่อกับงานหรือไม่?",
+			"button": "รีเซ็ตและดำเนินการต่อ"
+		},
+		"autoApprovedCostLimitReached": {
+			"title": "ถึงขีดจำกัดค่าใช้จ่ายที่อนุมัติอัตโนมัติแล้ว",
+			"description": "Kilo Code ถึงขีดจำกัดค่าใช้จ่ายที่อนุมัติอัตโนมัติ ${{count}} แล้ว คุณต้องการรีเซ็ตค่าใช้จ่ายและดำเนินงานต่อหรือไม่?",
+			"button": "รีเซ็ตและดำเนินการต่อ"
+		}
+	},
+	"indexingStatus": {
+		"ready": "ดัชนีพร้อม",
+		"indexing": "กำลังสร้างดัชนี {{percentage}}%",
+		"indexed": "สร้างดัชนีแล้ว",
+		"error": "ข้อผิดพลาดดัชนี",
+		"status": "สถานะดัชนี"
+	},
+	"versionIndicator": {
+		"ariaLabel": "เวอร์ชัน {{version}} - คลิกเพื่อดูบันทึกการเปลี่ยนแปลง"
+	},
+	"rooCloudCTA": {
+		"title": "Roo Code Cloud เปิดตัวเร็วๆ นี้!",
+		"description": "รันเอเจนต์ Roomote ในคลาวด์ เข้าถึงงานของคุณจากทุกที่ ทำงานร่วมกับผู้อื่น และอื่นๆ อีกมากมาย",
+		"joinWaitlist": "เข้าร่วมรายชื่อรอเพื่อรับสิทธิ์เข้าถึงก่อนใคร"
+	},
+	"command": {
+		"triggerDescription": "เรียกใช้คำสั่ง {{name}}"
+	},
+	"slashCommands": {
+		"tooltip": "จัดการคำสั่งแบบ slash",
+		"title": "คำสั่งแบบ Slash",
+		"description": "สร้างคำสั่งแบบ slash ที่กำหนดเองเพื่อเข้าถึงพรอมต์และเวิร์กโฟลว์ที่ใช้บ่อยได้อย่างรวดเร็ว <DocsLink>เอกสาร</DocsLink>",
+		"globalCommands": "คำสั่งทั่วไป",
+		"workspaceCommands": "คำสั่งเวิร์กสเปซ",
+		"globalCommand": "คำสั่งทั่วไป",
+		"editCommand": "แก้ไขคำสั่ง",
+		"deleteCommand": "ลบคำสั่ง",
+		"newGlobalCommandPlaceholder": "คำสั่งทั่วไปใหม่...",
+		"newWorkspaceCommandPlaceholder": "คำสั่งเวิร์กสเปซใหม่...",
+		"deleteDialog": {
+			"title": "ลบคำสั่ง",
+			"description": "คุณแน่ใจหรือไม่ว่าต้องการลบคำสั่ง \"{{name}}\"? การดำเนินการนี้ไม่สามารถยกเลิกได้",
+			"cancel": "ยกเลิก",
+			"confirm": "ลบ"
+		}
+	},
+	"queuedMessages": {
+		"title": "ข้อความในคิว:",
+		"clickToEdit": "คลิกเพื่อแก้ไขข้อความ"
+	}
+}

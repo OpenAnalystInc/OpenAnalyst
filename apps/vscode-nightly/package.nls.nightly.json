@@ -1,0 +1,7 @@
+{
+	"extension.displayName": "OpenAnalyst Nightly",
+	"views.contextMenu.label": "OpenAnalyst Nightly",
+	"views.terminalMenu.label": "OpenAnalyst Nightly",
+	"views.activitybar.title": "OpenAnalyst Nightly",
+	"configuration.title": "OpenAnalyst Nightly"
+}

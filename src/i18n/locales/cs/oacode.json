@@ -1,0 +1,125 @@
+{
+	"info": {
+		"settings_imported": "Nastavení byla úspěšně importována."
+	},
+	"userFeedback": {
+		"message_update_failed": "Aktualizace zprávy selhala",
+		"no_checkpoint_found": "Před touto zprávou nebyl nalezen žádný checkpoint",
+		"message_updated": "Zpráva byla úspěšně aktualizována"
+	},
+	"lowCreditWarning": {
+		"title": "Varování o nízkém kreditu!",
+		"message": "Zkontroluj, zda můžeš doplnit bezplatné kredity nebo si koupit další!"
+	},
+	"notLoggedInError": "Požadavek nelze dokončit, ujisti se, že jsi připojen a přihlášen u vybraného poskytovatele.\n\n{{error}}",
+	"rules": {
+		"actions": {
+			"delete": "Smazat",
+			"confirmDelete": "Jsi si jistý, že chceš smazat {{filename}}?",
+			"deleted": "Smazáno {{filename}}"
+		},
+		"errors": {
+			"noWorkspaceFound": "Nebyla nalezena složka pracovního prostoru",
+			"fileAlreadyExists": "Soubor {{filename}} již existuje",
+			"failedToCreateRuleFile": "Vytvoření souboru pravidla selhalo.",
+			"failedToDeleteRuleFile": "Smazání souboru pravidla selhalo."
+		},
+		"templates": {
+			"workflow": {
+				"description": "Popis pracovního postupu zde...",
+				"stepsHeader": "## Kroky",
+				"step1": "Krok 1",
+				"step2": "Krok 2"
+			},
+			"rule": {
+				"description": "Popis pravidla zde...",
+				"guidelinesHeader": "## Pokyny",
+				"guideline1": "Pokyn 1",
+				"guideline2": "Pokyn 2"
+			}
+		}
+	},
+	"commitMessage": {
+		"activated": "Generátor zpráv pro commit OpenAnalyst aktivován",
+		"gitNotFound": "⚠️ Git repozitář nebyl nalezen nebo git není dostupný",
+		"gitInitError": "⚠️ Chyba inicializace Gitu: {{error}}",
+		"generating": "Oa: Generuji zprávu commitu...",
+		"noChanges": "Oa: Nenalezeny žádné změny k analýze",
+		"generated": "Oa: Zpráva byla vygenerována!",
+		"generationFailed": "Oa: Nepodařilo se vygenerovat zprávu commitu: {{errorMessage}}",
+		"generatingFromUnstaged": "Oa: Generování zprávy s použitím nenapojených změn",
+		"activationFailed": "Oa: Aktivace generátoru zpráv se nezdařila: {{error}}",
+		"providerRegistered": "Oa: Poskytovatel zpráv commitů zaregistrován"
+	},
+	"ghost": {
+		"progress": {
+			"generating": "Generuji navrhované úpravy...",
+			"analyzing": "Analyzuji váš kód...",
+			"processing": "Zpracování navržených úprav...",
+			"showing": "Zobrazuji navrhované úpravy...",
+			"title": "OpenAnalyst"
+		},
+		"input": {
+			"title": "OpenAnalyst: Rychlý úkol",
+			"placeholder": "např. \"přepracovat tuto funkci, aby byla efektivnější\""
+		},
+		"commands": {
+			"generateSuggestions": "OpenAnalyst: Generování navrhovaných úprav",
+			"applyCurrentSuggestion": "Použít aktuální navrhovanou úpravu",
+			"displaySuggestions": "Zobrazit navrhované úpravy",
+			"cancelSuggestions": "Zrušit navrhované úpravy",
+			"applyAllSuggestions": "Použít všechny navrhované úpravy",
+			"promptCodeSuggestion": "Rychlý úkol",
+			"category": "OpenAnalyst"
+		},
+		"codeAction": {
+			"title": "OpenAnalyst: Navrhované úpravy"
+		},
+		"chatParticipant": {
+			"name": "Agent",
+			"fullName": "OpenAnalyst Agent",
+			"description": "Mohu vám pomoci s rychlými úkoly a navrženými úpravami."
+		},
+		"messages": {
+			"provideCodeSuggestions": "Poskytuji návrhy kódu..."
+		},
+		"statusBar": {
+			"disabled": "$(circle-slash) Inline asistent Oa",
+			"enabled": "$(sparkle) Oa Inline Asistent",
+			"warning": "$(warning) Inline asistence Oa",
+			"tooltip": {
+				"disabled": "OpenAnalyst Inline Assist (deaktivováno)",
+				"basic": "Inline asistent OpenAnalyst",
+				"tokenError": "Pro použití Inline Assist je nutné nastavit platný token",
+				"sessionTotal": "Celková cena sezení:",
+				"model": "Model:",
+				"lastCompletion": "Poslední návrh:"
+			},
+			"cost": {
+				"zero": "0,00 Kč",
+				"lessThanCent": "<0,01 $"
+			}
+		},
+		"toggleMessage": "Oa Inline Assist {{status}}",
+		"incompatibilityExtensionPopup": {
+			"message": "Inline asistent OpenAnalyst je blokován kvůli konfliktu s GitHub Copilot. Pro vyřešení tohoto problému musíš deaktivovat inline návrhy Copilotu.",
+			"disableCopilot": "Deaktivovat Copilot",
+			"disableInlineAssist": "Deaktivovat Inline asistenta"
+		}
+	},
+	"terminalCommandGenerator": {
+		"inputPrompt": "Oa: Popište příkaz, který chcete vygenerovat",
+		"noActiveTerminal": "Oa: Nebyl nalezen žádný aktivní terminál. Nejprve prosím otevřete terminál.",
+		"inputPlaceholder": "např. ukončit proces běžící na portu 3001, najít velké soubory atd.",
+		"generatingProgress": "Oa: Generuji příkaz terminálu...",
+		"generationFailed": "Oa: Příkaz se nepodařilo vygenerovat: {{error}}",
+		"commandGenerated": "Oa: Vygenerovaný příkaz: {{command}}",
+		"warningDialog": {
+			"title": "Bezpečnostní Upozornění Terminálu",
+			"okButton": "Rozumím",
+			"message": "Dvakrát zkontrolujte všechny vygenerované příkazy před jejich spuštěním. Akce v terminálu nelze vždy vrátit zpět – spuštění neověřených příkazů může vést k nevratné ztrátě dat nebo poškození systému. Před pokračováním si příkaz důkladně projděte a ujistěte se, že mu rozumíte!",
+			"cancelButton": "Zrušit"
+		},
+		"tipMessage": "Oa: Stiskněte {{shortcut}} pro generování příkazů v terminálu"
+	}
+}

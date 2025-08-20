@@ -1,0 +1,365 @@
+import {
+	type ProviderName,
+	type ProviderSettings,
+	type ModelInfo,
+	anthropicDefaultModelId,
+	anthropicModels,
+	bedrockDefaultModelId,
+	bedrockModels,
+	cerebrasDefaultModelId,
+	cerebrasModels,
+	deepSeekDefaultModelId,
+	deepSeekModels,
+	moonshotDefaultModelId,
+	moonshotModels,
+	geminiDefaultModelId,
+	geminiModels,
+	geminiCliDefaultModelId,
+	geminiCliModels,
+	mistralDefaultModelId,
+	mistralModels,
+	openAiModelInfoSaneDefaults,
+	openAiNativeDefaultModelId,
+	openAiNativeModels,
+	vertexDefaultModelId,
+	vertexModels,
+	xaiDefaultModelId,
+	xaiModels,
+	// oacode_change start
+	bigModelModels,
+	bigModelDefaultModelId,
+	// oacode_change end
+	groqModels,
+	groqDefaultModelId,
+	chutesModels,
+	chutesDefaultModelId,
+	vscodeLlmModels,
+	vscodeLlmDefaultModelId,
+	openRouterDefaultModelId,
+	requestyDefaultModelId,
+	glamaDefaultModelId,
+	unboundDefaultModelId,
+	litellmDefaultModelId,
+	claudeCodeDefaultModelId,
+	claudeCodeModels,
+	oacodeDefaultModelId,
+	sambaNovaModels,
+	sambaNovaDefaultModelId,
+	doubaoModels,
+	doubaoDefaultModelId,
+	internationalZAiDefaultModelId,
+	mainlandZAiDefaultModelId,
+	internationalZAiModels,
+	mainlandZAiModels,
+	fireworksModels,
+	fireworksDefaultModelId,
+} from "@roo-code/types"
+
+import type { ModelRecord, RouterModels } from "@roo/api"
+
+import { useRouterModels } from "./useRouterModels"
+import { useOpenRouterModelProviders } from "./useOpenRouterModelProviders"
+import { useLmStudioModels } from "./useLmStudioModels"
+
+export const useSelectedModel = (apiConfiguration?: ProviderSettings) => {
+	const provider = apiConfiguration?.apiProvider || "anthropic"
+	// oacode_change start
+	let openRouterModelId = provider === "openrouter" ? apiConfiguration?.openRouterModelId : undefined
+	if (provider === "oacode") {
+		openRouterModelId = apiConfiguration?.oacodeModel || undefined
+	}
+
+	const routerModels = useRouterModels({
+		openRouterBaseUrl: apiConfiguration?.openRouterBaseUrl,
+		openRouterApiKey: apiConfiguration?.apiKey,
+	})
+	const openRouterModelProviders = useOpenRouterModelProviders(
+		openRouterModelId,
+		apiConfiguration?.openRouterBaseUrl,
+		apiConfiguration?.apiKey,
+	)
+	// oacode_change end
+	const lmStudioModelId = provider === "lmstudio" ? apiConfiguration?.lmStudioModelId : undefined
+	const lmStudioModels = useLmStudioModels(lmStudioModelId)
+
+	const { id, info } =
+		apiConfiguration &&
+		(typeof lmStudioModelId === "undefined" || typeof lmStudioModels.data !== "undefined") &&
+		typeof routerModels.data !== "undefined" &&
+		typeof openRouterModelProviders.data !== "undefined"
+			? getSelectedModel({
+					provider,
+					apiConfiguration,
+					routerModels: routerModels.data,
+					openRouterModelProviders: openRouterModelProviders.data,
+					lmStudioModels: lmStudioModels.data,
+				})
+			: { id: anthropicDefaultModelId, info: undefined }
+
+	return {
+		provider,
+		id,
+		info,
+		isLoading:
+			routerModels.isLoading ||
+			openRouterModelProviders.isLoading ||
+			(apiConfiguration?.lmStudioModelId && lmStudioModels!.isLoading),
+		isError:
+			routerModels.isError ||
+			openRouterModelProviders.isError ||
+			(apiConfiguration?.lmStudioModelId && lmStudioModels!.isError),
+	}
+}
+
+function getSelectedModel({
+	provider,
+	apiConfiguration,
+	routerModels,
+	openRouterModelProviders,
+	lmStudioModels,
+}: {
+	provider: ProviderName
+	apiConfiguration: ProviderSettings
+	routerModels: RouterModels
+	openRouterModelProviders: Record<string, ModelInfo>
+	lmStudioModels: ModelRecord | undefined
+}): { id: string; info: ModelInfo | undefined } {
+	// the `undefined` case are used to show the invalid selection to prevent
+	// users from seeing the default model if their selection is invalid
+	// this gives a better UX than showing the default model
+	switch (provider) {
+		case "openrouter": {
+			const id = apiConfiguration.openRouterModelId ?? openRouterDefaultModelId
+			let info = routerModels.openrouter[id]
+			const specificProvider = apiConfiguration.openRouterSpecificProvider
+
+			if (specificProvider && openRouterModelProviders[specificProvider]) {
+				// Overwrite the info with the specific provider info. Some
+				// fields are missing the model info for `openRouterModelProviders`
+				// so we need to merge the two.
+				info = info
+					? { ...info, ...openRouterModelProviders[specificProvider] }
+					: openRouterModelProviders[specificProvider]
+			}
+
+			return { id, info }
+		}
+		case "requesty": {
+			const id = apiConfiguration.requestyModelId ?? requestyDefaultModelId
+			const info = routerModels.requesty[id]
+			return { id, info }
+		}
+		case "glama": {
+			const id = apiConfiguration.glamaModelId ?? glamaDefaultModelId
+			const info = routerModels.glama[id]
+			return { id, info }
+		}
+		case "unbound": {
+			const id = apiConfiguration.unboundModelId ?? unboundDefaultModelId
+			const info = routerModels.unbound[id]
+			return { id, info }
+		}
+		case "litellm": {
+			const id = apiConfiguration.litellmModelId ?? litellmDefaultModelId
+			const info = routerModels.litellm[id]
+			return { id, info }
+		}
+		case "xai": {
+			const id = apiConfiguration.apiModelId ?? xaiDefaultModelId
+			const info = xaiModels[id as keyof typeof xaiModels]
+			return info ? { id, info } : { id, info: undefined }
+		}
+		// oacode_change start
+		case "bigmodel": {
+			const id = apiConfiguration.apiModelId ?? bigModelDefaultModelId
+			const info = bigModelModels[id as keyof typeof bigModelModels]
+			return { id, info }
+		}
+		// oacode_change end
+		case "groq": {
+			const id = apiConfiguration.apiModelId ?? groqDefaultModelId
+			const info = groqModels[id as keyof typeof groqModels]
+			return { id, info }
+		}
+		case "huggingface": {
+			const id = apiConfiguration.huggingFaceModelId ?? "meta-llama/Llama-3.3-70B-Instruct"
+			const info = {
+				maxTokens: 8192,
+				contextWindow: 131072,
+				supportsImages: false,
+				supportsPromptCache: false,
+			}
+			return { id, info }
+		}
+		case "chutes": {
+			const id = apiConfiguration.apiModelId ?? chutesDefaultModelId
+			const info = chutesModels[id as keyof typeof chutesModels]
+			return { id, info }
+		}
+		case "bedrock": {
+			const id = apiConfiguration.apiModelId ?? bedrockDefaultModelId
+			const info = bedrockModels[id as keyof typeof bedrockModels]
+
+			// Special case for custom ARN.
+			if (id === "custom-arn") {
+				return {
+					id,
+					info: { maxTokens: 5000, contextWindow: 128_000, supportsPromptCache: false, supportsImages: true },
+				}
+			}
+
+			return { id, info }
+		}
+		case "vertex": {
+			const id = apiConfiguration.apiModelId ?? vertexDefaultModelId
+			const info = vertexModels[id as keyof typeof vertexModels]
+			return { id, info }
+		}
+		case "gemini": {
+			const id = apiConfiguration.apiModelId ?? geminiDefaultModelId
+			const info = geminiModels[id as keyof typeof geminiModels]
+			return { id, info }
+		}
+		case "gemini-cli": {
+			const id = apiConfiguration.apiModelId ?? geminiCliDefaultModelId
+			const info = geminiCliModels[id as keyof typeof geminiCliModels]
+			return { id, info }
+		}
+		case "deepseek": {
+			const id = apiConfiguration.apiModelId ?? deepSeekDefaultModelId
+			const info = deepSeekModels[id as keyof typeof deepSeekModels]
+			return { id, info }
+		}
+		case "doubao": {
+			const id = apiConfiguration.apiModelId ?? doubaoDefaultModelId
+			const info = doubaoModels[id as keyof typeof doubaoModels]
+			return { id, info }
+		}
+		case "moonshot": {
+			const id = apiConfiguration.apiModelId ?? moonshotDefaultModelId
+			const info = moonshotModels[id as keyof typeof moonshotModels]
+			return { id, info }
+		}
+		case "zai": {
+			const isChina = apiConfiguration.zaiApiLine === "china"
+			const models = isChina ? mainlandZAiModels : internationalZAiModels
+			const defaultModelId = isChina ? mainlandZAiDefaultModelId : internationalZAiDefaultModelId
+			const id = apiConfiguration.apiModelId ?? defaultModelId
+			const info = models[id as keyof typeof models]
+			return { id, info }
+		}
+		case "openai-native": {
+			const id = apiConfiguration.apiModelId ?? openAiNativeDefaultModelId
+			const info = openAiNativeModels[id as keyof typeof openAiNativeModels]
+			return { id, info }
+		}
+		case "mistral": {
+			const id = apiConfiguration.apiModelId ?? mistralDefaultModelId
+			const info = mistralModels[id as keyof typeof mistralModels]
+			return { id, info }
+		}
+		case "openai": {
+			const id = apiConfiguration.openAiModelId ?? ""
+			const info = apiConfiguration?.openAiCustomModelInfo ?? openAiModelInfoSaneDefaults
+			return { id, info }
+		}
+		case "ollama": {
+			const id = apiConfiguration.ollamaModelId ?? ""
+			const info = routerModels.ollama && routerModels.ollama[id]
+			return {
+				id,
+				info: info || undefined,
+			}
+		}
+		case "lmstudio": {
+			const id = apiConfiguration.lmStudioModelId ?? ""
+			const info = lmStudioModels && lmStudioModels[apiConfiguration.lmStudioModelId!]
+			return {
+				id,
+				info: info || undefined,
+			}
+		}
+		case "vscode-lm": {
+			const id = apiConfiguration?.vsCodeLmModelSelector
+				? `${apiConfiguration.vsCodeLmModelSelector.vendor}/${apiConfiguration.vsCodeLmModelSelector.family}`
+				: vscodeLlmDefaultModelId
+			const modelFamily = apiConfiguration?.vsCodeLmModelSelector?.family ?? vscodeLlmDefaultModelId
+			const info = vscodeLlmModels[modelFamily as keyof typeof vscodeLlmModels]
+			return { id, info: { ...openAiModelInfoSaneDefaults, ...info, supportsImages: false } } // VSCode LM API currently doesn't support images.
+		}
+		// oacode_change begin
+		case "oacode": {
+			// Use the fetched models from routerModels
+			if (routerModels["oacode-openrouter"] && apiConfiguration.oacodeModel) {
+				// Find the model in the fetched models
+				const modelEntries = Object.entries(routerModels["oacode-openrouter"])
+
+				const selectedModelId = apiConfiguration.oacodeModel.toLowerCase()
+
+				// Prefer exact match
+				const selectedModel =
+					modelEntries.find((model) => model[0].toLowerCase() === selectedModelId) ??
+					modelEntries.find((model) => model[0].toLowerCase().includes(selectedModelId))
+
+				if (selectedModel) {
+					const id = selectedModel[0]
+					let info = selectedModel[1]
+
+					const specificProvider = apiConfiguration.openRouterSpecificProvider
+					if (specificProvider && openRouterModelProviders[specificProvider]) {
+						info = info
+							? { ...info, ...openRouterModelProviders[specificProvider] }
+							: openRouterModelProviders[specificProvider]
+					}
+					return { id, info }
+				}
+			}
+
+			// Fallback to anthropic model if no match found
+			return {
+				id: oacodeDefaultModelId,
+				info: routerModels["oacode-openrouter"][oacodeDefaultModelId],
+			}
+		}
+		case "fireworks": {
+			const id = apiConfiguration.apiModelId ?? fireworksDefaultModelId
+			const info = fireworksModels[id as keyof typeof fireworksModels]
+			return { id, info }
+		}
+		case "virtual-quota-fallback": {
+			return {
+				id: apiConfiguration.apiModelId ?? anthropicDefaultModelId,
+				info: anthropicModels[
+					(apiConfiguration.apiModelId ?? anthropicDefaultModelId) as keyof typeof anthropicModels
+				],
+			}
+		}
+		// oacode_change end
+
+		case "claude-code": {
+			// Claude Code models extend anthropic models but with images and prompt caching disabled
+			const id = apiConfiguration.apiModelId ?? claudeCodeDefaultModelId
+			const info = claudeCodeModels[id as keyof typeof claudeCodeModels]
+			return { id, info: { ...openAiModelInfoSaneDefaults, ...info } }
+		}
+		case "cerebras": {
+			const id = apiConfiguration.apiModelId ?? cerebrasDefaultModelId
+			const info = cerebrasModels[id as keyof typeof cerebrasModels]
+			return { id, info }
+		}
+		case "sambanova": {
+			const id = apiConfiguration.apiModelId ?? sambaNovaDefaultModelId
+			const info = sambaNovaModels[id as keyof typeof sambaNovaModels]
+			return { id, info }
+		}
+		// case "anthropic":
+		// case "human-relay":
+		// case "fake-ai":
+		default: {
+			provider satisfies "anthropic" | "human-relay" | "fake-ai"
+			const id = apiConfiguration.apiModelId ?? anthropicDefaultModelId
+			const info = anthropicModels[id as keyof typeof anthropicModels]
+			return { id, info }
+		}
+	}
+}

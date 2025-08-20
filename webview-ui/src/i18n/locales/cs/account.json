@@ -1,0 +1,14 @@
+{
+	"title": "Účet",
+	"profilePicture": "Profilový obrázek",
+	"logOut": "Odhlásit se",
+	"testApiAuthentication": "Otestovat API autentizaci",
+	"signIn": "Připojit se k OpenAnalyst Cloud",
+	"connect": "Připojit",
+	"cloudBenefitsTitle": "Připojit se k OpenAnalyst Cloud",
+	"cloudBenefitsSubtitle": "Synchronizuj své prompty a telemetrii pro aktivaci:",
+	"cloudBenefitHistory": "Online historie úkolů",
+	"cloudBenefitSharing": "Funkce sdílení a spolupráce",
+	"cloudBenefitMetrics": "Metriky využití založené na úkolech, tokenech a nákladech",
+	"visitCloudWebsite": "Navštívit OpenAnalyst Cloud"
+}

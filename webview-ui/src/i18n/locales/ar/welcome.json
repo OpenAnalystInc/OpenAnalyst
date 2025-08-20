@@ -1,0 +1,27 @@
+{
+	"greeting": "مرحبًا، أنا OpenAnalyst!",
+	"introduction": "<strong>OpenAnalyst هو وكيل البرمجة الذاتي الأفضل على الإطلاق.</strong> استعد للتصميم والبرمجة وتصحيح الأخطاء وزيادة إنتاجيتك بشكل غير مسبوق. للمتابعة، يحتاج OpenAnalyst إلى مفتاح API.",
+	"notice": "عشان تبدأ، هذي الإضافة تحتاج مزوّد API.",
+	"start": "يلا نبدأ!",
+	"routers": {
+		"requesty": {
+			"description": "موجّه LLM الأمثل لك",
+			"incentive": "$1 رصيد مجاني"
+		},
+		"openrouter": {
+			"description": "واجهة موحّدة لنماذج LLM"
+		}
+	},
+	"chooseProvider": "عشان يشتغل سحر OpenAnalyst، يلزم مفتاح API.",
+	"startRouter": "نوصي باستخدام موجّه LLM:",
+	"startCustom": "أو تقدر تستخدم مفتاح مزوّدك الخاص:",
+	"telemetry": {
+		"title": "ساهم في تحسين OpenAnalyst",
+		"anonymousTelemetry": "أرسل بيانات الأخطاء والاستخدام لمساعدتنا في إصلاح الأخطاء وتحسين الإضافة. لا يتم إرسال أي كود أو prompts أو معلومات شخصية أبداً.",
+		"changeSettings": "تقدر تغيّر هالخيارات دايمًا من أسفل <settingsLink>الإعدادات</settingsLink>",
+		"settings": "الإعدادات",
+		"allow": "سماح",
+		"deny": "رفض"
+	},
+	"importSettings": "استيراد الإعدادات"
+}
