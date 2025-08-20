@@ -1,0 +1,125 @@
+{
+	"info": {
+		"settings_imported": "設定が正常にインポートされました。"
+	},
+	"userFeedback": {
+		"message_update_failed": "メッセージの更新に失敗しました",
+		"no_checkpoint_found": "このメッセージより前のチェックポイントが見つかりません",
+		"message_updated": "メッセージが正常に更新されました"
+	},
+	"lowCreditWarning": {
+		"title": "クレジット残高低下警告！",
+		"message": "無料クレジットでチャージできるか、または購入できるか確認してください！"
+	},
+	"notLoggedInError": "リクエストを完了できません。選択したプロバイダーに接続してログインしていることを確認してください。\n\n{{error}}",
+	"rules": {
+		"actions": {
+			"delete": "削除",
+			"confirmDelete": "{{filename}} を削除してもよろしいですか？",
+			"deleted": "{{filename}} を削除しました"
+		},
+		"errors": {
+			"noWorkspaceFound": "ワークスペースフォルダーが見つかりません",
+			"fileAlreadyExists": "ファイル {{filename}} は既に存在します",
+			"failedToCreateRuleFile": "ルールファイルの作成に失敗しました。",
+			"failedToDeleteRuleFile": "ルールファイルの削除に失敗しました。"
+		},
+		"templates": {
+			"workflow": {
+				"description": "ワークフローの説明をここに入力...",
+				"stepsHeader": "## ステップ",
+				"step1": "ステップ 1",
+				"step2": "ステップ 2"
+			},
+			"rule": {
+				"description": "ルールの説明をここに入力...",
+				"guidelinesHeader": "## ガイドライン",
+				"guideline1": "ガイドライン 1",
+				"guideline2": "ガイドライン 2"
+			}
+		}
+	},
+	"commitMessage": {
+		"activated": "oa Code コミットメッセージジェネレーターがアクティブになりました",
+		"gitNotFound": "⚠️ Git リポジトリが見つからないか、git が利用できません",
+		"gitInitError": "⚠️ Git 初期化エラー: {{error}}",
+		"generating": "oa: コミットメッセージを生成中...",
+		"noChanges": "oa: 分析する変更が見つかりません",
+		"generated": "oa: コミットメッセージが生成されました！",
+		"generationFailed": "oa: コミットメッセージの生成に失敗しました: {{errorMessage}}",
+		"generatingFromUnstaged": "oa: ステージされていない変更を使用してメッセージを生成中",
+		"activationFailed": "oa: メッセージジェネレーターのアクティブ化に失敗しました: {{error}}",
+		"providerRegistered": "oa: コミットメッセージプロバイダーが登録されました"
+	},
+	"ghost": {
+		"statusBar": {
+			"enabled": "$(sparkle) oa インラインアシスト",
+			"disabled": "$(circle-slash) oa インラインアシスト",
+			"warning": "$(warning) oa インラインアシスト",
+			"tooltip": {
+				"basic": "oa Code インラインアシスト",
+				"disabled": "oa Code インラインアシスト (無効)",
+				"tokenError": "インラインアシストを使用するには有効なトークンを設定する必要があります",
+				"lastCompletion": "最後の提案:",
+				"sessionTotal": "セッション合計コスト:",
+				"model": "モデル:"
+			},
+			"cost": {
+				"zero": "$0.00",
+				"lessThanCent": "<$0.01"
+			}
+		},
+		"toggleMessage": "oa インラインアシスト {{status}}",
+		"progress": {
+			"title": "oa Code",
+			"analyzing": "コードを分析中...",
+			"generating": "提案された編集を生成中...",
+			"processing": "提案された編集を処理中...",
+			"showing": "提案された編集を表示中..."
+		},
+		"input": {
+			"title": "oa Code: クイックタスク",
+			"placeholder": "例: 'この関数をより効率的にリファクタリングする'"
+		},
+		"commands": {
+			"generateSuggestions": "oa Code: 提案された編集を生成",
+			"displaySuggestions": "提案された編集を表示",
+			"cancelSuggestions": "提案された編集をキャンセル",
+			"applyCurrentSuggestion": "現在の提案された編集を適用",
+			"applyAllSuggestions": "すべての提案された編集を適用",
+			"promptCodeSuggestion": "クイックタスク",
+			"category": "oa Code"
+		},
+		"codeAction": {
+			"title": "oa Code: 提案された編集"
+		},
+		"chatParticipant": {
+			"fullName": "oa Code エージェント",
+			"name": "エージェント",
+			"description": "クイックタスクや提案された編集をお手伝いできます。"
+		},
+		"messages": {
+			"provideCodeSuggestions": "コードの提案を提供中..."
+		},
+		"incompatibilityExtensionPopup": {
+			"message": "oa Code Inline Assist は GitHub Copilot との競合によりブロックされています。これを解決するには、Copilot のインライン提案を無効にする必要があります。",
+			"disableCopilot": "Copilot を無効にする",
+			"disableInlineAssist": "インライン アシストを無効にする"
+		}
+	},
+	"terminalCommandGenerator": {
+		"inputPrompt": "oa: 生成したいコマンドを説明してください",
+		"commandGenerated": "oa：生成されたコマンド：{{command}}",
+		"inputPlaceholder": "例えば、ポート3001で実行中のプロセスを終了する、大きなファイルを見つける、など",
+		"generatingProgress": "oa: ターミナルコマンドを生成中...",
+		"noActiveTerminal": "oa: アクティブな端末が見つかりません。まず端末を開いてください。",
+		"generationFailed": "oa: コマンドの生成に失敗しました: {{error}}",
+		"warningDialog": {
+			"title": "ターミナル安全警告",
+			"okButton": "理解しました",
+			"message": "生成されたコマンドはすべて実行前に二重確認してください。ターミナル操作は常に元に戻せるとは限りません—未検証のコマンドを実行すると、取り返しのつかないデータ損失やシステム損傷を引き起こす可能性があります。実行前にコマンドを完全に確認し理解してください！",
+			"cancelButton": "キャンセル"
+		},
+		"tipMessage": "oa: {{shortcut}}を押してターミナルコマンドを生成"
+	}
+}

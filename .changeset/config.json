@@ -1,0 +1,11 @@
+{
+	"$schema": "https://unpkg.com/@changesets/config@3.0.4/schema.json",
+	"changelog": ["@changesets/changelog-github", { "repo": "Oa-Org/oacode" }],
+	"commit": false,
+	"fixed": [["oa-code"]],
+	"linked": [],
+	"access": "restricted",
+	"baseBranch": "main",
+	"updateInternalDependencies": "patch",
+	"ignore": []
+}

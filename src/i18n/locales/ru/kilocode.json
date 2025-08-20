@@ -1,0 +1,125 @@
+{
+	"info": {
+		"settings_imported": "Настройки успешно импортированы."
+	},
+	"userFeedback": {
+		"message_update_failed": "Не удалось обновить сообщение",
+		"no_checkpoint_found": "Контрольная точка перед этим сообщением не найдена",
+		"message_updated": "Сообщение успешно обновлено"
+	},
+	"lowCreditWarning": {
+		"title": "Предупреждение о низком балансе!",
+		"message": "Проверьте, можете ли вы пополнить баланс бесплатными кредитами или купить больше!"
+	},
+	"notLoggedInError": "Невозможно выполнить запрос, убедитесь, что вы подключены и вошли в систему с выбранным поставщиком.\n\n{{error}}",
+	"rules": {
+		"actions": {
+			"delete": "Удалить",
+			"confirmDelete": "Вы уверены, что хотите удалить {{filename}}?",
+			"deleted": "{{filename}} удалено"
+		},
+		"errors": {
+			"noWorkspaceFound": "Папка рабочей области не найдена",
+			"fileAlreadyExists": "Файл {{filename}} уже существует",
+			"failedToCreateRuleFile": "Не удалось создать файл правила.",
+			"failedToDeleteRuleFile": "Не удалось удалить файл правила."
+		},
+		"templates": {
+			"workflow": {
+				"description": "Описание рабочего процесса здесь...",
+				"stepsHeader": "## Шаги",
+				"step1": "Шаг 1",
+				"step2": "Шаг 2"
+			},
+			"rule": {
+				"description": "Описание правила здесь...",
+				"guidelinesHeader": "## Рекомендации",
+				"guideline1": "Рекомендация 1",
+				"guideline2": "Рекомендация 2"
+			}
+		}
+	},
+	"commitMessage": {
+		"activated": "Генератор сообщений коммитов oa Code активирован",
+		"gitNotFound": "⚠️ Репозиторий Git не найден или git недоступен",
+		"gitInitError": "⚠️ Ошибка инициализации Git: {{error}}",
+		"generating": "oa: Генерация сообщения коммита...",
+		"noChanges": "oa: Изменения для анализа не найдены",
+		"generated": "oa: Сообщение коммита сгенерировано!",
+		"generationFailed": "oa: Ошибка генерации сообщения коммита: {{errorMessage}}",
+		"generatingFromUnstaged": "oa: Генерация сообщения с использованием незафиксированных изменений",
+		"activationFailed": "oa: Не удалось активировать генератор сообщений: {{error}}",
+		"providerRegistered": "oa: Поставщик сообщений коммитов зарегистрирован"
+	},
+	"ghost": {
+		"statusBar": {
+			"enabled": "$(sparkle) Встроенная помощь oa",
+			"disabled": "$(circle-slash) Встроенная помощь oa",
+			"warning": "$(warning) Встроенная помощь oa",
+			"tooltip": {
+				"basic": "Встроенная помощь oa Code",
+				"disabled": "Встроенная помощь oa Code (отключена)",
+				"tokenError": "Для использования встроенной помощи необходимо установить действительный токен",
+				"lastCompletion": "Последнее предложение:",
+				"sessionTotal": "Общая стоимость сессии:",
+				"model": "Модель:"
+			},
+			"cost": {
+				"zero": "$0.00",
+				"lessThanCent": "<$0.01"
+			}
+		},
+		"toggleMessage": "Встроенная помощь oa {{status}}",
+		"progress": {
+			"title": "oa Code",
+			"analyzing": "Анализ вашего кода...",
+			"generating": "Генерация предлагаемых правок...",
+			"processing": "Обработка предлагаемых правок...",
+			"showing": "Отображение предлагаемых правок..."
+		},
+		"input": {
+			"title": "oa Code: Быстрая задача",
+			"placeholder": "например, 'рефакторить эту функцию, чтобы сделать ее более эффективной'"
+		},
+		"commands": {
+			"generateSuggestions": "oa Code: Сгенерировать предлагаемые правки",
+			"displaySuggestions": "Показать предлагаемые правки",
+			"cancelSuggestions": "Отменить предлагаемые правки",
+			"applyCurrentSuggestion": "Применить текущую предложенную правку",
+			"applyAllSuggestions": "Применить все предложенные правки",
+			"promptCodeSuggestion": "Быстрая задача",
+			"category": "oa Code"
+		},
+		"codeAction": {
+			"title": "oa Code: Предлагаемые правки"
+		},
+		"chatParticipant": {
+			"fullName": "Агент oa Code",
+			"name": "Агент",
+			"description": "Я могу помочь вам с быстрыми задачами и предлагаемыми правками."
+		},
+		"messages": {
+			"provideCodeSuggestions": "Предоставление предложений кода..."
+		},
+		"incompatibilityExtensionPopup": {
+			"message": "Встроенная помощь oa Code блокируется конфликтом с GitHub Copilot. Чтобы исправить это, вам необходимо отключить встроенные предложения Copilot.",
+			"disableCopilot": "Отключить Copilot",
+			"disableInlineAssist": "Отключить встроенную помощь"
+		}
+	},
+	"terminalCommandGenerator": {
+		"inputPrompt": "oa: Опишите команду, которую вы хотите сгенерировать",
+		"inputPlaceholder": "например, завершить процесс, работающий на порту 3001, найти большие файлы и т.д.",
+		"generatingProgress": "oa: Создание команды терминала...",
+		"generationFailed": "oa: Не удалось сгенерировать команду: {{error}}",
+		"commandGenerated": "oa: Сгенерированная команда: {{command}}",
+		"noActiveTerminal": "oa: Активный терминал не найден. Пожалуйста, сначала откройте терминал.",
+		"warningDialog": {
+			"title": "Предупреждение о безопасности терминала",
+			"okButton": "Я понимаю",
+			"message": "Перепроверяйте все сгенерированные команды перед их выполнением. Действия в терминале не всегда можно отменить — запуск непроверенных команд может привести к необратимой потере данных или повреждению системы. Полностью просмотрите и осознайте команду перед тем, как продолжить!",
+			"cancelButton": "Отменить"
+		},
+		"tipMessage": "oa: Нажмите {{shortcut}}, чтобы сгенерировать команды терминала"
+	}
+}

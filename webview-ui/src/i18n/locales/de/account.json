@@ -1,0 +1,14 @@
+{
+	"title": "Konto",
+	"profilePicture": "Profilbild",
+	"logOut": "Abmelden",
+	"testApiAuthentication": "API-Authentifizierung testen",
+	"signIn": "Mit OpenAnalyst Cloud verbinden",
+	"connect": "Verbinden",
+	"cloudBenefitsTitle": "Mit OpenAnalyst Cloud verbinden",
+	"cloudBenefitsSubtitle": "Synchronisiere deine Prompts und Telemetrie, um folgendes zu aktivieren:",
+	"cloudBenefitHistory": "Online-Aufgabenverlauf",
+	"cloudBenefitSharing": "Freigabe- und Kollaborationsfunktionen",
+	"cloudBenefitMetrics": "Aufgaben-, Token- und kostenbasierte Nutzungsmetriken",
+	"visitCloudWebsite": "OpenAnalyst Cloud besuchen"
+}

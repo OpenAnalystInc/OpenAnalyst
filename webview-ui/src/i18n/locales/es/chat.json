@@ -1,0 +1,389 @@
+{
+	"greeting": "¿Qué puede hacer OpenAnalyst por ti?",
+	"task": {
+		"title": "Tarea",
+		"seeMore": "Ver más",
+		"seeLess": "Ver menos",
+		"tokens": "Tokens",
+		"cache": "Caché",
+		"apiCost": "Costo de API",
+		"size": "Tamaño",
+		"contextWindow": "Longitud del contexto",
+		"closeAndStart": "Cerrar tarea e iniciar una nueva",
+		"export": "Exportar historial de tareas",
+		"delete": "Eliminar tarea (Shift + Clic para omitir confirmación)",
+		"condenseContext": "Condensar contexto de forma inteligente",
+		"share": "Compartir tarea",
+		"shareWithOrganization": "Compartir con organización",
+		"shareWithOrganizationDescription": "Solo los miembros de tu organización pueden acceder",
+		"sharePublicly": "Compartir públicamente",
+		"sharePubliclyDescription": "Cualquiera con el enlace puede acceder",
+		"connectToCloud": "Conectar al Cloud",
+		"connectToCloudDescription": "Inicia sesión en OpenAnalyst Cloud para compartir tareas",
+		"sharingDisabledByOrganization": "Compartir deshabilitado por la organización",
+		"shareSuccessOrganization": "Enlace de organización copiado al portapapeles",
+		"shareSuccessPublic": "Enlace público copiado al portapapeles"
+	},
+	"history": {
+		"title": "Historial"
+	},
+	"unpin": "Desfijar",
+	"pin": "Fijar",
+	"retry": {
+		"title": "Reintentar",
+		"tooltip": "Intenta la operación de nuevo"
+	},
+	"startNewTask": {
+		"title": "Iniciar nueva tarea",
+		"tooltip": "Comienza una nueva tarea"
+	},
+	"reportBug": {
+		"title": "Reportar Error"
+	},
+	"proceedAnyways": {
+		"title": "Continuar de todos modos",
+		"tooltip": "Continuar mientras se ejecuta el comando"
+	},
+	"save": {
+		"title": "Guardar",
+		"tooltip": "Guardar los cambios del mensaje"
+	},
+	"tokenProgress": {
+		"availableSpace": "Espacio disponible: {{amount}} tokens",
+		"tokensUsed": "Tokens utilizados: {{used}} de {{total}}",
+		"reservedForResponse": "Reservado para respuesta del modelo: {{amount}} tokens"
+	},
+	"reject": {
+		"title": "Rechazar",
+		"tooltip": "Rechazar esta acción"
+	},
+	"completeSubtaskAndReturn": "Completar subtarea y regresar",
+	"approve": {
+		"title": "Aprobar",
+		"tooltip": "Aprobar esta acción"
+	},
+	"runCommand": {
+		"title": "Ejecutar comando",
+		"tooltip": "Ejecutar este comando"
+	},
+	"proceedWhileRunning": {
+		"title": "Continuar mientras se ejecuta",
+		"tooltip": "Continuar a pesar de las advertencias"
+	},
+	"killCommand": {
+		"title": "Terminar comando",
+		"tooltip": "Terminar el comando actual"
+	},
+	"resumeTask": {
+		"title": "Reanudar tarea",
+		"tooltip": "Reanudar la tarea actual"
+	},
+	"terminate": {
+		"title": "Terminar",
+		"tooltip": "Terminar la tarea actual"
+	},
+	"cancel": {
+		"title": "Cancelar",
+		"tooltip": "Cancelar la operación actual"
+	},
+	"scrollToBottom": "Desplazarse al final del chat",
+	"about": "Genera, refactoriza y depura código con asistencia de IA. Consulta nuestra <DocsLink>documentación</DocsLink> para obtener más información.",
+	"onboarding": "<strong>Tu lista de tareas en este espacio de trabajo está vacía.</strong> Comienza escribiendo una tarea abajo. ¿No estás seguro cómo empezar? Lee más sobre lo que OpenAnalyst puede hacer por ti en <DocsLink>la documentación</DocsLink>.",
+	"rooTips": {
+		"boomerangTasks": {
+			"title": "Orquestación de Tareas",
+			"description": "Divide las tareas en partes más pequeñas y manejables."
+		},
+		"stickyModels": {
+			"title": "Modos persistentes",
+			"description": "Cada modo recuerda tu último modelo utilizado"
+		},
+		"tools": {
+			"title": "Herramientas",
+			"description": "Permite que la IA resuelva problemas navegando por la web, ejecutando comandos y mucho más."
+		},
+		"customizableModes": {
+			"title": "Modos personalizables",
+			"description": "Personalidades especializadas con sus propios comportamientos y modelos asignados"
+		}
+	},
+	"selectMode": "Seleccionar modo de interacción",
+	"selectApiConfig": "Seleccionar configuración de API",
+	"selectModelConfig": "Seleccionar modelo",
+	"enhancePrompt": "Mejorar el mensaje con contexto adicional",
+	"addImages": "Agregar imágenes al mensaje",
+	"sendMessage": "Enviar mensaje",
+	"stopTts": "Detener texto a voz",
+	"typeMessage": "Escribe un mensaje...",
+	"typeTask": "Escribe tu tarea aquí...",
+	"addContext": "@ para agregar contexto, / para comandos",
+	"dragFiles": "mantén shift para arrastrar archivos",
+	"dragFilesImages": "mantén shift para arrastrar archivos/imágenes",
+	"enhancePromptDescription": "El botón 'Mejorar el mensaje' ayuda a mejorar tu petición proporcionando contexto adicional, aclaraciones o reformulaciones. Intenta escribir una petición aquí y haz clic en el botón nuevamente para ver cómo funciona.",
+	"modeSelector": {
+		"title": "Modos",
+		"marketplace": "Marketplace de Modos",
+		"settings": "Configuración de Modos",
+		"description": "Personalidades especializadas que adaptan el comportamiento de OpenAnalyst.",
+		"searchPlaceholder": "Buscar modos...",
+		"noResults": "No se encontraron resultados"
+	},
+	"errorReadingFile": "Error al leer el archivo:",
+	"noValidImages": "No se procesaron imágenes válidas",
+	"separator": "Separador",
+	"edit": "Editar...",
+	"forNextMode": "para el siguiente modo",
+	"forPreviousMode": "para el modo anterior",
+	"error": "Error",
+	"diffError": {
+		"title": "Edición fallida"
+	},
+	"troubleMessage": "OpenAnalyst está teniendo problemas...",
+	"apiRequest": {
+		"title": "Solicitud API",
+		"failed": "Solicitud API falló",
+		"streaming": "Solicitud API...",
+		"cancelled": "Solicitud API cancelada",
+		"streamingFailed": "Transmisión API falló"
+	},
+	"checkpoint": {
+		"regular": "Punto de control",
+		"initializingWarning": "Todavía inicializando el punto de control... Si esto tarda demasiado, puedes desactivar los puntos de control en la <settingsLink>configuración</settingsLink> y reiniciar tu tarea.",
+		"menu": {
+			"viewDiff": "Ver diferencias",
+			"restore": "Restaurar punto de control",
+			"restoreFiles": "Restaurar archivos",
+			"restoreFilesDescription": "Restaura los archivos de tu proyecto a una instantánea tomada en este punto.",
+			"restoreFilesAndTask": "Restaurar archivos y tarea",
+			"confirm": "Confirmar",
+			"cancel": "Cancelar",
+			"cannotUndo": "Esta acción no se puede deshacer.",
+			"restoreFilesAndTaskDescription": "Restaura los archivos de tu proyecto a una instantánea tomada en este punto y elimina todos los mensajes posteriores a este punto."
+		},
+		"current": "Actual"
+	},
+	"instructions": {
+		"wantsToFetch": "OpenAnalyst quiere obtener instrucciones detalladas para ayudar con la tarea actual"
+	},
+	"fileOperations": {
+		"wantsToRead": "OpenAnalyst quiere leer este archivo:",
+		"wantsToReadOutsideWorkspace": "OpenAnalyst quiere leer este archivo fuera del espacio de trabajo:",
+		"didRead": "OpenAnalyst leyó este archivo:",
+		"wantsToEdit": "OpenAnalyst quiere editar este archivo:",
+		"wantsToEditOutsideWorkspace": "OpenAnalyst quiere editar este archivo fuera del espacio de trabajo:",
+		"wantsToEditProtected": "OpenAnalyst quiere editar un archivo de configuración protegido:",
+		"wantsToCreate": "OpenAnalyst quiere crear un nuevo archivo:",
+		"wantsToSearchReplace": "OpenAnalyst quiere realizar búsqueda y reemplazo en este archivo:",
+		"didSearchReplace": "OpenAnalyst realizó búsqueda y reemplazo en este archivo:",
+		"wantsToInsert": "OpenAnalyst quiere insertar contenido en este archivo:",
+		"wantsToInsertWithLineNumber": "OpenAnalyst quiere insertar contenido en este archivo en la línea {{lineNumber}}:",
+		"wantsToInsertAtEnd": "OpenAnalyst quiere añadir contenido al final de este archivo:",
+		"wantsToReadAndXMore": "OpenAnalyst quiere leer este archivo y {{count}} más:",
+		"wantsToReadMultiple": "OpenAnalyst quiere leer varios archivos:",
+		"wantsToApplyBatchChanges": "OpenAnalyst quiere aplicar cambios a múltiples archivos:"
+	},
+	"directoryOperations": {
+		"wantsToViewTopLevel": "OpenAnalyst quiere ver los archivos de nivel superior en este directorio:",
+		"didViewTopLevel": "OpenAnalyst vio los archivos de nivel superior en este directorio:",
+		"wantsToViewRecursive": "OpenAnalyst quiere ver recursivamente todos los archivos en este directorio:",
+		"didViewRecursive": "OpenAnalyst vio recursivamente todos los archivos en este directorio:",
+		"wantsToViewDefinitions": "OpenAnalyst quiere ver nombres de definiciones de código fuente utilizados en este directorio:",
+		"didViewDefinitions": "OpenAnalyst vio nombres de definiciones de código fuente utilizados en este directorio:",
+		"wantsToSearch": "OpenAnalyst quiere buscar en este directorio <code>{{regex}}</code>:",
+		"didSearch": "OpenAnalyst buscó en este directorio <code>{{regex}}</code>:",
+		"wantsToSearchOutsideWorkspace": "OpenAnalyst quiere buscar en este directorio (fuera del espacio de trabajo) <code>{{regex}}</code>:",
+		"didSearchOutsideWorkspace": "OpenAnalyst buscó en este directorio (fuera del espacio de trabajo) <code>{{regex}}</code>:",
+		"wantsToViewTopLevelOutsideWorkspace": "OpenAnalyst quiere ver los archivos de nivel superior en este directorio (fuera del espacio de trabajo):",
+		"didViewTopLevelOutsideWorkspace": "OpenAnalyst vio los archivos de nivel superior en este directorio (fuera del espacio de trabajo):",
+		"wantsToViewRecursiveOutsideWorkspace": "OpenAnalyst quiere ver recursivamente todos los archivos en este directorio (fuera del espacio de trabajo):",
+		"didViewRecursiveOutsideWorkspace": "OpenAnalyst vio recursivamente todos los archivos en este directorio (fuera del espacio de trabajo):",
+		"wantsToViewDefinitionsOutsideWorkspace": "OpenAnalyst quiere ver nombres de definiciones de código fuente utilizados en este directorio (fuera del espacio de trabajo):",
+		"didViewDefinitionsOutsideWorkspace": "OpenAnalyst vio nombres de definiciones de código fuente utilizados en este directorio (fuera del espacio de trabajo):"
+	},
+	"commandOutput": "Salida del comando",
+	"commandExecution": {
+		"running": "Ejecutando",
+		"pid": "PID: {{pid}}",
+		"exited": "Finalizado ({{exitCode}})",
+		"manageCommands": "Gestionar permisos de comandos",
+		"commandManagementDescription": "Gestionar permisos de comandos: Haz clic en ✓ para permitir la ejecución automática, ✗ para denegar la ejecución. Los patrones se pueden activar/desactivar o eliminar de las listas. <settingsLink>Ver todos los ajustes</settingsLink>",
+		"addToAllowed": "Añadir a la lista de permitidos",
+		"removeFromAllowed": "Eliminar de la lista de permitidos",
+		"addToDenied": "Añadir a la lista de denegados",
+		"removeFromDenied": "Eliminar de la lista de denegados",
+		"abortCommand": "Abortar ejecución del comando",
+		"expandOutput": "Expandir salida",
+		"collapseOutput": "Contraer salida",
+		"expandManagement": "Expandir sección de gestión de comandos",
+		"collapseManagement": "Contraer sección de gestión de comandos"
+	},
+	"response": "Respuesta",
+	"arguments": "Argumentos",
+	"mcp": {
+		"wantsToUseTool": "OpenAnalyst quiere usar una herramienta en el servidor MCP {{serverName}}:",
+		"wantsToAccessResource": "OpenAnalyst quiere acceder a un recurso en el servidor MCP {{serverName}}:"
+	},
+	"modes": {
+		"wantsToSwitch": "OpenAnalyst quiere cambiar a modo <code>{{mode}}</code>",
+		"wantsToSwitchWithReason": "OpenAnalyst quiere cambiar a modo <code>{{mode}}</code> porque: {{reason}}",
+		"didSwitch": "OpenAnalyst cambió a modo <code>{{mode}}</code>",
+		"didSwitchWithReason": "OpenAnalyst cambió a modo <code>{{mode}}</code> porque: {{reason}}"
+	},
+	"subtasks": {
+		"wantsToCreate": "OpenAnalyst quiere crear una nueva subtarea en modo <code>{{mode}}</code>:",
+		"wantsToFinish": "OpenAnalyst quiere finalizar esta subtarea",
+		"newTaskContent": "Instrucciones de la subtarea",
+		"completionContent": "Subtarea completada",
+		"resultContent": "Resultados de la subtarea",
+		"defaultResult": "Por favor, continúa con la siguiente tarea.",
+		"completionInstructions": "¡Subtarea completada! Puedes revisar los resultados y sugerir correcciones o próximos pasos. Si todo se ve bien, confirma para devolver el resultado a la tarea principal."
+	},
+	"questions": {
+		"hasQuestion": "OpenAnalyst tiene una pregunta:"
+	},
+	"taskCompleted": "Tarea completada",
+	"powershell": {
+		"issues": "Parece que estás teniendo problemas con Windows PowerShell, por favor consulta esta"
+	},
+	"autoApprove": {
+		"title": "Auto-aprobar:",
+		"none": "Ninguno",
+		"description": "Auto-aprobar permite a OpenAnalyst realizar acciones sin pedir permiso. Habilita solo para acciones en las que confíes plenamente. Configuración más detallada disponible en <settingsLink>Configuración</settingsLink>.",
+		"selectOptionsFirst": "Selecciona al menos una opción a continuación para habilitar la aprobación automática",
+		"toggleAriaLabel": "Alternar aprobación automática",
+		"disabledAriaLabel": "Aprobación automática desactivada: seleccione primero las opciones"
+	},
+	"reasoning": {
+		"thinking": "Pensando",
+		"seconds": "{{count}}s"
+	},
+	"contextCondense": {
+		"title": "Contexto condensado",
+		"condensing": "Condensando contexto...",
+		"errorHeader": "Error al condensar el contexto",
+		"tokens": "tokens"
+	},
+	"followUpSuggest": {
+		"copyToInput": "Copiar a la entrada (o Shift + clic)",
+		"autoSelectCountdown": "Selección automática en {{count}}s",
+		"countdownDisplay": "{{count}}s"
+	},
+	"announcement": {
+		"title": "🎉 OpenAnalyst {{version}} publicado",
+		"description": "OpenAnalyst {{version}} trae poderosas nuevas funcionalidades y mejoras significativas para mejorar tu flujo de trabajo de desarrollo.",
+		"whatsNew": "Novedades",
+		"feature1": "<bold>Cola de Mensajes</bold>: Pon en cola múltiples mensajes mientras Roo está trabajando, permitiéndote continuar planificando tu flujo de trabajo sin interrupciones.",
+		"feature2": "<bold>Comandos de Barra Personalizados</bold>: Crea comandos de barra personalizados para acceso rápido a prompts y flujos de trabajo utilizados frecuentemente, con gestión completa de la interfaz de usuario.",
+		"feature3": "<bold>Herramientas Gemini Mejoradas</bold>: Nuevas capacidades de contexto de URL y fundamentación de búsqueda de Google proporcionan a los modelos Gemini información web en tiempo real y capacidades de investigación mejoradas.",
+		"hideButton": "Ocultar anuncio",
+		"detailsDiscussLinks": "Obtén más detalles y participa en <discordLink>Discord</discordLink> y <redditLink>Reddit</redditLink> 🚀"
+	},
+	"browser": {
+		"rooWantsToUse": "OpenAnalyst quiere usar el navegador:",
+		"consoleLogs": "Registros de la consola",
+		"noNewLogs": "(No hay nuevos registros)",
+		"screenshot": "Captura de pantalla del navegador",
+		"cursor": "cursor",
+		"navigation": {
+			"step": "Paso {{current}} de {{total}}",
+			"previous": "Anterior",
+			"next": "Siguiente"
+		},
+		"sessionStarted": "Sesión de navegador iniciada",
+		"actions": {
+			"title": "Acción de navegación: ",
+			"launch": "Iniciar navegador en {{url}}",
+			"click": "Clic ({{coordinate}})",
+			"type": "Escribir \"{{text}}\"",
+			"scrollDown": "Desplazar hacia abajo",
+			"scrollUp": "Desplazar hacia arriba",
+			"close": "Cerrar navegador"
+		}
+	},
+	"codeblock": {
+		"tooltips": {
+			"expand": "Expandir bloque de código",
+			"collapse": "Contraer bloque de código",
+			"enable_wrap": "Activar ajuste de línea",
+			"disable_wrap": "Desactivar ajuste de línea",
+			"copy_code": "Copiar código"
+		}
+	},
+	"systemPromptWarning": "ADVERTENCIA: Anulación de instrucciones del sistema personalizada activa. Esto puede romper gravemente la funcionalidad y causar un comportamiento impredecible.",
+	"profileViolationWarning": "El perfil actual no es compatible con la configuración de tu organización",
+	"shellIntegration": {
+		"title": "Advertencia de ejecución de comandos",
+		"description": "Tu comando se está ejecutando sin la integración de shell de terminal de VSCode. Para suprimir esta advertencia, puedes desactivar la integración de shell en la sección <strong>Terminal</strong> de la <settingsLink>configuración de OpenAnalyst</settingsLink> o solucionar problemas de integración de terminal de VSCode usando el enlace de abajo.",
+		"troubleshooting": "Haz clic aquí para ver la documentación de integración de shell."
+	},
+	"ask": {
+		"autoApprovedRequestLimitReached": {
+			"title": "Límite de Solicitudes Auto-aprobadas Alcanzado",
+			"description": "OpenAnalyst ha alcanzado el límite auto-aprobado de {{count}} solicitud(es) API. ¿Deseas reiniciar el contador y continuar con la tarea?",
+			"button": "Reiniciar y Continuar"
+		},
+		"autoApprovedCostLimitReached": {
+			"title": "Límite de Costo Auto-Aprobado Alcanzado",
+			"description": "OpenAnalyst ha alcanzado el límite de costo autoaprobado de ${{count}}. ¿Le gustaría reiniciar el costo y continuar con la tarea?",
+			"button": "Reiniciar y continuar"
+		}
+	},
+	"codebaseSearch": {
+		"wantsToSearch": "OpenAnalyst quiere buscar en la base de código <code>{{query}}</code>:",
+		"wantsToSearchWithPath": "OpenAnalyst quiere buscar en la base de código <code>{{query}}</code> en <code>{{path}}</code>:",
+		"didSearch_one": "Se encontró 1 resultado",
+		"didSearch_other": "Se encontraron {{count}} resultados",
+		"resultTooltip": "Puntuación de similitud: {{score}} (haz clic para abrir el archivo)"
+	},
+	"read-batch": {
+		"approve": {
+			"title": "Aprobar todo"
+		},
+		"deny": {
+			"title": "Denegar todo"
+		}
+	},
+	"indexingStatus": {
+		"ready": "Índice listo",
+		"indexing": "Indexando {{percentage}}%",
+		"indexed": "Indexado",
+		"error": "Error de índice",
+		"status": "Estado del índice"
+	},
+	"versionIndicator": {
+		"ariaLabel": "Versión {{version}} - Haz clic para ver las notas de la versión"
+	},
+	"rooCloudCTA": {
+		"title": "¡Roo Code Cloud llegará pronto!",
+		"description": "Ejecuta agentes remotos en la nube, accede a tus tareas desde cualquier lugar, colabora con otros y mucho más.",
+		"joinWaitlist": "Únete a la lista de espera para obtener acceso anticipado."
+	},
+	"editMessage": {
+		"placeholder": "Edita tu mensaje..."
+	},
+	"command": {
+		"triggerDescription": "Activar el comando {{name}}"
+	},
+	"slashCommands": {
+		"tooltip": "Gestionar comandos de barra",
+		"title": "Comandos de Barra",
+		"description": "Crea comandos de barra personalizados para acceder rápidamente a prompts y flujos de trabajo utilizados con frecuencia. <DocsLink>Documentación</DocsLink>",
+		"globalCommands": "Comandos Globales",
+		"workspaceCommands": "Comandos del Espacio de Trabajo",
+		"globalCommand": "Comando global",
+		"editCommand": "Editar comando",
+		"deleteCommand": "Eliminar comando",
+		"newGlobalCommandPlaceholder": "Nuevo comando global...",
+		"newWorkspaceCommandPlaceholder": "Nuevo comando del espacio de trabajo...",
+		"deleteDialog": {
+			"title": "Eliminar Comando",
+			"description": "¿Estás seguro de que quieres eliminar el comando \"{{name}}\"? Esta acción no se puede deshacer.",
+			"cancel": "Cancelar",
+			"confirm": "Eliminar"
+		}
+	},
+	"queuedMessages": {
+		"title": "Mensajes en cola:",
+		"clickToEdit": "Haz clic para editar el mensaje"
+	}
+}

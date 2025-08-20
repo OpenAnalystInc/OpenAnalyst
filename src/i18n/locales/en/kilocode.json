@@ -1,0 +1,122 @@
+{
+	"info": {
+		"settings_imported": "Settings imported successfully."
+	},
+	"userFeedback": {
+		"message_update_failed": "Failed to update message",
+		"no_checkpoint_found": "No checkpoint found before this message",
+		"message_updated": "Message updated successfully"
+	},
+	"lowCreditWarning": {
+		"title": "Low Credit Warning!",
+		"message": "Check to see if you can top up with free credits or purchase some more!"
+	},
+	"notLoggedInError": "Cannot complete request, make sure you are connected and logged in with the selected provider.\n\n{{error}}",
+	"rules": {
+		"actions": {
+			"delete": "Delete",
+			"confirmDelete": "Are you sure you want to delete {{filename}}?",
+			"deleted": "Deleted {{filename}}"
+		},
+		"errors": {
+			"noWorkspaceFound": "No workspace folder found",
+			"fileAlreadyExists": "File {{filename}} already exists",
+			"failedToCreateRuleFile": "Failed to create rule file.",
+			"failedToDeleteRuleFile": "Failed to delete rule file."
+		},
+		"templates": {
+			"workflow": {
+				"description": "Workflow description here...",
+				"stepsHeader": "## Steps",
+				"step1": "Step 1",
+				"step2": "Step 2"
+			},
+			"rule": {
+				"description": "Rule description here...",
+				"guidelinesHeader": "## Guidelines",
+				"guideline1": "Guideline 1",
+				"guideline2": "Guideline 2"
+			}
+		}
+	},
+	"commitMessage": {
+		"activated": "oa Code commit message generator activated",
+		"gitNotFound": "⚠️ Git repository not found or git not available",
+		"gitInitError": "⚠️ Git initialization error: {{error}}",
+		"generating": "oa: Generating commit message...",
+		"noChanges": "oa: No changes found to analyze",
+		"generated": "oa: Commit message generated!",
+		"generationFailed": "oa: Failed to generate commit message: {{errorMessage}}",
+		"generatingFromUnstaged": "oa: Generating message using unstaged changes",
+		"activationFailed": "oa: Failed to activate message generator: {{error}}",
+		"providerRegistered": "oa: Commit message provider registered"
+	},
+	"ghost": {
+		"statusBar": {
+			"enabled": "$(sparkle) oa Inline Assist",
+			"disabled": "$(circle-slash) oa Inline Assist",
+			"warning": "$(warning) oa Inline Assist",
+			"tooltip": {
+				"basic": "oa Code Inline Assist",
+				"disabled": "oa Code Inline Assist (disabled)",
+				"tokenError": "A valid token must be set to use Inline Assist",
+				"lastCompletion": "Last suggestion:",
+				"sessionTotal": "Session total cost:",
+				"model": "Model:"
+			},
+			"cost": {
+				"zero": "$0.00",
+				"lessThanCent": "<$0.01"
+			}
+		},
+		"toggleMessage": "oa Inline Assist {{status}}",
+		"progress": {
+			"title": "oa Code",
+			"analyzing": "Analyzing your code...",
+			"generating": "Generating suggested edits...",
+			"processing": "Processing suggested edits...",
+			"showing": "Displaying suggested edits..."
+		},
+		"input": {
+			"title": "oa Code: Quick Task",
+			"placeholder": "e.g., 'refactor this function to be more efficient'"
+		},
+		"commands": {
+			"generateSuggestions": "oa Code: Generate Suggested Edits",
+			"displaySuggestions": "Display Suggested Edits",
+			"cancelSuggestions": "Cancel Suggested Edits",
+			"applyCurrentSuggestion": "Apply Current Suggested Edit",
+			"applyAllSuggestions": "Apply All Suggested Edits",
+			"promptCodeSuggestion": "Quick Task",
+			"category": "oa Code"
+		},
+		"codeAction": {
+			"title": "oa Code: Suggested Edits"
+		},
+		"chatParticipant": {
+			"fullName": "oa Code Agent",
+			"name": "Agent",
+			"description": "I can help you with quick tasks and suggested edits."
+		},
+		"incompatibilityExtensionPopup": {
+			"message": "The oa Code Inline Assist is being blocked by a conflict with GitHub Copilot. To fix this, you must disable Copilot's inline suggestions.",
+			"disableCopilot": "Disable Copilot",
+			"disableInlineAssist": "Disable Inline Assist"
+		}
+	},
+	"terminalCommandGenerator": {
+		"tipMessage": "oa: Press {{shortcut}} to generate terminal commands",
+		"inputPrompt": "oa: Describe the command you want to generate",
+		"inputPlaceholder": "e.g., kill the process running on port 3001, find large files, etc",
+		"noActiveTerminal": "oa: No active terminal found. Please open a terminal first.",
+		"generatingProgress": "oa: Generating terminal command...",
+		"commandGenerated": "oa: Generated command: {{command}}",
+		"generationFailed": "oa: Failed to generate command: {{error}}",
+		"warningDialog": {
+			"title": "Terminal Safety Warning",
+			"message": "Double-check all generated commands before running them. Terminal actions cannot always be undone— running unverified commands can result in irreversible data loss or system damage. Review and understand the command completely before proceeding!",
+			"okButton": "I Understand",
+			"cancelButton": "Cancel"
+		}
+	}
+}
