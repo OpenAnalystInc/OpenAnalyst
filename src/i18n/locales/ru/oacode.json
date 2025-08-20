@@ -40,25 +40,25 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "Генератор сообщений коммитов OpenAnalyst активирован",
+		"activated": "Генератор сообщений коммитов oa Code активирован",
 		"gitNotFound": "⚠️ Репозиторий Git не найден или git недоступен",
 		"gitInitError": "⚠️ Ошибка инициализации Git: {{error}}",
-		"generating": "Oa: Генерация сообщения коммита...",
-		"noChanges": "Oa: Изменения для анализа не найдены",
-		"generated": "Oa: Сообщение коммита сгенерировано!",
-		"generationFailed": "Oa: Ошибка генерации сообщения коммита: {{errorMessage}}",
-		"generatingFromUnstaged": "Oa: Генерация сообщения с использованием незафиксированных изменений",
-		"activationFailed": "Oa: Не удалось активировать генератор сообщений: {{error}}",
-		"providerRegistered": "Oa: Поставщик сообщений коммитов зарегистрирован"
+		"generating": "oa: Генерация сообщения коммита...",
+		"noChanges": "oa: Изменения для анализа не найдены",
+		"generated": "oa: Сообщение коммита сгенерировано!",
+		"generationFailed": "oa: Ошибка генерации сообщения коммита: {{errorMessage}}",
+		"generatingFromUnstaged": "oa: Генерация сообщения с использованием незафиксированных изменений",
+		"activationFailed": "oa: Не удалось активировать генератор сообщений: {{error}}",
+		"providerRegistered": "oa: Поставщик сообщений коммитов зарегистрирован"
 	},
 	"ghost": {
 		"statusBar": {
-			"enabled": "$(sparkle) Встроенная помощь Oa",
-			"disabled": "$(circle-slash) Встроенная помощь Oa",
-			"warning": "$(warning) Встроенная помощь Oa",
+			"enabled": "$(sparkle) Встроенная помощь oa",
+			"disabled": "$(circle-slash) Встроенная помощь oa",
+			"warning": "$(warning) Встроенная помощь oa",
 			"tooltip": {
-				"basic": "Встроенная помощь OpenAnalyst",
-				"disabled": "Встроенная помощь OpenAnalyst (отключена)",
+				"basic": "Встроенная помощь oa Code",
+				"disabled": "Встроенная помощь oa Code (отключена)",
 				"tokenError": "Для использования встроенной помощи необходимо установить действительный токен",
 				"lastCompletion": "Последнее предложение:",
 				"sessionTotal": "Общая стоимость сессии:",
@@ -69,32 +69,32 @@
 				"lessThanCent": "<$0.01"
 			}
 		},
-		"toggleMessage": "Встроенная помощь Oa {{status}}",
+		"toggleMessage": "Встроенная помощь oa {{status}}",
 		"progress": {
-			"title": "OpenAnalyst",
+			"title": "oa Code",
 			"analyzing": "Анализ вашего кода...",
 			"generating": "Генерация предлагаемых правок...",
 			"processing": "Обработка предлагаемых правок...",
 			"showing": "Отображение предлагаемых правок..."
 		},
 		"input": {
-			"title": "OpenAnalyst: Быстрая задача",
+			"title": "oa Code: Быстрая задача",
 			"placeholder": "например, 'рефакторить эту функцию, чтобы сделать ее более эффективной'"
 		},
 		"commands": {
-			"generateSuggestions": "OpenAnalyst: Сгенерировать предлагаемые правки",
+			"generateSuggestions": "oa Code: Сгенерировать предлагаемые правки",
 			"displaySuggestions": "Показать предлагаемые правки",
 			"cancelSuggestions": "Отменить предлагаемые правки",
 			"applyCurrentSuggestion": "Применить текущую предложенную правку",
 			"applyAllSuggestions": "Применить все предложенные правки",
 			"promptCodeSuggestion": "Быстрая задача",
-			"category": "OpenAnalyst"
+			"category": "oa Code"
 		},
 		"codeAction": {
-			"title": "OpenAnalyst: Предлагаемые правки"
+			"title": "oa Code: Предлагаемые правки"
 		},
 		"chatParticipant": {
-			"fullName": "Агент OpenAnalyst",
+			"fullName": "Агент oa Code",
 			"name": "Агент",
 			"description": "Я могу помочь вам с быстрыми задачами и предлагаемыми правками."
 		},
@@ -102,24 +102,24 @@
 			"provideCodeSuggestions": "Предоставление предложений кода..."
 		},
 		"incompatibilityExtensionPopup": {
-			"message": "Встроенная помощь OpenAnalyst блокируется конфликтом с GitHub Copilot. Чтобы исправить это, вам необходимо отключить встроенные предложения Copilot.",
+			"message": "Встроенная помощь oa Code блокируется конфликтом с GitHub Copilot. Чтобы исправить это, вам необходимо отключить встроенные предложения Copilot.",
 			"disableCopilot": "Отключить Copilot",
 			"disableInlineAssist": "Отключить встроенную помощь"
 		}
 	},
 	"terminalCommandGenerator": {
-		"inputPrompt": "Oa: Опишите команду, которую вы хотите сгенерировать",
+		"inputPrompt": "oa: Опишите команду, которую вы хотите сгенерировать",
 		"inputPlaceholder": "например, завершить процесс, работающий на порту 3001, найти большие файлы и т.д.",
-		"generatingProgress": "Oa: Создание команды терминала...",
-		"generationFailed": "Oa: Не удалось сгенерировать команду: {{error}}",
-		"commandGenerated": "Oa: Сгенерированная команда: {{command}}",
-		"noActiveTerminal": "Oa: Активный терминал не найден. Пожалуйста, сначала откройте терминал.",
+		"generatingProgress": "oa: Создание команды терминала...",
+		"generationFailed": "oa: Не удалось сгенерировать команду: {{error}}",
+		"commandGenerated": "oa: Сгенерированная команда: {{command}}",
+		"noActiveTerminal": "oa: Активный терминал не найден. Пожалуйста, сначала откройте терминал.",
 		"warningDialog": {
 			"title": "Предупреждение о безопасности терминала",
 			"okButton": "Я понимаю",
 			"message": "Перепроверяйте все сгенерированные команды перед их выполнением. Действия в терминале не всегда можно отменить — запуск непроверенных команд может привести к необратимой потере данных или повреждению системы. Полностью просмотрите и осознайте команду перед тем, как продолжить!",
 			"cancelButton": "Отменить"
 		},
-		"tipMessage": "Oa: Нажмите {{shortcut}}, чтобы сгенерировать команды терминала"
+		"tipMessage": "oa: Нажмите {{shortcut}}, чтобы сгенерировать команды терминала"
 	}
 }

@@ -40,25 +40,25 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "OpenAnalyst commit bericht generator geactiveerd",
+		"activated": "oa Code commit bericht generator geactiveerd",
 		"gitNotFound": "⚠️ Git-repository niet gevonden of git niet beschikbaar",
 		"gitInitError": "⚠️ Git-initialisatiefout: {{error}}",
-		"generating": "Oa: Commit bericht genereren...",
-		"noChanges": "Oa: Geen wijzigingen gevonden om te analyseren",
-		"generated": "Oa: Commit bericht gegenereerd!",
-		"generationFailed": "Oa: Fout bij het genereren van commit bericht: {{errorMessage}}",
-		"generatingFromUnstaged": "Oa: Bericht genereren met niet-gestage wijzigingen",
-		"activationFailed": "Oa: Fout bij het activeren van berichtgenerator: {{error}}",
-		"providerRegistered": "Oa: Commit bericht provider geregistreerd"
+		"generating": "oa: Commit bericht genereren...",
+		"noChanges": "oa: Geen wijzigingen gevonden om te analyseren",
+		"generated": "oa: Commit bericht gegenereerd!",
+		"generationFailed": "oa: Fout bij het genereren van commit bericht: {{errorMessage}}",
+		"generatingFromUnstaged": "oa: Bericht genereren met niet-gestage wijzigingen",
+		"activationFailed": "oa: Fout bij het activeren van berichtgenerator: {{error}}",
+		"providerRegistered": "oa: Commit bericht provider geregistreerd"
 	},
 	"ghost": {
 		"statusBar": {
-			"enabled": "$(sparkle) Oa In-line Assistent",
-			"disabled": "$(circle-slash) Oa In-line Assistent",
-			"warning": "$(warning) Oa In-line Assistent",
+			"enabled": "$(sparkle) oa In-line Assistent",
+			"disabled": "$(circle-slash) oa In-line Assistent",
+			"warning": "$(warning) oa In-line Assistent",
 			"tooltip": {
-				"basic": "OpenAnalyst In-line Assistent",
-				"disabled": "OpenAnalyst In-line Assistent (uitgeschakeld)",
+				"basic": "oa Code In-line Assistent",
+				"disabled": "oa Code In-line Assistent (uitgeschakeld)",
 				"tokenError": "Een geldig token moet zijn ingesteld om In-line Assistent te gebruiken",
 				"lastCompletion": "Laatste suggestie:",
 				"sessionTotal": "Totale sessiekosten:",
@@ -69,32 +69,32 @@
 				"lessThanCent": "<$0.01"
 			}
 		},
-		"toggleMessage": "Oa In-line Assistent {{status}}",
+		"toggleMessage": "oa In-line Assistent {{status}}",
 		"progress": {
-			"title": "OpenAnalyst",
+			"title": "oa Code",
 			"analyzing": "Uw code analyseren...",
 			"generating": "Suggesties voor bewerkingen genereren...",
 			"processing": "Suggesties voor bewerkingen verwerken...",
 			"showing": "Suggesties voor bewerkingen weergeven..."
 		},
 		"input": {
-			"title": "OpenAnalyst: Snelle Taak",
+			"title": "oa Code: Snelle Taak",
 			"placeholder": "bijv. 'refactor deze functie om deze efficiënter te maken'"
 		},
 		"commands": {
-			"generateSuggestions": "OpenAnalyst: Genereer Voorgestelde Bewerkingen",
+			"generateSuggestions": "oa Code: Genereer Voorgestelde Bewerkingen",
 			"displaySuggestions": "Voorgestelde Bewerkingen Weergeven",
 			"cancelSuggestions": "Voorgestelde Bewerkingen Annuleren",
 			"applyCurrentSuggestion": "Huidige Voorgestelde Bewerking Toepassen",
 			"applyAllSuggestions": "Alle Voorgestelde Bewerkingen Toepassen",
 			"promptCodeSuggestion": "Snelle Taak",
-			"category": "OpenAnalyst"
+			"category": "oa Code"
 		},
 		"codeAction": {
-			"title": "OpenAnalyst: Voorgestelde Bewerkingen"
+			"title": "oa Code: Voorgestelde Bewerkingen"
 		},
 		"chatParticipant": {
-			"fullName": "OpenAnalyst Agent",
+			"fullName": "oa Code Agent",
 			"name": "Agent",
 			"description": "Ik kan u helpen met snelle taken en voorgestelde bewerkingen."
 		},
@@ -102,24 +102,24 @@
 			"provideCodeSuggestions": "Code suggesties worden verstrekt..."
 		},
 		"incompatibilityExtensionPopup": {
-			"message": "De OpenAnalyst In-line Assistent wordt geblokkeerd door een conflict met GitHub Copilot. Om dit op te lossen, moet u de in-line suggesties van Copilot uitschakelen.",
+			"message": "De oa Code In-line Assistent wordt geblokkeerd door een conflict met GitHub Copilot. Om dit op te lossen, moet u de in-line suggesties van Copilot uitschakelen.",
 			"disableCopilot": "Copilot uitschakelen",
 			"disableInlineAssist": "In-line Assistent uitschakelen"
 		}
 	},
 	"terminalCommandGenerator": {
-		"inputPrompt": "Oa: Beschrijf het commando dat je wilt genereren",
-		"noActiveTerminal": "Oa: Geen actieve terminal gevonden. Open eerst een terminal.",
+		"inputPrompt": "oa: Beschrijf het commando dat je wilt genereren",
+		"noActiveTerminal": "oa: Geen actieve terminal gevonden. Open eerst een terminal.",
 		"inputPlaceholder": "bijv., dood het proces dat draait op poort 3001, zoek grote bestanden, enz",
-		"generatingProgress": "Oa: Terminal opdracht genereren...",
-		"commandGenerated": "Oa: Gegenereerd commando: {{command}}",
-		"generationFailed": "Oa: Opdracht genereren mislukt: {{error}}",
+		"generatingProgress": "oa: Terminal opdracht genereren...",
+		"commandGenerated": "oa: Gegenereerd commando: {{command}}",
+		"generationFailed": "oa: Opdracht genereren mislukt: {{error}}",
 		"warningDialog": {
 			"title": "Waarschuwing Terminalveiligheid",
 			"okButton": "Ik begrijp",
 			"message": "Controleer alle gegenereerde commando's dubbel voordat je ze uitvoert. Acties in de terminal kunnen niet altijd worden teruggedraaid— het uitvoeren van niet-geverifieerde commando's kan resulteren in onherstelbaar dataverlies of beschadiging van het systeem. Bekijk en begrijp het commando volledig voordat je verdergaat!",
 			"cancelButton": "Annuleren"
 		},
-		"tipMessage": "Oa: Druk op {{shortcut}} om terminalopdrachten te genereren"
+		"tipMessage": "oa: Druk op {{shortcut}} om terminalopdrachten te genereren"
 	}
 }

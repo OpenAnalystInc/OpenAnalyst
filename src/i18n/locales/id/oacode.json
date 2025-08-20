@@ -40,25 +40,25 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "Generator pesan komit OpenAnalyst diaktifkan",
+		"activated": "Generator pesan komit oa Code diaktifkan",
 		"gitNotFound": "⚠️ Repositori Git tidak ditemukan atau git tidak tersedia",
 		"gitInitError": "⚠️ Kesalahan inisialisasi Git: {{error}}",
-		"generating": "Oa: Menghasilkan pesan komit...",
-		"noChanges": "Oa: Tidak ada perubahan yang ditemukan untuk dianalisis",
-		"generated": "Oa: Pesan komit dihasilkan!",
-		"generationFailed": "Oa: Gagal menghasilkan pesan komit: {{errorMessage}}",
-		"generatingFromUnstaged": "Oa: Menghasilkan pesan menggunakan perubahan yang belum ditahapkan",
-		"activationFailed": "Oa: Gagal mengaktifkan generator pesan: {{error}}",
-		"providerRegistered": "Oa: Penyedia pesan komit terdaftar"
+		"generating": "oa: Menghasilkan pesan komit...",
+		"noChanges": "oa: Tidak ada perubahan yang ditemukan untuk dianalisis",
+		"generated": "oa: Pesan komit dihasilkan!",
+		"generationFailed": "oa: Gagal menghasilkan pesan komit: {{errorMessage}}",
+		"generatingFromUnstaged": "oa: Menghasilkan pesan menggunakan perubahan yang belum ditahapkan",
+		"activationFailed": "oa: Gagal mengaktifkan generator pesan: {{error}}",
+		"providerRegistered": "oa: Penyedia pesan komit terdaftar"
 	},
 	"ghost": {
 		"statusBar": {
-			"enabled": "$(sparkle) Bantuan Dalam Baris Oa",
-			"disabled": "$(circle-slash) Bantuan Dalam Baris Oa",
-			"warning": "$(warning) Bantuan Dalam Baris Oa",
+			"enabled": "$(sparkle) Bantuan Dalam Baris oa",
+			"disabled": "$(circle-slash) Bantuan Dalam Baris oa",
+			"warning": "$(warning) Bantuan Dalam Baris oa",
 			"tooltip": {
-				"basic": "Bantuan Dalam Baris OpenAnalyst",
-				"disabled": "Bantuan Dalam Baris OpenAnalyst (dinonaktifkan)",
+				"basic": "Bantuan Dalam Baris oa Code",
+				"disabled": "Bantuan Dalam Baris oa Code (dinonaktifkan)",
 				"tokenError": "Token yang valid harus diatur untuk menggunakan Bantuan Dalam Baris",
 				"lastCompletion": "Saran terakhir:",
 				"sessionTotal": "Total biaya sesi:",
@@ -69,32 +69,32 @@
 				"lessThanCent": "<$0.01"
 			}
 		},
-		"toggleMessage": "Bantuan Dalam Baris Oa {{status}}",
+		"toggleMessage": "Bantuan Dalam Baris oa {{status}}",
 		"progress": {
-			"title": "OpenAnalyst",
+			"title": "oa Code",
 			"analyzing": "Menganalisis kode Anda...",
 			"generating": "Menghasilkan saran pengeditan...",
 			"processing": "Memproses saran pengeditan...",
 			"showing": "Menampilkan saran pengeditan..."
 		},
 		"input": {
-			"title": "OpenAnalyst: Tugas Cepat",
+			"title": "oa Code: Tugas Cepat",
 			"placeholder": "misalnya, 'refactor fungsi ini agar lebih efisien'"
 		},
 		"commands": {
-			"generateSuggestions": "OpenAnalyst: Hasilkan Saran Pengeditan",
+			"generateSuggestions": "oa Code: Hasilkan Saran Pengeditan",
 			"displaySuggestions": "Tampilkan Saran Pengeditan",
 			"cancelSuggestions": "Batalkan Saran Pengeditan",
 			"applyCurrentSuggestion": "Terapkan Saran Pengeditan Saat Ini",
 			"applyAllSuggestions": "Terapkan Semua Saran Pengeditan",
 			"promptCodeSuggestion": "Tugas Cepat",
-			"category": "OpenAnalyst"
+			"category": "oa Code"
 		},
 		"codeAction": {
-			"title": "OpenAnalyst: Saran Pengeditan"
+			"title": "oa Code: Saran Pengeditan"
 		},
 		"chatParticipant": {
-			"fullName": "Agen OpenAnalyst",
+			"fullName": "Agen oa Code",
 			"name": "Agen",
 			"description": "Saya dapat membantu Anda dengan tugas-tugas cepat dan saran pengeditan."
 		},
@@ -102,24 +102,24 @@
 			"provideCodeSuggestions": "Menyediakan saran kode..."
 		},
 		"incompatibilityExtensionPopup": {
-			"message": "Bantuan Dalam Baris OpenAnalyst diblokir oleh konflik dengan GitHub Copilot. Untuk memperbaikinya, Anda harus menonaktifkan saran dalam baris Copilot.",
+			"message": "Bantuan Dalam Baris oa Code diblokir oleh konflik dengan GitHub Copilot. Untuk memperbaikinya, Anda harus menonaktifkan saran dalam baris Copilot.",
 			"disableCopilot": "Nonaktifkan Copilot",
 			"disableInlineAssist": "Nonaktifkan Bantuan Dalam Baris"
 		}
 	},
 	"terminalCommandGenerator": {
 		"inputPlaceholder": "mis., matikan proses yang berjalan di port 3001, temukan file besar, dll",
-		"noActiveTerminal": "Oa: Tidak ada terminal aktif yang ditemukan. Silakan buka terminal terlebih dahulu.",
-		"inputPrompt": "Oa: Jelaskan perintah yang ingin Anda hasilkan",
-		"generatingProgress": "Oa: Menghasilkan perintah terminal...",
-		"generationFailed": "Oa: Gagal menghasilkan perintah: {{error}}",
-		"commandGenerated": "Oa: Perintah yang dihasilkan: {{command}}",
+		"noActiveTerminal": "oa: Tidak ada terminal aktif yang ditemukan. Silakan buka terminal terlebih dahulu.",
+		"inputPrompt": "oa: Jelaskan perintah yang ingin Anda hasilkan",
+		"generatingProgress": "oa: Menghasilkan perintah terminal...",
+		"generationFailed": "oa: Gagal menghasilkan perintah: {{error}}",
+		"commandGenerated": "oa: Perintah yang dihasilkan: {{command}}",
 		"warningDialog": {
 			"title": "Peringatan Keamanan Terminal",
 			"okButton": "Saya Mengerti",
 			"message": "Periksa kembali semua perintah yang dihasilkan sebelum menjalankannya. Tindakan terminal tidak selalu dapat dibatalkan—menjalankan perintah yang belum diverifikasi dapat mengakibatkan kehilangan data atau kerusakan sistem yang tidak dapat dipulihkan. Tinjau dan pahami perintah sepenuhnya sebelum melanjutkan!",
 			"cancelButton": "Batal"
 		},
-		"tipMessage": "Oa: Tekan {{shortcut}} untuk menghasilkan perintah terminal"
+		"tipMessage": "oa: Tekan {{shortcut}} untuk menghasilkan perintah terminal"
 	}
 }

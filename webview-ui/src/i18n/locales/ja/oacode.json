@@ -1,7 +1,7 @@
 {
 	"welcome": {
-		"greeting": "OpenAnalystへようこそ！",
-		"introText1": "OpenAnalystは無料のオープンソースAIコーディングエージェントです。",
+		"greeting": "oa Codeへようこそ！",
+		"introText1": "oa Codeは無料のオープンソースAIコーディングエージェントです。",
 		"introText2": "Claude 4 Sonnet、Gemini 2.5 Pro、GPT-4.1、その他450以上の最新のAIモデルと連携します。",
 		"introText3": "無料アカウントを作成して、任意のAIモデルで使用できる$20のトークンを取得しましょう。",
 		"ctaButton": "始める",
@@ -11,7 +11,7 @@
 	},
 	"lowCreditWarning": {
 		"addCredit": "クレジットを追加",
-		"lowBalance": "OpenAnalystの残高が少なくなっています"
+		"lowBalance": "oa Codeの残高が少なくなっています"
 	},
 	"pricing": {
 		"costUnknown": "コスト不明",
@@ -28,28 +28,28 @@
 			"mcp": "MCPサーバー"
 		},
 		"provider": {
-			"account": "OpenAnalyst アカウント",
-			"apiKey": "OpenAnalyst APIキー",
-			"login": "OpenAnalystにログイン",
-			"logout": "OpenAnalystからログアウト",
+			"account": "oa Code アカウント",
+			"apiKey": "oa Code APIキー",
+			"login": "oa Codeにログイン",
+			"logout": "oa Codeからログアウト",
 			"providerRouting": {
-				"title": "OpenAnalyst - OpenRouterプロバイダーのルーティング",
-				"description": "OpenAnalystは、モデルに最適な利用可能なプロバイダーにリクエストをルーティングします。デフォルトでは、稼働時間を最大化するために、リクエストはトッププロバイダー間で負荷分散されます。ただし、このモデルに使用する特定のプロバイダーを選択できます。"
+				"title": "oa Code - OpenRouterプロバイダーのルーティング",
+				"description": "oa Codeは、モデルに最適な利用可能なプロバイダーにリクエストをルーティングします。デフォルトでは、稼働時間を最大化するために、リクエストはトッププロバイダー間で負荷分散されます。ただし、このモデルに使用する特定のプロバイダーを選択できます。"
 			},
-			"automaticFetch": "最新のモデルはOpenAnalystで自動的に利用可能になります。どのモデルを選択すべきかわからない場合は、上部に<strong>太字</strong>で表示されている推奨モデルでOpenAnalystが最適に動作します。"
+			"automaticFetch": "最新のモデルはoa Codeで自動的に利用可能になります。どのモデルを選択すべきかわからない場合は、上部に<strong>太字</strong>で表示されている推奨モデルでoa Codeが最適に動作します。"
 		},
 		"contextManagement": {
 			"allowVeryLargeReads": {
 				"label": "非常に大きなファイルの読み取りを許可",
-				"description": "有効にすると、OpenAnalystはコンテキストウィンドウをオーバーフローする可能性が高い場合でも、非常に大きなファイルやMCP出力の読み取りを実行します（コンテンツサイズがコンテキストウィンドウの80%以上）。"
+				"description": "有効にすると、oa Codeはコンテキストウィンドウをオーバーフローする可能性が高い場合でも、非常に大きなファイルやMCP出力の読み取りを実行します（コンテンツサイズがコンテキストウィンドウの80%以上）。"
 			}
 		},
 		"systemNotifications": {
 			"label": "システム通知を有効にする",
-			"description": "有効にすると、OpenAnalystはタスクの完了やエラーなどの重要なイベントについてシステム通知を送信します。",
+			"description": "有効にすると、oa Codeはタスクの完了やエラーなどの重要なイベントについてシステム通知を送信します。",
 			"testButton": "通知をテスト",
-			"testTitle": "OpenAnalyst",
-			"testMessage": "これはOpenAnalystからのテスト通知です。"
+			"testTitle": "oa Code",
+			"testMessage": "これはoa Codeからのテスト通知です。"
 		},
 		"terminal": {
 			"commandGenerator": {
@@ -64,7 +64,7 @@
 	},
 	"chat": {
 		"condense": {
-			"wantsToCondense": "OpenAnalystは会話を要約したいと思っています",
+			"wantsToCondense": "oa Codeは会話を要約したいと思っています",
 			"condenseConversation": "会話を要約する"
 		}
 	},
@@ -87,15 +87,15 @@
 	},
 	"docs": "ドキュメント",
 	"rules": {
-		"tooltip": "OpenAnalystルールとワークフローを管理",
-		"ariaLabel": "OpenAnalystルール",
+		"tooltip": "oa Codeルールとワークフローを管理",
+		"ariaLabel": "oa Codeルール",
 		"tabs": {
 			"rules": "ルール",
 			"workflows": "ワークフロー"
 		},
 		"description": {
-			"rules": "ルールを使用すると、OpenAnalystがすべてのモードとすべてのプロンプトで従うべき指示を提供できます。これらは、ワークスペースまたはグローバルですべての会話にコンテキストと設定を含める永続的な方法です。",
-			"workflows": "ワークフローは会話用の準備されたテンプレートです。ワークフローを使用すると、頻繁に使用するプロンプトを定義でき、サービスのデプロイやPRの送信など、反復的なタスクを通じてOpenAnalystをガイドする一連のステップを含めることができます。ワークフローを呼び出すには、次のように入力します",
+			"rules": "ルールを使用すると、oa Codeがすべてのモードとすべてのプロンプトで従うべき指示を提供できます。これらは、ワークスペースまたはグローバルですべての会話にコンテキストと設定を含める永続的な方法です。",
+			"workflows": "ワークフローは会話用の準備されたテンプレートです。ワークフローを使用すると、頻繁に使用するプロンプトを定義でき、サービスのデプロイやPRの送信など、反復的なタスクを通じてoa Codeをガイドする一連のステップを含めることができます。ワークフローを呼び出すには、次のように入力します",
 			"workflowsInChat": "チャットで。"
 		},
 		"sections": {
@@ -168,19 +168,19 @@
 			},
 			"enableAutoInlineTaskKeybinding": {
 				"label": "自動インライン タスク",
-				"description": "素早く修正、補完、リファクタリングが必要ですか？Oaは周囲のコンテキストを使用して即座に改善を提案し、あなたの作業の流れを維持します。<DocsLink>ショートカットを見る</DocsLink>"
+				"description": "素早く修正、補完、リファクタリングが必要ですか？oaは周囲のコンテキストを使用して即座に改善を提案し、あなたの作業の流れを維持します。<DocsLink>ショートカットを見る</DocsLink>"
 			},
 			"enableAutoTrigger": {
 				"label": "自動トリガーを有効にする",
-				"description": "有効にすると、入力を停止したときにOpenAnalystが自動的にインラインアシストをトリガーします。これは素早い修正や提案に便利です。"
+				"description": "有効にすると、入力を停止したときにoa Codeが自動的にインラインアシストをトリガーします。これは素早い修正や提案に便利です。"
 			},
 			"autoTriggerDelay": {
 				"label": "自動トリガー遅延",
-				"description": "入力を停止してからOpenAnalystがインラインアシストをトリガーするまでの秒単位の遅延。短い遅延はより速い提案を意味しますが、リソースをより多く消費する可能性があります。"
+				"description": "入力を停止してからoa Codeがインラインアシストをトリガーするまでの秒単位の遅延。短い遅延はより速い提案を意味しますが、リソースをより多く消費する可能性があります。"
 			},
 			"enableSmartInlineTaskKeybinding": {
 				"label": "スマートインラインタスク",
-				"description": "素早い修正、補完、またはリファクタリングが必要？Oaは周囲のコンテキストを使用して即座の改善を提供し、フローを維持します。<DocsLink>ショートカットを見る</DocsLink>"
+				"description": "素早い修正、補完、またはリファクタリングが必要？oaは周囲のコンテキストを使用して即座の改善を提供し、フローを維持します。<DocsLink>ショートカットを見る</DocsLink>"
 			},
 			"provider": "プロバイダー",
 			"apiConfigId": {

@@ -40,25 +40,25 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "ตัวสร้างข้อความคอมมิต OpenAnalyst เปิดใช้งานแล้ว",
+		"activated": "ตัวสร้างข้อความคอมมิต oa Code เปิดใช้งานแล้ว",
 		"gitNotFound": "⚠️ ไม่พบที่เก็บ Git หรือ git ไม่พร้อมใช้งาน",
 		"gitInitError": "⚠️ ข้อผิดพลาดในการเริ่มต้น Git: {{error}}",
-		"generating": "Oa: กำลังสร้างข้อความคอมมิต...",
-		"noChanges": "Oa: ไม่พบการเปลี่ยนแปลงใดๆ สำหรับการวิเคราะห์",
-		"generated": "Oa: สร้างข้อความคอมมิตแล้ว!",
-		"generationFailed": "Oa: สร้างข้อความคอมมิตไม่สำเร็จ: {{errorMessage}}",
-		"generatingFromUnstaged": "Oa: กำลังสร้างข้อความโดยใช้การเปลี่ยนแปลงที่ยังไม่ได้จัดเก็บ",
-		"activationFailed": "Oa: เปิดใช้งานตัวสร้างข้อความไม่สำเร็จ: {{error}}",
-		"providerRegistered": "Oa: ผู้ให้บริการข้อความคอมมิตลงทะเบียนแล้ว"
+		"generating": "oa: กำลังสร้างข้อความคอมมิต...",
+		"noChanges": "oa: ไม่พบการเปลี่ยนแปลงใดๆ สำหรับการวิเคราะห์",
+		"generated": "oa: สร้างข้อความคอมมิตแล้ว!",
+		"generationFailed": "oa: สร้างข้อความคอมมิตไม่สำเร็จ: {{errorMessage}}",
+		"generatingFromUnstaged": "oa: กำลังสร้างข้อความโดยใช้การเปลี่ยนแปลงที่ยังไม่ได้จัดเก็บ",
+		"activationFailed": "oa: เปิดใช้งานตัวสร้างข้อความไม่สำเร็จ: {{error}}",
+		"providerRegistered": "oa: ผู้ให้บริการข้อความคอมมิตลงทะเบียนแล้ว"
 	},
 	"ghost": {
 		"statusBar": {
-			"enabled": "$(sparkle) Oa Inline Assist",
-			"disabled": "$(circle-slash) Oa Inline Assist",
-			"warning": "$(warning) Oa Inline Assist",
+			"enabled": "$(sparkle) oa Inline Assist",
+			"disabled": "$(circle-slash) oa Inline Assist",
+			"warning": "$(warning) oa Inline Assist",
 			"tooltip": {
-				"basic": "OpenAnalyst Inline Assist",
-				"disabled": "OpenAnalyst Inline Assist (ปิดใช้งาน)",
+				"basic": "oa Code Inline Assist",
+				"disabled": "oa Code Inline Assist (ปิดใช้งาน)",
 				"tokenError": "ต้องตั้งค่าโทเค็นที่ถูกต้องเพื่อใช้ Inline Assist",
 				"lastCompletion": "คำแนะนำล่าสุด:",
 				"sessionTotal": "ค่าใช้จ่ายเซสชันทั้งหมด:",
@@ -69,32 +69,32 @@
 				"lessThanCent": "<$0.01"
 			}
 		},
-		"toggleMessage": "Oa Inline Assist {{status}}",
+		"toggleMessage": "oa Inline Assist {{status}}",
 		"progress": {
-			"title": "OpenAnalyst",
+			"title": "oa Code",
 			"analyzing": "กำลังวิเคราะห์โค้ดของคุณ...",
 			"generating": "กำลังสร้างการแก้ไขที่แนะนำ...",
 			"processing": "กำลังประมวลผลการแก้ไขที่แนะนำ...",
 			"showing": "กำลังแสดงการแก้ไขที่แนะนำ..."
 		},
 		"input": {
-			"title": "OpenAnalyst: งานด่วน",
+			"title": "oa Code: งานด่วน",
 			"placeholder": "เช่น 'ปรับปรุงฟังก์ชันนี้ให้มีประสิทธิภาพมากขึ้น'"
 		},
 		"commands": {
-			"generateSuggestions": "OpenAnalyst: สร้างการแก้ไขที่แนะนำ",
+			"generateSuggestions": "oa Code: สร้างการแก้ไขที่แนะนำ",
 			"displaySuggestions": "แสดงการแก้ไขที่แนะนำ",
 			"cancelSuggestions": "ยกเลิกการแก้ไขที่แนะนำ",
 			"applyCurrentSuggestion": "ใช้การแก้ไขที่แนะนำปัจจุบัน",
 			"applyAllSuggestions": "ใช้การแก้ไขที่แนะนำทั้งหมด",
 			"promptCodeSuggestion": "งานด่วน",
-			"category": "OpenAnalyst"
+			"category": "oa Code"
 		},
 		"codeAction": {
-			"title": "OpenAnalyst: การแก้ไขที่แนะนำ"
+			"title": "oa Code: การแก้ไขที่แนะนำ"
 		},
 		"chatParticipant": {
-			"fullName": "OpenAnalyst Agent",
+			"fullName": "oa Code Agent",
 			"name": "Agent",
 			"description": "ฉันสามารถช่วยคุณเกี่ยวกับงานด่วนและการแก้ไขที่แนะนำได้"
 		},
@@ -102,24 +102,24 @@
 			"provideCodeSuggestions": "กำลังให้คำแนะนำโค้ด..."
 		},
 		"incompatibilityExtensionPopup": {
-			"message": "OpenAnalyst Inline Assist ถูกบล็อกโดยความขัดแย้งกับ GitHub Copilot หากต้องการแก้ไขปัญหานี้ คุณต้องปิดใช้งานคำแนะนำในบรรทัดของ Copilot",
+			"message": "oa Code Inline Assist ถูกบล็อกโดยความขัดแย้งกับ GitHub Copilot หากต้องการแก้ไขปัญหานี้ คุณต้องปิดใช้งานคำแนะนำในบรรทัดของ Copilot",
 			"disableCopilot": "ปิดใช้งาน Copilot",
 			"disableInlineAssist": "ปิดใช้งาน Inline Assist"
 		}
 	},
 	"terminalCommandGenerator": {
-		"inputPrompt": "Oa: อธิบายคำสั่งที่คุณต้องการสร้าง",
-		"noActiveTerminal": "Oa: ไม่พบเทอร์มินัลที่ใช้งานอยู่ กรุณาเปิดเทอร์มินัลก่อน",
-		"generatingProgress": "Oa: กำลังสร้างคำสั่งเทอร์มินัล...",
-		"commandGenerated": "Oa: คำสั่งที่สร้างขึ้น: {{command}}",
+		"inputPrompt": "oa: อธิบายคำสั่งที่คุณต้องการสร้าง",
+		"noActiveTerminal": "oa: ไม่พบเทอร์มินัลที่ใช้งานอยู่ กรุณาเปิดเทอร์มินัลก่อน",
+		"generatingProgress": "oa: กำลังสร้างคำสั่งเทอร์มินัล...",
+		"commandGenerated": "oa: คำสั่งที่สร้างขึ้น: {{command}}",
 		"inputPlaceholder": "เช่น ยุติกระบวนการที่ทำงานบนพอร์ต 3001, ค้นหาไฟล์ขนาดใหญ่, ฯลฯ",
-		"generationFailed": "Oa: สร้างคำสั่งไม่สำเร็จ: {{error}}",
+		"generationFailed": "oa: สร้างคำสั่งไม่สำเร็จ: {{error}}",
 		"warningDialog": {
 			"title": "คำเตือนความปลอดภัยของเทอร์มินัล",
 			"okButton": "ฉันเข้าใจแล้ว",
 			"message": "ตรวจสอบคำสั่งที่สร้างขึ้นทั้งหมดอีกครั้งก่อนที่จะรันคำสั่งเหล่านั้น การดำเนินการในเทอร์มินัลไม่สามารถยกเลิกได้เสมอ — การรันคำสั่งที่ไม่ได้ตรวจสอบอาจส่งผลให้เกิดการสูญเสียข้อมูลหรือความเสียหายต่อระบบที่ไม่สามารถแก้ไขได้ ตรวจสอบและทำความเข้าใจคำสั่งอย่างครบถ้วนก่อนดำเนินการต่อไป!",
 			"cancelButton": "ยกเลิก"
 		},
-		"tipMessage": "Oa: กด {{shortcut}} เพื่อสร้างคำสั่งเทอร์มินัล"
+		"tipMessage": "oa: กด {{shortcut}} เพื่อสร้างคำสั่งเทอร์มินัล"
 	}
 }

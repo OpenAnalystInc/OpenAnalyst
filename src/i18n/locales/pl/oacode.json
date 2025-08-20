@@ -40,25 +40,25 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "Generator wiadomości commit OpenAnalyst aktywowany",
+		"activated": "Generator wiadomości commit oa Code aktywowany",
 		"gitNotFound": "⚠️ Nie znaleziono repozytorium Git lub git jest niedostępny",
 		"gitInitError": "⚠️ Błąd inicjalizacji Git: {{error}}",
-		"generating": "Oa: Generowanie wiadomości commit...",
-		"noChanges": "Oa: Nie znaleziono zmian do analizy",
-		"generated": "Oa: Wiadomość commit wygenerowana!",
-		"generationFailed": "Oa: Nie udało się wygenerować wiadomości commit: {{errorMessage}}",
-		"generatingFromUnstaged": "Oa: Generowanie wiadomości przy użyciu niezatwierdzonych zmian",
-		"activationFailed": "Oa: Nie udało się aktywować generatora wiadomości: {{error}}",
-		"providerRegistered": "Oa: Zarejestrowano dostawcę wiadomości commit"
+		"generating": "oa: Generowanie wiadomości commit...",
+		"noChanges": "oa: Nie znaleziono zmian do analizy",
+		"generated": "oa: Wiadomość commit wygenerowana!",
+		"generationFailed": "oa: Nie udało się wygenerować wiadomości commit: {{errorMessage}}",
+		"generatingFromUnstaged": "oa: Generowanie wiadomości przy użyciu niezatwierdzonych zmian",
+		"activationFailed": "oa: Nie udało się aktywować generatora wiadomości: {{error}}",
+		"providerRegistered": "oa: Zarejestrowano dostawcę wiadomości commit"
 	},
 	"ghost": {
 		"statusBar": {
-			"enabled": "$(sparkle) Asystent Inline Oa",
-			"disabled": "$(circle-slash) Asystent Inline Oa",
-			"warning": "$(warning) Asystent Inline Oa",
+			"enabled": "$(sparkle) Asystent Inline oa",
+			"disabled": "$(circle-slash) Asystent Inline oa",
+			"warning": "$(warning) Asystent Inline oa",
 			"tooltip": {
-				"basic": "Asystent Inline OpenAnalyst",
-				"disabled": "Asystent Inline OpenAnalyst (wyłączony)",
+				"basic": "Asystent Inline oa Code",
+				"disabled": "Asystent Inline oa Code (wyłączony)",
 				"tokenError": "Musisz ustawić prawidłowy token, aby korzystać z Asystenta Inline",
 				"lastCompletion": "Ostatnia sugestia:",
 				"sessionTotal": "Całkowity koszt sesji:",
@@ -69,32 +69,32 @@
 				"lessThanCent": "<$0.01"
 			}
 		},
-		"toggleMessage": "Asystent Inline Oa {{status}}",
+		"toggleMessage": "Asystent Inline oa {{status}}",
 		"progress": {
-			"title": "OpenAnalyst",
+			"title": "oa Code",
 			"analyzing": "Analizowanie Twojego kodu...",
 			"generating": "Generowanie sugerowanych edycji...",
 			"processing": "Przetwarzanie sugerowanych edycji...",
 			"showing": "Wyświetlanie sugerowanych edycji..."
 		},
 		"input": {
-			"title": "OpenAnalyst: Szybkie Zadanie",
+			"title": "oa Code: Szybkie Zadanie",
 			"placeholder": "np. 'refaktoryzuj tę funkcję, aby była bardziej wydajna'"
 		},
 		"commands": {
-			"generateSuggestions": "OpenAnalyst: Generuj Sugerowane Edycje",
+			"generateSuggestions": "oa Code: Generuj Sugerowane Edycje",
 			"displaySuggestions": "Wyświetl Sugerowane Edycje",
 			"cancelSuggestions": "Anuluj Sugerowane Edycje",
 			"applyCurrentSuggestion": "Zastosuj Bieżącą Sugerowaną Edycję",
 			"applyAllSuggestions": "Zastosuj Wszystkie Sugerowane Edycje",
 			"promptCodeSuggestion": "Szybkie Zadanie",
-			"category": "OpenAnalyst"
+			"category": "oa Code"
 		},
 		"codeAction": {
-			"title": "OpenAnalyst: Sugerowane Edycje"
+			"title": "oa Code: Sugerowane Edycje"
 		},
 		"chatParticipant": {
-			"fullName": "Agent OpenAnalyst",
+			"fullName": "Agent oa Code",
 			"name": "Agent",
 			"description": "Mogę pomóc w szybkich zadaniach i sugerowanych edycjach."
 		},
@@ -102,24 +102,24 @@
 			"provideCodeSuggestions": "Dostarczanie sugestii kodu..."
 		},
 		"incompatibilityExtensionPopup": {
-			"message": "Asystent OpenAnalyst Inline jest blokowany przez konflikt z GitHub Copilot. Aby to naprawić, musisz wyłączyć sugestie inline Copilota.",
+			"message": "Asystent oa Code Inline jest blokowany przez konflikt z GitHub Copilot. Aby to naprawić, musisz wyłączyć sugestie inline Copilota.",
 			"disableCopilot": "Wyłącz Copilota",
 			"disableInlineAssist": "Wyłącz Asystenta Inline"
 		}
 	},
 	"terminalCommandGenerator": {
-		"inputPrompt": "Oa: Opisz polecenie, które chcesz wygenerować",
+		"inputPrompt": "oa: Opisz polecenie, które chcesz wygenerować",
 		"inputPlaceholder": "np. zakończ proces działający na porcie 3001, znajdź duże pliki, itp.",
-		"generatingProgress": "Oa: Generowanie polecenia terminala...",
-		"generationFailed": "Oa: Nie udało się wygenerować polecenia: {{error}}",
-		"commandGenerated": "Oa: Wygenerowane polecenie: {{command}}",
-		"noActiveTerminal": "Oa: Nie znaleziono aktywnego terminala. Proszę najpierw otworzyć terminal.",
+		"generatingProgress": "oa: Generowanie polecenia terminala...",
+		"generationFailed": "oa: Nie udało się wygenerować polecenia: {{error}}",
+		"commandGenerated": "oa: Wygenerowane polecenie: {{command}}",
+		"noActiveTerminal": "oa: Nie znaleziono aktywnego terminala. Proszę najpierw otworzyć terminal.",
 		"warningDialog": {
 			"title": "Ostrzeżenie o Bezpieczeństwie Terminala",
 			"okButton": "Rozumiem",
 			"message": "Dokładnie sprawdzaj wszystkie wygenerowane polecenia przed ich uruchomieniem. Działań wykonanych w terminalu nie zawsze można cofnąć – uruchamianie niezweryfikowanych poleceń może spowodować nieodwracalną utratę danych lub uszkodzenie systemu. Przejrzyj i zrozum polecenie w całości zanim przejdziesz dalej!",
 			"cancelButton": "Anuluj"
 		},
-		"tipMessage": "Oa: Naciśnij {{shortcut}}, aby wygenerować polecenia terminala"
+		"tipMessage": "oa: Naciśnij {{shortcut}}, aby wygenerować polecenia terminala"
 	}
 }

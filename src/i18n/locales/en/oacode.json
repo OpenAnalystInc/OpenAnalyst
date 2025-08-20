@@ -40,25 +40,25 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "OpenAnalyst commit message generator activated",
+		"activated": "oa Code commit message generator activated",
 		"gitNotFound": "⚠️ Git repository not found or git not available",
 		"gitInitError": "⚠️ Git initialization error: {{error}}",
-		"generating": "Oa: Generating commit message...",
-		"noChanges": "Oa: No changes found to analyze",
-		"generated": "Oa: Commit message generated!",
-		"generationFailed": "Oa: Failed to generate commit message: {{errorMessage}}",
-		"generatingFromUnstaged": "Oa: Generating message using unstaged changes",
-		"activationFailed": "Oa: Failed to activate message generator: {{error}}",
-		"providerRegistered": "Oa: Commit message provider registered"
+		"generating": "oa: Generating commit message...",
+		"noChanges": "oa: No changes found to analyze",
+		"generated": "oa: Commit message generated!",
+		"generationFailed": "oa: Failed to generate commit message: {{errorMessage}}",
+		"generatingFromUnstaged": "oa: Generating message using unstaged changes",
+		"activationFailed": "oa: Failed to activate message generator: {{error}}",
+		"providerRegistered": "oa: Commit message provider registered"
 	},
 	"ghost": {
 		"statusBar": {
-			"enabled": "$(sparkle) Oa Inline Assist",
-			"disabled": "$(circle-slash) Oa Inline Assist",
-			"warning": "$(warning) Oa Inline Assist",
+			"enabled": "$(sparkle) oa Inline Assist",
+			"disabled": "$(circle-slash) oa Inline Assist",
+			"warning": "$(warning) oa Inline Assist",
 			"tooltip": {
-				"basic": "OpenAnalyst Inline Assist",
-				"disabled": "OpenAnalyst Inline Assist (disabled)",
+				"basic": "oa Code Inline Assist",
+				"disabled": "oa Code Inline Assist (disabled)",
 				"tokenError": "A valid token must be set to use Inline Assist",
 				"lastCompletion": "Last suggestion:",
 				"sessionTotal": "Session total cost:",
@@ -69,49 +69,49 @@
 				"lessThanCent": "<$0.01"
 			}
 		},
-		"toggleMessage": "Oa Inline Assist {{status}}",
+		"toggleMessage": "oa Inline Assist {{status}}",
 		"progress": {
-			"title": "OpenAnalyst",
+			"title": "oa Code",
 			"analyzing": "Analyzing your code...",
 			"generating": "Generating suggested edits...",
 			"processing": "Processing suggested edits...",
 			"showing": "Displaying suggested edits..."
 		},
 		"input": {
-			"title": "OpenAnalyst: Quick Task",
+			"title": "oa Code: Quick Task",
 			"placeholder": "e.g., 'refactor this function to be more efficient'"
 		},
 		"commands": {
-			"generateSuggestions": "OpenAnalyst: Generate Suggested Edits",
+			"generateSuggestions": "oa Code: Generate Suggested Edits",
 			"displaySuggestions": "Display Suggested Edits",
 			"cancelSuggestions": "Cancel Suggested Edits",
 			"applyCurrentSuggestion": "Apply Current Suggested Edit",
 			"applyAllSuggestions": "Apply All Suggested Edits",
 			"promptCodeSuggestion": "Quick Task",
-			"category": "OpenAnalyst"
+			"category": "oa Code"
 		},
 		"codeAction": {
-			"title": "OpenAnalyst: Suggested Edits"
+			"title": "oa Code: Suggested Edits"
 		},
 		"chatParticipant": {
-			"fullName": "OpenAnalyst Agent",
+			"fullName": "oa Code Agent",
 			"name": "Agent",
 			"description": "I can help you with quick tasks and suggested edits."
 		},
 		"incompatibilityExtensionPopup": {
-			"message": "The OpenAnalyst Inline Assist is being blocked by a conflict with GitHub Copilot. To fix this, you must disable Copilot's inline suggestions.",
+			"message": "The oa Code Inline Assist is being blocked by a conflict with GitHub Copilot. To fix this, you must disable Copilot's inline suggestions.",
 			"disableCopilot": "Disable Copilot",
 			"disableInlineAssist": "Disable Inline Assist"
 		}
 	},
 	"terminalCommandGenerator": {
-		"tipMessage": "Oa: Press {{shortcut}} to generate terminal commands",
-		"inputPrompt": "Oa: Describe the command you want to generate",
+		"tipMessage": "oa: Press {{shortcut}} to generate terminal commands",
+		"inputPrompt": "oa: Describe the command you want to generate",
 		"inputPlaceholder": "e.g., kill the process running on port 3001, find large files, etc",
-		"noActiveTerminal": "Oa: No active terminal found. Please open a terminal first.",
-		"generatingProgress": "Oa: Generating terminal command...",
-		"commandGenerated": "Oa: Generated command: {{command}}",
-		"generationFailed": "Oa: Failed to generate command: {{error}}",
+		"noActiveTerminal": "oa: No active terminal found. Please open a terminal first.",
+		"generatingProgress": "oa: Generating terminal command...",
+		"commandGenerated": "oa: Generated command: {{command}}",
+		"generationFailed": "oa: Failed to generate command: {{error}}",
 		"warningDialog": {
 			"title": "Terminal Safety Warning",
 			"message": "Double-check all generated commands before running them. Terminal actions cannot always be undone— running unverified commands can result in irreversible data loss or system damage. Review and understand the command completely before proceeding!",

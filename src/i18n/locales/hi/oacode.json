@@ -40,25 +40,25 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "OpenAnalyst कमिट संदेश जनरेटर सक्रिय",
+		"activated": "oa Code कमिट संदेश जनरेटर सक्रिय",
 		"gitNotFound": "⚠️ Git रिपॉजिटरी नहीं मिली या Git उपलब्ध नहीं है",
 		"gitInitError": "⚠️ Git इनिशियलाइज़ेशन त्रुटि: {{error}}",
-		"generating": "Oa: कमिट संदेश उत्पन्न कर रहा है...",
-		"noChanges": "Oa: विश्लेषण के लिए कोई बदलाव नहीं मिला",
-		"generated": "Oa: कमिट संदेश उत्पन्न हुआ!",
-		"generationFailed": "Oa: कमिट संदेश उत्पन्न करने में विफल: {{errorMessage}}",
-		"generatingFromUnstaged": "Oa: अनस्टेज किए गए परिवर्तनों का उपयोग करके संदेश उत्पन्न कर रहा है",
-		"activationFailed": "Oa: संदेश जनरेटर सक्रिय करने में विफल: {{error}}",
-		"providerRegistered": "Oa: कमिट संदेश प्रदाता पंजीकृत"
+		"generating": "oa: कमिट संदेश उत्पन्न कर रहा है...",
+		"noChanges": "oa: विश्लेषण के लिए कोई बदलाव नहीं मिला",
+		"generated": "oa: कमिट संदेश उत्पन्न हुआ!",
+		"generationFailed": "oa: कमिट संदेश उत्पन्न करने में विफल: {{errorMessage}}",
+		"generatingFromUnstaged": "oa: अनस्टेज किए गए परिवर्तनों का उपयोग करके संदेश उत्पन्न कर रहा है",
+		"activationFailed": "oa: संदेश जनरेटर सक्रिय करने में विफल: {{error}}",
+		"providerRegistered": "oa: कमिट संदेश प्रदाता पंजीकृत"
 	},
 	"ghost": {
 		"statusBar": {
-			"enabled": "$(sparkle) Oa इनलाइन सहायता",
-			"disabled": "$(circle-slash) Oa इनलाइन सहायता",
-			"warning": "$(warning) Oa इनलाइन सहायता",
+			"enabled": "$(sparkle) oa इनलाइन सहायता",
+			"disabled": "$(circle-slash) oa इनलाइन सहायता",
+			"warning": "$(warning) oa इनलाइन सहायता",
 			"tooltip": {
-				"basic": "OpenAnalyst इनलाइन सहायता",
-				"disabled": "OpenAnalyst इनलाइन सहायता (अक्षम)",
+				"basic": "oa Code इनलाइन सहायता",
+				"disabled": "oa Code इनलाइन सहायता (अक्षम)",
 				"tokenError": "इनलाइन सहायता का उपयोग करने के लिए एक वैध टोकन सेट होना चाहिए",
 				"lastCompletion": "अंतिम सुझाव:",
 				"sessionTotal": "सत्र कुल लागत:",
@@ -69,32 +69,32 @@
 				"lessThanCent": "<$0.01"
 			}
 		},
-		"toggleMessage": "Oa इनलाइन सहायता {{status}}",
+		"toggleMessage": "oa इनलाइन सहायता {{status}}",
 		"progress": {
-			"title": "OpenAnalyst",
+			"title": "oa Code",
 			"analyzing": "आपका कोड विश्लेषण कर रहा है...",
 			"generating": "सुझाए गए संपादन उत्पन्न कर रहा है...",
 			"processing": "सुझाए गए संपादन संसाधित कर रहा है...",
 			"showing": "सुझाए गए संपादन प्रदर्शित कर रहा है..."
 		},
 		"input": {
-			"title": "OpenAnalyst: त्वरित कार्य",
+			"title": "oa Code: त्वरित कार्य",
 			"placeholder": "जैसे, 'इस फ़ंक्शन को अधिक कुशल बनाने के लिए रीफैक्टर करें'"
 		},
 		"commands": {
-			"generateSuggestions": "OpenAnalyst: सुझाए गए संपादन उत्पन्न करें",
+			"generateSuggestions": "oa Code: सुझाए गए संपादन उत्पन्न करें",
 			"displaySuggestions": "सुझाए गए संपादन प्रदर्शित करें",
 			"cancelSuggestions": "सुझाए गए संपादन रद्द करें",
 			"applyCurrentSuggestion": "वर्तमान सुझाए गए संपादन लागू करें",
 			"applyAllSuggestions": "सभी सुझाए गए संपादन लागू करें",
 			"promptCodeSuggestion": "त्वरित कार्य",
-			"category": "OpenAnalyst"
+			"category": "oa Code"
 		},
 		"codeAction": {
-			"title": "OpenAnalyst: सुझाए गए संपादन"
+			"title": "oa Code: सुझाए गए संपादन"
 		},
 		"chatParticipant": {
-			"fullName": "OpenAnalyst एजेंट",
+			"fullName": "oa Code एजेंट",
 			"name": "एजेंट",
 			"description": "मैं त्वरित कार्यों और सुझाए गए संपादनों में आपकी सहायता कर सकता हूँ।"
 		},
@@ -102,24 +102,24 @@
 			"provideCodeSuggestions": "कोड सुझाव प्रदान किए जा रहे हैं..."
 		},
 		"incompatibilityExtensionPopup": {
-			"message": "OpenAnalyst Inline Assist GitHub Copilot के साथ टकराव के कारण अवरुद्ध हो रहा है। इसे ठीक करने के लिए, आपको Copilot के इनलाइन सुझावों को अक्षम करना होगा।",
+			"message": "oa Code Inline Assist GitHub Copilot के साथ टकराव के कारण अवरुद्ध हो रहा है। इसे ठीक करने के लिए, आपको Copilot के इनलाइन सुझावों को अक्षम करना होगा।",
 			"disableCopilot": "Copilot अक्षम करें",
 			"disableInlineAssist": "Inline Assist अक्षम करें"
 		}
 	},
 	"terminalCommandGenerator": {
-		"inputPrompt": "Oa: उस कमांड का वर्णन करें जिसे आप जनरेट करना चाहते हैं",
-		"noActiveTerminal": "Oa: कोई सक्रिय टर्मिनल नहीं मिला। कृपया पहले एक टर्मिनल खोलें।",
+		"inputPrompt": "oa: उस कमांड का वर्णन करें जिसे आप जनरेट करना चाहते हैं",
+		"noActiveTerminal": "oa: कोई सक्रिय टर्मिनल नहीं मिला। कृपया पहले एक टर्मिनल खोलें।",
 		"inputPlaceholder": "उदाहरण के लिए, पोर्ट 3001 पर चल रही प्रक्रिया को समाप्त करें, बड़ी फाइलें खोजें, इत्यादि",
-		"generatingProgress": "Oa: टर्मिनल कमांड उत्पन्न कर रहा है...",
-		"generationFailed": "Oa: कमांड जनरेट करने में विफल: {{error}}",
-		"commandGenerated": "Oa: उत्पन्न आदेश: {{command}}",
+		"generatingProgress": "oa: टर्मिनल कमांड उत्पन्न कर रहा है...",
+		"generationFailed": "oa: कमांड जनरेट करने में विफल: {{error}}",
+		"commandGenerated": "oa: उत्पन्न आदेश: {{command}}",
 		"warningDialog": {
 			"title": "टर्मिनल सुरक्षा चेतावनी",
 			"okButton": "मैं समझता हूँ",
 			"message": "सभी जनरेट किए गए कमांड्स को चलाने से पहले दोबारा जांच लें। टर्मिनल क्रियाओं को हमेशा पूर्ववत नहीं किया जा सकता है - बिना सत्यापित कमांड्स चलाने से अपरिवर्तनीय डेटा हानि या सिस्टम क्षति हो सकती है। आगे बढ़ने से पहले कमांड को पूरी तरह से समझें और समीक्षा करें!",
 			"cancelButton": "रद्द करें"
 		},
-		"tipMessage": "Oa: टर्मिनल कमांड उत्पन्न करने के लिए {{shortcut}} दबाएँ"
+		"tipMessage": "oa: टर्मिनल कमांड उत्पन्न करने के लिए {{shortcut}} दबाएँ"
 	}
 }

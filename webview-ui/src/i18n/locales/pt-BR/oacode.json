@@ -1,7 +1,7 @@
 {
 	"welcome": {
-		"greeting": "Bem-vindo ao OpenAnalyst!",
-		"introText1": "OpenAnalyst é um agente de codificação AI gratuito e de código aberto.",
+		"greeting": "Bem-vindo ao oa Code!",
+		"introText1": "oa Code é um agente de codificação AI gratuito e de código aberto.",
 		"introText2": "Funciona com os mais recentes modelos de IA como Claude 4 Sonnet, Gemini 2.5 Pro, GPT-4.1, e mais de 450 outros.",
 		"introText3": "Crie uma conta gratuita e receba $20 em tokens para usar com qualquer modelo de IA.",
 		"ctaButton": "Começar",
@@ -11,7 +11,7 @@
 	},
 	"lowCreditWarning": {
 		"addCredit": "Adicionar crédito",
-		"lowBalance": "Seu saldo do OpenAnalyst está baixo"
+		"lowBalance": "Seu saldo do oa Code está baixo"
 	},
 	"pricing": {
 		"costUnknown": "custo desconhecido",
@@ -28,28 +28,28 @@
 			"mcp": "Servidores MCP"
 		},
 		"provider": {
-			"account": "Conta OpenAnalyst",
-			"apiKey": "Chave de API do OpenAnalyst",
-			"login": "Entrar no OpenAnalyst",
-			"logout": "Sair do OpenAnalyst",
-			"automaticFetch": "Os modelos mais recentes estão automaticamente disponíveis no OpenAnalyst. Se você não tem certeza de qual modelo escolher, o OpenAnalyst funciona melhor com os modelos recomendados listados no topo em <strong>negrito</strong>.",
+			"account": "Conta oa Code",
+			"apiKey": "Chave de API do oa Code",
+			"login": "Entrar no oa Code",
+			"logout": "Sair do oa Code",
+			"automaticFetch": "Os modelos mais recentes estão automaticamente disponíveis no oa Code. Se você não tem certeza de qual modelo escolher, o oa Code funciona melhor com os modelos recomendados listados no topo em <strong>negrito</strong>.",
 			"providerRouting": {
-				"title": "OpenAnalyst - Roteamento de Provedor OpenRouter",
-				"description": "O OpenAnalyst roteia as solicitações para os melhores provedores disponíveis para o seu modelo. Por padrão, as solicitações são balanceadas em carga entre os principais provedores para maximizar o tempo de atividade. No entanto, você pode escolher um provedor específico para usar para este modelo."
+				"title": "oa Code - Roteamento de Provedor OpenRouter",
+				"description": "O oa Code roteia as solicitações para os melhores provedores disponíveis para o seu modelo. Por padrão, as solicitações são balanceadas em carga entre os principais provedores para maximizar o tempo de atividade. No entanto, você pode escolher um provedor específico para usar para este modelo."
 			}
 		},
 		"contextManagement": {
 			"allowVeryLargeReads": {
 				"label": "Permitir leituras de arquivos muito grandes",
-				"description": "Quando ativado, o OpenAnalyst realizará leituras de arquivos ou saídas MCP muito grandes mesmo que haja uma alta probabilidade de exceder a janela de contexto (tamanho do conteúdo >80% da janela de contexto)."
+				"description": "Quando ativado, o oa Code realizará leituras de arquivos ou saídas MCP muito grandes mesmo que haja uma alta probabilidade de exceder a janela de contexto (tamanho do conteúdo >80% da janela de contexto)."
 			}
 		},
 		"systemNotifications": {
 			"label": "Ativar notificações do sistema",
-			"description": "Quando ativado, o OpenAnalyst enviará notificações do sistema para eventos importantes como conclusão de tarefas ou erros.",
+			"description": "Quando ativado, o oa Code enviará notificações do sistema para eventos importantes como conclusão de tarefas ou erros.",
 			"testButton": "Testar notificação",
-			"testTitle": "OpenAnalyst",
-			"testMessage": "Esta é uma notificação de teste do OpenAnalyst."
+			"testTitle": "oa Code",
+			"testMessage": "Esta é uma notificação de teste do oa Code."
 		},
 		"terminal": {
 			"commandGenerator": {
@@ -64,7 +64,7 @@
 	},
 	"chat": {
 		"condense": {
-			"wantsToCondense": "OpenAnalyst quer condensar sua conversa",
+			"wantsToCondense": "oa Code quer condensar sua conversa",
 			"condenseConversation": "Condensar Conversa"
 		}
 	},
@@ -87,15 +87,15 @@
 	},
 	"docs": "Documentação",
 	"rules": {
-		"tooltip": "Gerenciar Regras e Fluxos de Trabalho do OpenAnalyst",
-		"ariaLabel": "Regras do OpenAnalyst",
+		"tooltip": "Gerenciar Regras e Fluxos de Trabalho do oa Code",
+		"ariaLabel": "Regras do oa Code",
 		"tabs": {
 			"rules": "Regras",
 			"workflows": "Fluxos de Trabalho"
 		},
 		"description": {
-			"rules": "As regras permitem fornecer ao OpenAnalyst instruções que ele deve seguir em todos os modos e para todos os prompts. Elas são uma forma persistente de incluir contexto e preferências para todas as conversas em seu workspace ou globalmente.",
-			"workflows": "Os fluxos de trabalho são um modelo preparado para uma conversa. Os fluxos de trabalho permitem definir prompts que você usa frequentemente, e podem incluir uma série de passos para guiar o OpenAnalyst através de tarefas repetitivas, como implantar um serviço ou enviar um PR. Para invocar um fluxo de trabalho, digite",
+			"rules": "As regras permitem fornecer ao oa Code instruções que ele deve seguir em todos os modos e para todos os prompts. Elas são uma forma persistente de incluir contexto e preferências para todas as conversas em seu workspace ou globalmente.",
+			"workflows": "Os fluxos de trabalho são um modelo preparado para uma conversa. Os fluxos de trabalho permitem definir prompts que você usa frequentemente, e podem incluir uma série de passos para guiar o oa Code através de tarefas repetitivas, como implantar um serviço ou enviar um PR. Para invocar um fluxo de trabalho, digite",
 			"workflowsInChat": "no chat."
 		},
 		"sections": {
@@ -168,19 +168,19 @@
 			},
 			"enableAutoInlineTaskKeybinding": {
 				"label": "Tarefa Automática em Linha",
-				"description": "Precisa de uma correção rápida, preenchimento ou refatoração? Oa usará o contexto ao redor para oferecer melhorias imediatas, mantendo seu fluxo de trabalho. <DocsLink>Ver atalho</DocsLink>"
+				"description": "Precisa de uma correção rápida, preenchimento ou refatoração? oa usará o contexto ao redor para oferecer melhorias imediatas, mantendo seu fluxo de trabalho. <DocsLink>Ver atalho</DocsLink>"
 			},
 			"enableAutoTrigger": {
 				"label": "Ativar Gatilho Automático",
-				"description": "Quando ativado, o OpenAnalyst acionará automaticamente a Assistência em Linha quando você parar de digitar. Isso pode ser útil para correções e sugestões rápidas."
+				"description": "Quando ativado, o oa Code acionará automaticamente a Assistência em Linha quando você parar de digitar. Isso pode ser útil para correções e sugestões rápidas."
 			},
 			"autoTriggerDelay": {
 				"label": "Atraso do Gatilho Automático",
-				"description": "O atraso em segundos antes do OpenAnalyst acionar a Assistência em Linha após você parar de digitar. Um atraso menor significa sugestões mais rápidas, mas pode ser mais intensivo em recursos."
+				"description": "O atraso em segundos antes do oa Code acionar a Assistência em Linha após você parar de digitar. Um atraso menor significa sugestões mais rápidas, mas pode ser mais intensivo em recursos."
 			},
 			"enableSmartInlineTaskKeybinding": {
 				"label": "Tarefa Inteligente em Linha",
-				"description": "Precisa de uma correção rápida, completar ou refatorar? O Oa usará o contexto ao redor para oferecer melhorias imediatas, mantendo você no fluxo. <DocsLink>Ver atalho</DocsLink>"
+				"description": "Precisa de uma correção rápida, completar ou refatorar? O oa usará o contexto ao redor para oferecer melhorias imediatas, mantendo você no fluxo. <DocsLink>Ver atalho</DocsLink>"
 			},
 			"provider": "Provedor",
 			"apiConfigId": {
