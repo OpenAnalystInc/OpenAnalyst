@@ -1,14 +1,14 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { fn } from "storybook/test"
 
-import KiloTaskHeader from "../../../webview-ui/src/components/kilocode/KiloTaskHeader"
+import oaTaskHeader from "../../../webview-ui/src/components/oacode/oaTaskHeader"
 import { createTaskHeaderMessages, createMockTask } from "../src/mockData/clineMessages"
 import { withTooltipProvider } from "../src/decorators/withTooltipProvider"
 import { withExtensionState } from "../src/decorators/withExtensionState"
 
 const meta = {
-	title: "Chat/KiloTaskHeader",
-	component: KiloTaskHeader,
+	title: "Chat/oaTaskHeader",
+	component: oaTaskHeader,
 	decorators: [withTooltipProvider, withExtensionState],
 	argTypes: {},
 	args: {
@@ -16,7 +16,7 @@ const meta = {
 		onClose: fn(),
 		onMessageClick: fn(),
 	},
-} satisfies Meta<typeof KiloTaskHeader>
+} satisfies Meta<typeof oaTaskHeader>
 
 export default meta
 type Story = StoryObj<typeof meta>

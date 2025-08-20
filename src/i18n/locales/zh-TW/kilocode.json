@@ -40,25 +40,25 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "Kilo Code Commit 訊息產生器已啟用",
+		"activated": "oa Code Commit 訊息產生器已啟用",
 		"gitNotFound": "⚠️找不到 Git 儲存庫或 Git 不可用",
 		"gitInitError": "⚠️ Git 初始化錯誤：{{error}}",
-		"generating": "Kilo：正在產生 Commit 訊息...",
-		"noChanges": "Kilo：找不到可供分析的變更",
-		"generated": "Kilo：Commit 訊息已產生！",
-		"generationFailed": "Kilo：產生 Commit 訊息失敗：{{errorMessage}}",
-		"generatingFromUnstaged": "Kilo：使用未暫存的變更產生訊息",
-		"activationFailed": "Kilo：啟用訊息產生器失敗：{{error}}",
-		"providerRegistered": "Kilo：Commit 訊息提供者已註冊"
+		"generating": "oa：正在產生 Commit 訊息...",
+		"noChanges": "oa：找不到可供分析的變更",
+		"generated": "oa：Commit 訊息已產生！",
+		"generationFailed": "oa：產生 Commit 訊息失敗：{{errorMessage}}",
+		"generatingFromUnstaged": "oa：使用未暫存的變更產生訊息",
+		"activationFailed": "oa：啟用訊息產生器失敗：{{error}}",
+		"providerRegistered": "oa：Commit 訊息提供者已註冊"
 	},
 	"ghost": {
 		"statusBar": {
-			"enabled": "$(sparkle) Kilo 行內輔助",
-			"disabled": "$(circle-slash) Kilo 行內輔助",
-			"warning": "$(warning) Kilo 行內輔助",
+			"enabled": "$(sparkle) oa 行內輔助",
+			"disabled": "$(circle-slash) oa 行內輔助",
+			"warning": "$(warning) oa 行內輔助",
 			"tooltip": {
-				"basic": "Kilo Code 行內輔助",
-				"disabled": "Kilo Code 行內輔助 (已停用)",
+				"basic": "oa Code 行內輔助",
+				"disabled": "oa Code 行內輔助 (已停用)",
 				"tokenError": "必須設定有效的令牌才能使用行內輔助",
 				"lastCompletion": "最後建議：",
 				"sessionTotal": "工作階段總費用：",
@@ -69,32 +69,32 @@
 				"lessThanCent": "<$0.01"
 			}
 		},
-		"toggleMessage": "Kilo 行內輔助 {{status}}",
+		"toggleMessage": "oa 行內輔助 {{status}}",
 		"progress": {
-			"title": "Kilo Code",
+			"title": "oa Code",
 			"analyzing": "正在分析您的程式碼...",
 			"generating": "正在產生建議的編輯...",
 			"processing": "正在處理建議的編輯...",
 			"showing": "正在顯示建議的編輯..."
 		},
 		"input": {
-			"title": "Kilo Code：快速任務",
+			"title": "oa Code：快速任務",
 			"placeholder": "例如：'重構此函數以提高效率'"
 		},
 		"commands": {
-			"generateSuggestions": "Kilo Code：產生建議的編輯",
+			"generateSuggestions": "oa Code：產生建議的編輯",
 			"displaySuggestions": "顯示建議的編輯",
 			"cancelSuggestions": "取消建議的編輯",
 			"applyCurrentSuggestion": "套用目前的建議編輯",
 			"applyAllSuggestions": "套用所有建議的編輯",
 			"promptCodeSuggestion": "快速任務",
-			"category": "Kilo Code"
+			"category": "oa Code"
 		},
 		"codeAction": {
-			"title": "Kilo Code：建議的編輯"
+			"title": "oa Code：建議的編輯"
 		},
 		"chatParticipant": {
-			"fullName": "Kilo Code Agent",
+			"fullName": "oa Code Agent",
 			"name": "Agent",
 			"description": "我可以幫助您處理快速任務和建議的編輯。"
 		},
@@ -102,19 +102,19 @@
 			"provideCodeSuggestions": "正在提供程式碼建議..."
 		},
 		"incompatibilityExtensionPopup": {
-			"message": "Kilo Code 行內輔助被 GitHub Copilot 的衝突所阻擋。為了解決此問題，您必須停用 Copilot 的內嵌建議。",
+			"message": "oa Code 行內輔助被 GitHub Copilot 的衝突所阻擋。為了解決此問題，您必須停用 Copilot 的內嵌建議。",
 			"disableCopilot": "停用 Copilot",
 			"disableInlineAssist": "停用行內輔助"
 		}
 	},
 	"terminalCommandGenerator": {
-		"tipMessage": "Kilo：按下 {{shortcut}} 產生終端機指令",
-		"noActiveTerminal": "Kilo: 找不到活動的終端機。請先開啟一個終端機",
-		"inputPrompt": "Kilo：描述您想要產生的指令",
+		"tipMessage": "oa：按下 {{shortcut}} 產生終端機指令",
+		"noActiveTerminal": "oa: 找不到活動的終端機。請先開啟一個終端機",
+		"inputPrompt": "oa：描述您想要產生的指令",
 		"inputPlaceholder": "例如，結束在連接埠 3001 上執行的行程，尋找大檔案等",
-		"generatingProgress": "Kilo：正在產生終端機指令...",
-		"commandGenerated": "Kilo：產生的指令：{{command}}",
-		"generationFailed": "Kilo：指令產生失敗：{{error}}",
+		"generatingProgress": "oa：正在產生終端機指令...",
+		"commandGenerated": "oa：產生的指令：{{command}}",
+		"generationFailed": "oa：指令產生失敗：{{error}}",
 		"warningDialog": {
 			"title": "終端機安全警告",
 			"okButton": "我明白",

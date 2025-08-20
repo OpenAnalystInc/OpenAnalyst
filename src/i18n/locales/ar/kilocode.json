@@ -40,20 +40,20 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "تم تفعيل منشئ رسائل التزام Kilo Code",
+		"activated": "تم تفعيل منشئ رسائل التزام oa Code",
 		"gitNotFound": "⚠️ مستودع Git غير موجود أو Git غير متاح",
 		"gitInitError": "⚠️ خطأ في تهيئة Git: {{error}}",
-		"generating": "Kilo: جارٍ إنشاء رسالة الالتزام...",
-		"noChanges": "Kilo: لم يتم العثور على تغييرات للتحليل",
-		"generated": "Kilo: تم إنشاء رسالة الالتزام!",
-		"generationFailed": "Kilo: فشل في إنشاء رسالة الالتزام: {{errorMessage}}",
-		"generatingFromUnstaged": "Kilo: إنشاء رسالة باستخدام التغييرات غير المرحلة",
-		"analyzingChanges": "Kilo: جاري تحليل التعديلات الجاهزة...",
-		"noStagedChangesRepo": "Kilo: ما فيه تعديلات مضافة في مستودع git",
-		"noStagedChanges": "Kilo: ما فيه تعديلات مضافة لتحليلها",
-		"tokenRequired": "يتطلب توليد الرسالة رمز Kilo Code",
-		"activationFailed": "Kilo: فشل تفعيل مولّد الرسائل: {{error}}",
-		"providerRegistered": "Kilo: تم تسجيل موفر رسائل الاعتماد"
+		"generating": "oa: جارٍ إنشاء رسالة الالتزام...",
+		"noChanges": "oa: لم يتم العثور على تغييرات للتحليل",
+		"generated": "oa: تم إنشاء رسالة الالتزام!",
+		"generationFailed": "oa: فشل في إنشاء رسالة الالتزام: {{errorMessage}}",
+		"generatingFromUnstaged": "oa: إنشاء رسالة باستخدام التغييرات غير المرحلة",
+		"analyzingChanges": "oa: جاري تحليل التعديلات الجاهزة...",
+		"noStagedChangesRepo": "oa: ما فيه تعديلات مضافة في مستودع git",
+		"noStagedChanges": "oa: ما فيه تعديلات مضافة لتحليلها",
+		"tokenRequired": "يتطلب توليد الرسالة رمز oa Code",
+		"activationFailed": "oa: فشل تفعيل مولّد الرسائل: {{error}}",
+		"providerRegistered": "oa: تم تسجيل موفر رسائل الاعتماد"
 	},
 	"ghost": {
 		"progress": {
@@ -61,26 +61,26 @@
 			"showing": "عرض التعديلات المقترحة...",
 			"generating": "جاري توليد التعديلات المقترحة...",
 			"processing": "جارِ معالجة التعديلات المقترحة...",
-			"title": "Kilo Code"
+			"title": "oa Code"
 		},
 		"input": {
-			"title": "Kilo Code: مهمة سريعة",
+			"title": "oa Code: مهمة سريعة",
 			"placeholder": "مثلاً، 'أعد هيكلة هذه الدالة لتكون أكثر كفاءة'"
 		},
 		"commands": {
 			"displaySuggestions": "عرض التعديلات المقترحة",
-			"generateSuggestions": "Kilo Code: توليد تعديلات مقترحة",
+			"generateSuggestions": "oa Code: توليد تعديلات مقترحة",
 			"applyCurrentSuggestion": "تطبيق التعديل المُقترح الحالي",
 			"cancelSuggestions": "إلغاء التعديلات المقترحة",
 			"promptCodeSuggestion": "مهمة سريعة",
 			"applyAllSuggestions": "تطبيق كافة التعديلات المقترحة",
-			"category": "Kilo Code"
+			"category": "oa Code"
 		},
 		"codeAction": {
-			"title": "Kilo Code: التعديلات المقترحة"
+			"title": "oa Code: التعديلات المقترحة"
 		},
 		"chatParticipant": {
-			"fullName": "Kilo Code وكيل",
+			"fullName": "oa Code وكيل",
 			"description": "يمكنني مساعدتك بالمهام السريعة والتعديلات المقترحة.",
 			"name": "وكيل"
 		},
@@ -88,42 +88,42 @@
 			"provideCodeSuggestions": "جارٍ تقديم اقتراحات الرمز..."
 		},
 		"statusBar": {
-			"warning": "$(warning) مساعد Kilo المباشر",
-			"disabled": "$(circle-slash) مساعدة Kilo المضمنة",
+			"warning": "$(warning) مساعد oa المباشر",
+			"disabled": "$(circle-slash) مساعدة oa المضمنة",
 			"tooltip": {
-				"disabled": "مساعد Kilo كود المضمّن (معطّل)",
-				"basic": "مساعد رمز Kilo المدمج",
+				"disabled": "مساعد oa كود المضمّن (معطّل)",
+				"basic": "مساعد رمز oa المدمج",
 				"lastCompletion": "الاقتراح الأخير:",
 				"model": "النموذج:",
 				"tokenError": "يجب تعيين رمز صالح لاستخدام المساعد المضمن",
 				"sessionTotal": "التكلفة الإجمالية للجلسة:"
 			},
-			"enabled": "$(sparkle) مساعد Kilo المضمّن",
+			"enabled": "$(sparkle) مساعد oa المضمّن",
 			"cost": {
 				"lessThanCent": "<$0.01",
 				"zero": "$٠٫٠٠"
 			}
 		},
-		"toggleMessage": "المساعد المضمن Kilo {{status}}",
+		"toggleMessage": "المساعد المضمن oa {{status}}",
 		"incompatibilityExtensionPopup": {
-			"message": "يتم حظر مساعد Kilo كود المضمّن بسبب تعارض مع GitHub Copilot. لإصلاح هذا، يجب عليك تعطيل اقتراحات Copilot المضمنة.",
+			"message": "يتم حظر مساعد oa كود المضمّن بسبب تعارض مع GitHub Copilot. لإصلاح هذا، يجب عليك تعطيل اقتراحات Copilot المضمنة.",
 			"disableCopilot": "تعطيل Copilot",
 			"disableInlineAssist": "تعطيل المساعد المضمّن"
 		}
 	},
 	"terminalCommandGenerator": {
-		"inputPrompt": "Kilo: وصف الأمر الذي ترغب في توليده",
-		"generatingProgress": "Kilo: جاري توليد الأمر الطرفي...",
-		"noActiveTerminal": "Kilo: لا يوجد طرفية نشطة. يرجى فتح طرفية أولاً.",
-		"commandGenerated": "Kilo: الأمر الذي تم إنشاؤه: {{command}}",
+		"inputPrompt": "oa: وصف الأمر الذي ترغب في توليده",
+		"generatingProgress": "oa: جاري توليد الأمر الطرفي...",
+		"noActiveTerminal": "oa: لا يوجد طرفية نشطة. يرجى فتح طرفية أولاً.",
+		"commandGenerated": "oa: الأمر الذي تم إنشاؤه: {{command}}",
 		"inputPlaceholder": "مثلًا، إنهاء العملية التي تعمل على المنفذ 3001، إيجاد الملفات الكبيرة، إلخ",
-		"generationFailed": "Kilo: فشل في إنشاء الأمر: {{error}}",
+		"generationFailed": "oa: فشل في إنشاء الأمر: {{error}}",
 		"warningDialog": {
 			"okButton": "أفهم",
 			"title": "تحذير أمان للمحطة",
 			"message": "تحقق مرة أخرى من جميع الأوامر التي تم إنشاؤها قبل تنفيذها. لا يمكن دائمًا التراجع عن الإجراءات التي تتم في نافذة الطرفية - فتنفيذ أوامر غير موثوقة قد يؤدي إلى فقدان البيانات بشكل لا رجعة فيه أو تلف النظام. راجع وافهم الأمر بشكل كامل قبل المتابعة!",
 			"cancelButton": "إلغاء"
 		},
-		"tipMessage": "Kilo: اضغط {{shortcut}} لإنشاء أوامر الطرفية"
+		"tipMessage": "oa: اضغط {{shortcut}} لإنشاء أوامر الطرفية"
 	}
 }

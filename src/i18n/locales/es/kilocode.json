@@ -40,25 +40,25 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "Generador de mensajes de commit de Kilo Code activado",
+		"activated": "Generador de mensajes de commit de oa Code activado",
 		"gitNotFound": "⚠️ Repositorio Git no encontrado o git no disponible",
 		"gitInitError": "⚠️ Error de inicialización de Git: {{error}}",
-		"generating": "Kilo: Generando mensaje de confirmación...",
-		"noChanges": "Kilo: No se encontraron cambios para analizar",
-		"generated": "Kilo: ¡Mensaje de commit generado!",
-		"generationFailed": "Kilo: Error al generar mensaje de confirmación: {{errorMessage}}",
-		"generatingFromUnstaged": "Kilo: Generando mensaje usando cambios no preparados",
-		"providerRegistered": "Kilo: Proveedor de mensajes de confirmación registrado",
-		"activationFailed": "Kilo: Error al activar el generador de mensajes: {{error}}"
+		"generating": "oa: Generando mensaje de confirmación...",
+		"noChanges": "oa: No se encontraron cambios para analizar",
+		"generated": "oa: ¡Mensaje de commit generado!",
+		"generationFailed": "oa: Error al generar mensaje de confirmación: {{errorMessage}}",
+		"generatingFromUnstaged": "oa: Generando mensaje usando cambios no preparados",
+		"providerRegistered": "oa: Proveedor de mensajes de confirmación registrado",
+		"activationFailed": "oa: Error al activar el generador de mensajes: {{error}}"
 	},
 	"ghost": {
 		"statusBar": {
-			"enabled": "$(sparkle) Asistente Integrado Kilo",
-			"disabled": "$(circle-slash) Asistencia en línea Kilo",
-			"warning": "$(warning) Asistencia Integrada Kilo",
+			"enabled": "$(sparkle) Asistente Integrado oa",
+			"disabled": "$(circle-slash) Asistencia en línea oa",
+			"warning": "$(warning) Asistencia Integrada oa",
 			"tooltip": {
-				"basic": "Asistencia Integrada Kilo Code",
-				"disabled": "Asistente Integrado Kilo Code (desactivado)",
+				"basic": "Asistencia Integrada oa Code",
+				"disabled": "Asistente Integrado oa Code (desactivado)",
 				"tokenError": "Se debe establecer un token válido para usar Inline Assist",
 				"lastCompletion": "Última sugerencia:",
 				"sessionTotal": "Costo total de la sesión:",
@@ -69,32 +69,32 @@
 				"lessThanCent": "<$0.01"
 			}
 		},
-		"toggleMessage": "Asistente Integrado Kilo {{status}}",
+		"toggleMessage": "Asistente Integrado oa {{status}}",
 		"progress": {
 			"analyzing": "Analizando su código...",
 			"generating": "Generando sugerencias de edición...",
 			"processing": "Procesando ediciones sugeridas...",
 			"showing": "Mostrando ediciones sugeridas...",
-			"title": "Kilo Code"
+			"title": "oa Code"
 		},
 		"input": {
-			"title": "Kilo Code: Tarea Rápida",
+			"title": "oa Code: Tarea Rápida",
 			"placeholder": "p. ej., 'refactorizar esta función para que sea más eficiente'"
 		},
 		"commands": {
 			"displaySuggestions": "Mostrar Ediciones Sugeridas",
 			"cancelSuggestions": "Cancelar Ediciones Sugeridas",
-			"generateSuggestions": "Kilo Code: Generar Ediciones Sugeridas",
+			"generateSuggestions": "oa Code: Generar Ediciones Sugeridas",
 			"applyCurrentSuggestion": "Aplicar edición sugerida actual",
 			"applyAllSuggestions": "Aplicar todas las ediciones sugeridas",
 			"promptCodeSuggestion": "Tarea Rápida de Prompt",
-			"category": "Kilo Code"
+			"category": "oa Code"
 		},
 		"codeAction": {
-			"title": "Kilo Code: Ediciones sugeridas"
+			"title": "oa Code: Ediciones sugeridas"
 		},
 		"chatParticipant": {
-			"fullName": "Kilo Code Agente",
+			"fullName": "oa Code Agente",
 			"description": "Puedo ayudarte con tareas rápidas y ediciones sugeridas.",
 			"name": "Agente"
 		},
@@ -102,24 +102,24 @@
 			"provideCodeSuggestions": "Proporcionando sugerencias de código..."
 		},
 		"incompatibilityExtensionPopup": {
-			"message": "La Asistencia Integrada de Kilo Code está siendo bloqueada por un conflicto con GitHub Copilot. Para solucionar esto, debes deshabilitar las sugerencias integradas de Copilot.",
+			"message": "La Asistencia Integrada de oa Code está siendo bloqueada por un conflicto con GitHub Copilot. Para solucionar esto, debes deshabilitar las sugerencias integradas de Copilot.",
 			"disableCopilot": "Deshabilitar Copilot",
 			"disableInlineAssist": "Deshabilitar Asistencia Integrada"
 		}
 	},
 	"terminalCommandGenerator": {
-		"inputPrompt": "Kilo: Describe el comando que quieres generar",
-		"noActiveTerminal": "Kilo: No se encontró ningún terminal activo. Por favor abra un terminal primero.",
+		"inputPrompt": "oa: Describe el comando que quieres generar",
+		"noActiveTerminal": "oa: No se encontró ningún terminal activo. Por favor abra un terminal primero.",
 		"inputPlaceholder": "p. ej., matar el proceso que se ejecuta en el puerto 3001, encontrar archivos grandes, etc.",
-		"generatingProgress": "Kilo: Generando comando de terminal...",
-		"commandGenerated": "Kilo: Comando generado: {{command}}",
-		"generationFailed": "Kilo: Error al generar el comando: {{error}}",
+		"generatingProgress": "oa: Generando comando de terminal...",
+		"commandGenerated": "oa: Comando generado: {{command}}",
+		"generationFailed": "oa: Error al generar el comando: {{error}}",
 		"warningDialog": {
 			"title": "Advertencia de Seguridad de Terminal",
 			"okButton": "Entiendo",
 			"message": "Verifique dos veces todos los comandos generados antes de ejecutarlos. Las acciones en terminal no siempre se pueden deshacer: ejecutar comandos sin verificar puede resultar en pérdida irreversible de datos o daños al sistema. ¡Revise y comprenda completamente el comando antes de continuar!",
 			"cancelButton": "Cancelar"
 		},
-		"tipMessage": "Kilo: Presiona {{shortcut}} para generar comandos de terminal"
+		"tipMessage": "oa: Presiona {{shortcut}} para generar comandos de terminal"
 	}
 }

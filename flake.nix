@@ -1,5 +1,5 @@
 {
-  description = "Kilo Code development environment";
+  description = "oa Code development environment";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
@@ -13,7 +13,7 @@
     mkDevShell = system: let
       pkgs = import nixpkgs { inherit system; };
     in pkgs.mkShell {
-      name = "kilo-code";
+      name = "oa-code";
 
       packages = with pkgs; [
         nodejs_20

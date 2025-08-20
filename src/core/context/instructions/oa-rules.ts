@@ -7,7 +7,10 @@ import fs from "fs/promises"
  * Doesn't do anything if .oacode/rules dir already exists or doesn't exist
  * Returns whether there are any uncaught errors
  */
-export async function ensureLocalOarulesDirExists(oarulePath: string, defaultRuleFilename: string): Promise<boolean> {
+export async function ensureLocaloarulesDirExists(
+	oarulePath: string,
+	defaultRuleFilename: string,
+): Promise<boolean> {
 	try {
 		const exists = await fileExistsAtPath(oarulePath)
 

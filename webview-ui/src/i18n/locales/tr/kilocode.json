@@ -1,7 +1,7 @@
 {
 	"welcome": {
-		"greeting": "Kilo Code'a hoş geldiniz!",
-		"introText1": "Kilo Code ücretsiz, açık kaynaklı bir AI kodlama ajanıdır.",
+		"greeting": "oa Code'a hoş geldiniz!",
+		"introText1": "oa Code ücretsiz, açık kaynaklı bir AI kodlama ajanıdır.",
 		"introText2": "Claude 4 Sonnet, Gemini 2.5 Pro, GPT-4.1 ve 450+ diğer en yeni AI modelleri ile çalışır.",
 		"introText3": "Ücretsiz hesap oluşturun ve herhangi bir AI modeli ile kullanabilceğiniz $20 değerinde token alın.",
 		"ctaButton": "Başla",
@@ -11,7 +11,7 @@
 	},
 	"lowCreditWarning": {
 		"addCredit": "Kredi Ekle",
-		"lowBalance": "Kilo Code bakiyeniz düşük"
+		"lowBalance": "oa Code bakiyeniz düşük"
 	},
 	"pricing": {
 		"costUnknown": "maliyet bilinmiyor",
@@ -30,26 +30,26 @@
 		"contextManagement": {
 			"allowVeryLargeReads": {
 				"label": "Çok büyük dosya okumalarına izin ver",
-				"description": "Etkinleştirildiğinde, Kilo Code bağlam penceresini taşma olasılığı yüksek olsa bile çok büyük dosya veya MCP çıktı okumalarını gerçekleştirir (içerik boyutu bağlam penceresinin %80'inden fazla)."
+				"description": "Etkinleştirildiğinde, oa Code bağlam penceresini taşma olasılığı yüksek olsa bile çok büyük dosya veya MCP çıktı okumalarını gerçekleştirir (içerik boyutu bağlam penceresinin %80'inden fazla)."
 			}
 		},
 		"provider": {
-			"account": "Kilo Code Hesabı",
-			"apiKey": "Kilo Code API Anahtarı",
-			"login": "Kilo Code'a giriş yap",
-			"logout": "Kilo Code'dan çıkış yap",
-			"automaticFetch": "En son modeller Kilo Code'da otomatik olarak kullanılabilir. Hangi modeli seçeceğinizden emin değilseniz, Kilo Code en üstte <strong>kalın yazı</strong> ile listelenen önerilen modellerle en iyi şekilde çalışır.",
+			"account": "oa Code Hesabı",
+			"apiKey": "oa Code API Anahtarı",
+			"login": "oa Code'a giriş yap",
+			"logout": "oa Code'dan çıkış yap",
+			"automaticFetch": "En son modeller oa Code'da otomatik olarak kullanılabilir. Hangi modeli seçeceğinizden emin değilseniz, oa Code en üstte <strong>kalın yazı</strong> ile listelenen önerilen modellerle en iyi şekilde çalışır.",
 			"providerRouting": {
-				"title": "Kilo Code - OpenRouter Sağlayıcı Yönlendirme",
-				"description": "Kilo Code, modeliniz için en iyi kullanılabilir sağlayıcılara istekleri yönlendirir. Varsayılan olarak, çalışma süresini en üst düzeye çıkarmak için istekler en iyi sağlayıcılar arasında yük dengelenir. Ancak, bu model için kullanılacak belirli bir sağlayıcı seçebilirsiniz."
+				"title": "oa Code - OpenRouter Sağlayıcı Yönlendirme",
+				"description": "oa Code, modeliniz için en iyi kullanılabilir sağlayıcılara istekleri yönlendirir. Varsayılan olarak, çalışma süresini en üst düzeye çıkarmak için istekler en iyi sağlayıcılar arasında yük dengelenir. Ancak, bu model için kullanılacak belirli bir sağlayıcı seçebilirsiniz."
 			}
 		},
 		"systemNotifications": {
 			"label": "Sistem bildirimlerini etkinleştir",
-			"description": "Etkinleştirildiğinde, Kilo Code görev tamamlama veya hatalar gibi önemli olaylar için sistem bildirimleri gönderecektir.",
+			"description": "Etkinleştirildiğinde, oa Code görev tamamlama veya hatalar gibi önemli olaylar için sistem bildirimleri gönderecektir.",
 			"testButton": "Bildirimi test et",
-			"testTitle": "Kilo Code",
-			"testMessage": "Bu Kilo Code'dan bir test bildirimidir."
+			"testTitle": "oa Code",
+			"testMessage": "Bu oa Code'dan bir test bildirimidir."
 		},
 		"terminal": {
 			"commandGenerator": {
@@ -64,7 +64,7 @@
 	},
 	"chat": {
 		"condense": {
-			"wantsToCondense": "Kilo Code konuşmanı özetlemek istiyor",
+			"wantsToCondense": "oa Code konuşmanı özetlemek istiyor",
 			"condenseConversation": "Konuşmayı Özetle"
 		}
 	},
@@ -87,15 +87,15 @@
 	},
 	"docs": "Belgeler",
 	"rules": {
-		"tooltip": "Kilo Code Kuralları ve İş Akışlarını Yönet",
-		"ariaLabel": "Kilo Code Kuralları",
+		"tooltip": "oa Code Kuralları ve İş Akışlarını Yönet",
+		"ariaLabel": "oa Code Kuralları",
 		"tabs": {
 			"rules": "Kurallar",
 			"workflows": "İş Akışları"
 		},
 		"description": {
-			"rules": "Kurallar, Kilo Code'a tüm modlarda ve tüm promptlarda uyması gereken talimatlar sağlamanıza olanak tanır. Bunlar, çalışma alanınızda veya global olarak tüm konuşmalar için bağlam ve tercihleri dahil etmenin kalıcı bir yoludur.",
-			"workflows": "İş akışları, bir konuşma için hazırlanmış bir şablondur. İş akışları, sık kullandığınız promptları tanımlamanıza olanak tanır ve bir hizmeti dağıtmak veya PR göndermek gibi tekrarlayan görevler boyunca Kilo Code'u yönlendirmek için bir dizi adım içerebilir. Bir iş akışını çağırmak için şunu yazın",
+			"rules": "Kurallar, oa Code'a tüm modlarda ve tüm promptlarda uyması gereken talimatlar sağlamanıza olanak tanır. Bunlar, çalışma alanınızda veya global olarak tüm konuşmalar için bağlam ve tercihleri dahil etmenin kalıcı bir yoludur.",
+			"workflows": "İş akışları, bir konuşma için hazırlanmış bir şablondur. İş akışları, sık kullandığınız promptları tanımlamanıza olanak tanır ve bir hizmeti dağıtmak veya PR göndermek gibi tekrarlayan görevler boyunca oa Code'u yönlendirmek için bir dizi adım içerebilir. Bir iş akışını çağırmak için şunu yazın",
 			"workflowsInChat": "sohbette."
 		},
 		"sections": {
@@ -168,19 +168,19 @@
 			},
 			"enableAutoInlineTaskKeybinding": {
 				"label": "Otomatik Satır İçi Görev",
-				"description": "Hızlı bir düzeltme, tamamlama veya yeniden düzenleme mi gerekiyor? Kilo, çevreleyen bağlamı kullanarak anında iyileştirmeler sunacak, böylece odağınızı kaybetmeyeceksiniz. <DocsLink>Kısayolu gör</DocsLink>"
+				"description": "Hızlı bir düzeltme, tamamlama veya yeniden düzenleme mi gerekiyor? oa, çevreleyen bağlamı kullanarak anında iyileştirmeler sunacak, böylece odağınızı kaybetmeyeceksiniz. <DocsLink>Kısayolu gör</DocsLink>"
 			},
 			"enableAutoTrigger": {
 				"label": "Otomatik Tetikleyiciyi Etkinleştir",
-				"description": "Etkinleştirildiğinde, yazmayı bıraktığında Kilo Code otomatik olarak Satır İçi Yardımı tetikler. Bu, hızlı düzeltmeler ve öneriler için yararlı olabilir."
+				"description": "Etkinleştirildiğinde, yazmayı bıraktığında oa Code otomatik olarak Satır İçi Yardımı tetikler. Bu, hızlı düzeltmeler ve öneriler için yararlı olabilir."
 			},
 			"autoTriggerDelay": {
 				"label": "Otomatik Tetikleyici Gecikmesi",
-				"description": "Yazmayı bıraktıktan sonra Kilo Code'un Satır İçi Yardımı tetiklemeden önceki saniye cinsinden gecikme. Daha kısa gecikme daha hızlı öneriler anlamına gelir, ancak daha fazla kaynak kullanabilir."
+				"description": "Yazmayı bıraktıktan sonra oa Code'un Satır İçi Yardımı tetiklemeden önceki saniye cinsinden gecikme. Daha kısa gecikme daha hızlı öneriler anlamına gelir, ancak daha fazla kaynak kullanabilir."
 			},
 			"enableSmartInlineTaskKeybinding": {
 				"label": "Akıllı Satır İçi Görev",
-				"description": "Hızlı bir düzeltme, tamamlama veya yeniden düzenlemeye mi ihtiyacın var? Kilo, anında iyileştirmeler sunmak için çevredeki bağlamı kullanır ve seni akışta tutar. <DocsLink>Kısayolu gör</DocsLink>"
+				"description": "Hızlı bir düzeltme, tamamlama veya yeniden düzenlemeye mi ihtiyacın var? oa, anında iyileştirmeler sunmak için çevredeki bağlamı kullanır ve seni akışta tutar. <DocsLink>Kısayolu gör</DocsLink>"
 			},
 			"provider": "Sağlayıcı",
 			"apiConfigId": {

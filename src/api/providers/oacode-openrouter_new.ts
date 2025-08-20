@@ -15,9 +15,9 @@ import { getModelEndpoints } from "./fetchers/modelEndpointCache"
 
 /**
  * A custom OpenRouter handler that overrides the getModel function
- * to provide custom model information and fetches models from the OaCode OpenRouter endpoint.
+ * to provide custom model information and fetches models from the oacode OpenRouter endpoint.
  */
-export class OacodeOpenrouterHandler extends OpenRouterHandler {
+export class oacodeOpenrouterHandler extends OpenRouterHandler {
 	protected override models: ModelRecord = {}
 
 	constructor(options: ApiHandlerOptions) {
@@ -35,14 +35,14 @@ export class OacodeOpenrouterHandler extends OpenRouterHandler {
 		return metadata
 			? {
 					headers: {
-						"X-OaCode-TaskId": metadata.taskId,
+						"X-oacode-TaskId": metadata.taskId,
 					},
 				}
 			: undefined
 	}
 
 	override getTotalCost(lastUsage: CompletionUsage): number {
-		// https://github.com/Oa-Org/oacode-backend/blob/eb3d382df1e933a089eea95b9c4387db0c676e35/src/lib/processUsage.ts#L281
+		// https://github.com/oa-Org/oacode-backend/blob/eb3d382df1e933a089eea95b9c4387db0c676e35/src/lib/processUsage.ts#L281
 		if (lastUsage.is_byok) {
 			return lastUsage.cost_details?.upstream_inference_cost || 0
 		}
@@ -79,7 +79,7 @@ export class OacodeOpenrouterHandler extends OpenRouterHandler {
 
 	public override async fetchModel() {
 		if (!this.options.oacodeToken || !this.options.openRouterBaseUrl) {
-			throw new Error("OaCode token + baseUrl is required to fetch models")
+			throw new Error("oacode token + baseUrl is required to fetch models")
 		}
 
 		const [models, endpoints] = await Promise.all([

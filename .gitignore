@@ -35,7 +35,7 @@ logs
 # Vite development
 .vite-port
 
-# kilocode_change
+# oacode_change
 .history/
 .aider*
 .docker-cache/

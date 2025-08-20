@@ -40,16 +40,16 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "Generátor zpráv pro commit Kilo Code aktivován",
+		"activated": "Generátor zpráv pro commit oa Code aktivován",
 		"gitNotFound": "⚠️ Git repozitář nebyl nalezen nebo git není dostupný",
 		"gitInitError": "⚠️ Chyba inicializace Gitu: {{error}}",
-		"generating": "Kilo: Generuji zprávu commitu...",
-		"noChanges": "Kilo: Nenalezeny žádné změny k analýze",
-		"generated": "Kilo: Zpráva byla vygenerována!",
-		"generationFailed": "Kilo: Nepodařilo se vygenerovat zprávu commitu: {{errorMessage}}",
-		"generatingFromUnstaged": "Kilo: Generování zprávy s použitím nenapojených změn",
-		"activationFailed": "Kilo: Aktivace generátoru zpráv se nezdařila: {{error}}",
-		"providerRegistered": "Kilo: Poskytovatel zpráv commitů zaregistrován"
+		"generating": "oa: Generuji zprávu commitu...",
+		"noChanges": "oa: Nenalezeny žádné změny k analýze",
+		"generated": "oa: Zpráva byla vygenerována!",
+		"generationFailed": "oa: Nepodařilo se vygenerovat zprávu commitu: {{errorMessage}}",
+		"generatingFromUnstaged": "oa: Generování zprávy s použitím nenapojených změn",
+		"activationFailed": "oa: Aktivace generátoru zpráv se nezdařila: {{error}}",
+		"providerRegistered": "oa: Poskytovatel zpráv commitů zaregistrován"
 	},
 	"ghost": {
 		"progress": {
@@ -57,39 +57,39 @@
 			"analyzing": "Analyzuji váš kód...",
 			"processing": "Zpracování navržených úprav...",
 			"showing": "Zobrazuji navrhované úpravy...",
-			"title": "Kilo Code"
+			"title": "oa Code"
 		},
 		"input": {
-			"title": "Kilo Code: Rychlý úkol",
+			"title": "oa Code: Rychlý úkol",
 			"placeholder": "např. \"přepracovat tuto funkci, aby byla efektivnější\""
 		},
 		"commands": {
-			"generateSuggestions": "Kilo Code: Generování navrhovaných úprav",
+			"generateSuggestions": "oa Code: Generování navrhovaných úprav",
 			"applyCurrentSuggestion": "Použít aktuální navrhovanou úpravu",
 			"displaySuggestions": "Zobrazit navrhované úpravy",
 			"cancelSuggestions": "Zrušit navrhované úpravy",
 			"applyAllSuggestions": "Použít všechny navrhované úpravy",
 			"promptCodeSuggestion": "Rychlý úkol",
-			"category": "Kilo Code"
+			"category": "oa Code"
 		},
 		"codeAction": {
-			"title": "Kilo Code: Navrhované úpravy"
+			"title": "oa Code: Navrhované úpravy"
 		},
 		"chatParticipant": {
 			"name": "Agent",
-			"fullName": "Kilo Code Agent",
+			"fullName": "oa Code Agent",
 			"description": "Mohu vám pomoci s rychlými úkoly a navrženými úpravami."
 		},
 		"messages": {
 			"provideCodeSuggestions": "Poskytuji návrhy kódu..."
 		},
 		"statusBar": {
-			"disabled": "$(circle-slash) Inline asistent Kilo",
-			"enabled": "$(sparkle) Kilo Inline Asistent",
-			"warning": "$(warning) Inline asistence Kilo",
+			"disabled": "$(circle-slash) Inline asistent oa",
+			"enabled": "$(sparkle) oa Inline Asistent",
+			"warning": "$(warning) Inline asistence oa",
 			"tooltip": {
-				"disabled": "Kilo Code Inline Assist (deaktivováno)",
-				"basic": "Inline asistent Kilo Code",
+				"disabled": "oa Code Inline Assist (deaktivováno)",
+				"basic": "Inline asistent oa Code",
 				"tokenError": "Pro použití Inline Assist je nutné nastavit platný token",
 				"sessionTotal": "Celková cena sezení:",
 				"model": "Model:",
@@ -100,26 +100,26 @@
 				"lessThanCent": "<0,01 $"
 			}
 		},
-		"toggleMessage": "Kilo Inline Assist {{status}}",
+		"toggleMessage": "oa Inline Assist {{status}}",
 		"incompatibilityExtensionPopup": {
-			"message": "Inline asistent Kilo Code je blokován kvůli konfliktu s GitHub Copilot. Pro vyřešení tohoto problému musíš deaktivovat inline návrhy Copilotu.",
+			"message": "Inline asistent oa Code je blokován kvůli konfliktu s GitHub Copilot. Pro vyřešení tohoto problému musíš deaktivovat inline návrhy Copilotu.",
 			"disableCopilot": "Deaktivovat Copilot",
 			"disableInlineAssist": "Deaktivovat Inline asistenta"
 		}
 	},
 	"terminalCommandGenerator": {
-		"inputPrompt": "Kilo: Popište příkaz, který chcete vygenerovat",
-		"noActiveTerminal": "Kilo: Nebyl nalezen žádný aktivní terminál. Nejprve prosím otevřete terminál.",
+		"inputPrompt": "oa: Popište příkaz, který chcete vygenerovat",
+		"noActiveTerminal": "oa: Nebyl nalezen žádný aktivní terminál. Nejprve prosím otevřete terminál.",
 		"inputPlaceholder": "např. ukončit proces běžící na portu 3001, najít velké soubory atd.",
-		"generatingProgress": "Kilo: Generuji příkaz terminálu...",
-		"generationFailed": "Kilo: Příkaz se nepodařilo vygenerovat: {{error}}",
-		"commandGenerated": "Kilo: Vygenerovaný příkaz: {{command}}",
+		"generatingProgress": "oa: Generuji příkaz terminálu...",
+		"generationFailed": "oa: Příkaz se nepodařilo vygenerovat: {{error}}",
+		"commandGenerated": "oa: Vygenerovaný příkaz: {{command}}",
 		"warningDialog": {
 			"title": "Bezpečnostní Upozornění Terminálu",
 			"okButton": "Rozumím",
 			"message": "Dvakrát zkontrolujte všechny vygenerované příkazy před jejich spuštěním. Akce v terminálu nelze vždy vrátit zpět – spuštění neověřených příkazů může vést k nevratné ztrátě dat nebo poškození systému. Před pokračováním si příkaz důkladně projděte a ujistěte se, že mu rozumíte!",
 			"cancelButton": "Zrušit"
 		},
-		"tipMessage": "Kilo: Stiskněte {{shortcut}} pro generování příkazů v terminálu"
+		"tipMessage": "oa: Stiskněte {{shortcut}} pro generování příkazů v terminálu"
 	}
 }

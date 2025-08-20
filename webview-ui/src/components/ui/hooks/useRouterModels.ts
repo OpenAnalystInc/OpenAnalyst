@@ -35,7 +35,7 @@ const getRouterModels = async () =>
 		vscode.postMessage({ type: "requestRouterModels" })
 	})
 
-// kilocode_change start
+// oacode_change start
 type RouterModelsQueryKey = {
 	openRouterBaseUrl?: string
 	openRouterApiKey?: string
@@ -46,4 +46,4 @@ type RouterModelsQueryKey = {
 
 export const useRouterModels = (queryKey: RouterModelsQueryKey) =>
 	useQuery({ queryKey: ["routerModels", queryKey], queryFn: getRouterModels })
-// kilocode_change end
+// oacode_change end

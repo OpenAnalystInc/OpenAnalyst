@@ -1,7 +1,7 @@
 {
 	"welcome": {
-		"greeting": "欢迎使用 Kilo Code！",
-		"introText1": "Kilo Code 是一个免费的开源 AI 编程代理。",
+		"greeting": "欢迎使用 oa Code！",
+		"introText1": "oa Code 是一个免费的开源 AI 编程代理。",
 		"introText2": "它适用于最新的 AI 模型，如 Claude 4 Sonnet、Gemini 2.5 Pro、GPT-4.1 以及 450 多个其他模型。",
 		"introText3": "创建免费账户，获得价值 20 美元的 token，可用于任何 AI 模型。",
 		"ctaButton": "开始使用",
@@ -11,7 +11,7 @@
 	},
 	"lowCreditWarning": {
 		"addCredit": "添加额度",
-		"lowBalance": "你的 Kilo Code 余额不足"
+		"lowBalance": "你的 oa Code 余额不足"
 	},
 	"pricing": {
 		"costUnknown": "费用未知",
@@ -30,25 +30,25 @@
 		"contextManagement": {
 			"allowVeryLargeReads": {
 				"label": "允许超大文件读取",
-				"description": "启用后，Kilo Code 将执行超大文件或 MCP 输出读取，即使存在高概率溢出上下文窗口（内容大小 >80% 的上下文窗口）。"
+				"description": "启用后，oa Code 将执行超大文件或 MCP 输出读取，即使存在高概率溢出上下文窗口（内容大小 >80% 的上下文窗口）。"
 			}
 		},
 		"systemNotifications": {
 			"label": "启用系统通知",
-			"description": "启用后 Kilo Code 将发送系统通知，提醒任务完成或错误等重要事件。",
+			"description": "启用后 oa Code 将发送系统通知，提醒任务完成或错误等重要事件。",
 			"testButton": "测试通知",
-			"testTitle": "Kilo Code",
-			"testMessage": "这是来自 Kilo Code 的测试通知。"
+			"testTitle": "oa Code",
+			"testMessage": "这是来自 oa Code 的测试通知。"
 		},
 		"provider": {
-			"account": "Kilo Code 账号",
-			"apiKey": "Kilo Code API 密钥",
-			"login": "登录 Kilo Code",
-			"logout": "退出 Kilo Code",
-			"automaticFetch": "最新模型在 Kilo Code 中自动可用。如果您不确定选择哪个模型，Kilo Code 与顶部<strong>粗体</strong>显示的推荐模型配合最佳。",
+			"account": "oa Code 账号",
+			"apiKey": "oa Code API 密钥",
+			"login": "登录 oa Code",
+			"logout": "退出 oa Code",
+			"automaticFetch": "最新模型在 oa Code 中自动可用。如果您不确定选择哪个模型，oa Code 与顶部<strong>粗体</strong>显示的推荐模型配合最佳。",
 			"providerRouting": {
-				"title": "Kilo Code - OpenRouter 提供商路由",
-				"description": "Kilo Code 将请求路由到您模型的最佳可用提供商。默认情况下，请求会在顶级提供商之间进行负载均衡，以最大限度地延长正常运行时间。但是，您可以选择要用于此模型的特定提供商。"
+				"title": "oa Code - OpenRouter 提供商路由",
+				"description": "oa Code 将请求路由到您模型的最佳可用提供商。默认情况下，请求会在顶级提供商之间进行负载均衡，以最大限度地延长正常运行时间。但是，您可以选择要用于此模型的特定提供商。"
 			}
 		},
 		"terminal": {
@@ -64,7 +64,7 @@
 	},
 	"chat": {
 		"condense": {
-			"wantsToCondense": "Kilo Code 想要压缩你的对话",
+			"wantsToCondense": "oa Code 想要压缩你的对话",
 			"condenseConversation": "压缩对话"
 		}
 	},
@@ -87,15 +87,15 @@
 	},
 	"docs": "文档",
 	"rules": {
-		"tooltip": "管理 Kilo Code 规则和工作流",
-		"ariaLabel": "Kilo Code 规则",
+		"tooltip": "管理 oa Code 规则和工作流",
+		"ariaLabel": "oa Code 规则",
 		"tabs": {
 			"rules": "规则",
 			"workflows": "工作流"
 		},
 		"description": {
-			"rules": "规则允许你为 Kilo Code 提供在所有模式和所有提示中都应遵循的指令。它们是在你的工作空间或全局范围内为所有对话包含上下文和偏好的持久方式。",
-			"workflows": "工作流是为对话准备的模板。工作流允许你定义经常使用的提示，并可以包含一系列步骤来指导 Kilo Code 完成重复性任务，如部署服务或提交 PR。要调用工作流，请输入",
+			"rules": "规则允许你为 oa Code 提供在所有模式和所有提示中都应遵循的指令。它们是在你的工作空间或全局范围内为所有对话包含上下文和偏好的持久方式。",
+			"workflows": "工作流是为对话准备的模板。工作流允许你定义经常使用的提示，并可以包含一系列步骤来指导 oa Code 完成重复性任务，如部署服务或提交 PR。要调用工作流，请输入",
 			"workflowsInChat": "在聊天中。"
 		},
 		"sections": {
@@ -168,15 +168,15 @@
 			},
 			"enableAutoTrigger": {
 				"label": "启用自动触发",
-				"description": "启用后，当你停止输入时，Kilo Code 将自动触发内联助手。这对于快速修复和建议很有用。"
+				"description": "启用后，当你停止输入时，oa Code 将自动触发内联助手。这对于快速修复和建议很有用。"
 			},
 			"autoTriggerDelay": {
 				"label": "自动触发延迟",
-				"description": "在你停止输入后，Kilo Code 触发内联助手之前的延迟秒数。较低的延迟意味着更快的建议，但可能会更消耗资源。"
+				"description": "在你停止输入后，oa Code 触发内联助手之前的延迟秒数。较低的延迟意味着更快的建议，但可能会更消耗资源。"
 			},
 			"enableSmartInlineTaskKeybinding": {
 				"label": "智能内联任务",
-				"description": "需要快速修复、完成或重构代码？Kilo 将使用周围的上下文提供即时改进，让您保持工作流畅。<DocsLink>查看快捷键</DocsLink>"
+				"description": "需要快速修复、完成或重构代码？oa 将使用周围的上下文提供即时改进，让您保持工作流畅。<DocsLink>查看快捷键</DocsLink>"
 			},
 			"provider": "提供商",
 			"apiConfigId": {

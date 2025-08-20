@@ -15,7 +15,7 @@ import { getGlamaModels } from "./glama"
 import { getUnboundModels } from "./unbound"
 import { getLiteLLMModels } from "./litellm"
 import { GetModelsOptions } from "../../../shared/api"
-import { getOaBaseUriFromToken } from "../../../utils/oacode-token"
+import { getoaBaseUriFromToken } from "../../../utils/oacode-token"
 import { getOllamaModels } from "./ollama"
 import { getLMStudioModels } from "./lmstudio"
 
@@ -81,7 +81,7 @@ export const getModels = async (options: GetModelsOptions): Promise<ModelRecord>
 			// oacode_change start
 			case "oacode-openrouter":
 				models = await getOpenRouterModels({
-					openRouterBaseUrl: getOaBaseUriFromToken(options.oacodeToken ?? "") + "/api/openrouter",
+					openRouterBaseUrl: getoaBaseUriFromToken(options.oacodeToken ?? "") + "/api/openrouter",
 				})
 				break
 			case "cerebras":

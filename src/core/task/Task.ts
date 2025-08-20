@@ -99,9 +99,9 @@ import { maybeRemoveImageBlocks } from "../../api/transform/image-cleaning"
 import { processOaUserContentMentions } from "../mentions/processOaUserContentMentions" // oacode_change
 import { refreshWorkflowToggles } from "../context/instructions/workflows" // oacode_change
 import { parseMentions } from "../mentions" // oacode_change
-import { parseOaSlashCommands } from "../slash-commands/oa" // oacode_change
+import { parseoaSlashCommands } from "../slash-commands/oa" // oacode_change
 import { GlobalFileNames } from "../../shared/globalFileNames" // oacode_change
-import { ensureLocalOarulesDirExists } from "../context/instructions/oa-rules" // oacode_change
+import { ensureLocaloarulesDirExists } from "../context/instructions/oa-rules" // oacode_change
 import { restoreTodoListForTask } from "../tools/updateTodoListTool"
 import { reportExcessiveRecursion, yieldPromise } from "../oacode" // oacode_change
 import { AutoApprovalHandler } from "./AutoApprovalHandler"
@@ -2076,7 +2076,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 							)
 
 							// when parsing slash commands, we still want to allow the user to provide their desired context
-							const { processedText, needsRulesFileCheck: needsCheck } = await parseOaSlashCommands(
+							const { processedText, needsRulesFileCheck: needsCheck } = await parseoaSlashCommands(
 								parsedText,
 								localWorkflowToggles,
 								globalWorkflowToggles,
@@ -2110,7 +2110,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		// After processing content, check clinerulesData if needed
 		let clinerulesError = false
 		if (needsClinerulesFileCheck) {
-			clinerulesError = await ensureLocalOarulesDirExists(this.cwd, GlobalFileNames.oaRules)
+			clinerulesError = await ensureLocaloarulesDirExists(this.cwd, GlobalFileNames.oaRules)
 		}
 
 		// Return all results

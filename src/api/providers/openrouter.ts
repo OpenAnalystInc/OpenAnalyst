@@ -25,7 +25,7 @@ import { getModelEndpoints } from "./fetchers/modelEndpointCache"
 import { DEFAULT_HEADERS } from "./constants"
 import { BaseProvider } from "./base-provider"
 import type {
-	ApiHandlerCreateMessageMetadata, // kilocode_change
+	ApiHandlerCreateMessageMetadata, // oacode_change
 	SingleCompletionHandler,
 } from "../index"
 
@@ -40,7 +40,7 @@ type OpenRouterChatCompletionParams = OpenAI.Chat.ChatCompletionCreateParams & {
 // See `OpenAI.Chat.Completions.ChatCompletionChunk["usage"]`
 // `CompletionsAPI.CompletionUsage`
 // See also: https://openrouter.ai/docs/use-cases/usage-accounting
-export // kilocode_change
+export // oacode_change
 interface CompletionUsage {
 	completion_tokens?: number
 	completion_tokens_details?: {
@@ -52,7 +52,7 @@ interface CompletionUsage {
 	}
 	total_tokens?: number
 	cost?: number
-	is_byok?: boolean // kilocode_change
+	is_byok?: boolean // oacode_change
 	cost_details?: {
 		upstream_inference_cost?: number
 	}
@@ -74,7 +74,7 @@ export class OpenRouterHandler extends BaseProvider implements SingleCompletionH
 		this.client = new OpenAI({ baseURL, apiKey, defaultHeaders: DEFAULT_HEADERS })
 	}
 
-	// kilocode_change start
+	// oacode_change start
 	customRequestOptions(_metadata?: ApiHandlerCreateMessageMetadata): OpenAI.RequestOptions | undefined {
 		return undefined
 	}
@@ -82,12 +82,12 @@ export class OpenRouterHandler extends BaseProvider implements SingleCompletionH
 	getTotalCost(lastUsage: CompletionUsage): number {
 		return (lastUsage.cost_details?.upstream_inference_cost || 0) + (lastUsage.cost || 0)
 	}
-	// kilocode_change end
+	// oacode_change end
 
 	override async *createMessage(
 		systemPrompt: string,
 		messages: Anthropic.Messages.MessageParam[],
-		metadata?: ApiHandlerCreateMessageMetadata, // kilocode_change
+		metadata?: ApiHandlerCreateMessageMetadata, // oacode_change
 	): AsyncGenerator<ApiStreamChunk> {
 		const model = await this.fetchModel()
 
@@ -152,7 +152,7 @@ export class OpenRouterHandler extends BaseProvider implements SingleCompletionH
 		let stream
 		stream = await this.client.chat.completions.create(
 			completionParams,
-			this.customRequestOptions(metadata), // kilocode_change
+			this.customRequestOptions(metadata), // oacode_change
 		)
 
 		let lastUsage: CompletionUsage | undefined = undefined
@@ -192,7 +192,7 @@ export class OpenRouterHandler extends BaseProvider implements SingleCompletionH
 				outputTokens: lastUsage.completion_tokens || 0,
 				cacheReadTokens: lastUsage.prompt_tokens_details?.cached_tokens,
 				reasoningTokens: lastUsage.completion_tokens_details?.reasoning_tokens,
-				totalCost: this.getTotalCost(lastUsage), // kilocode_change
+				totalCost: this.getTotalCost(lastUsage), // oacode_change
 			}
 		}
 	}
@@ -268,7 +268,7 @@ export class OpenRouterHandler extends BaseProvider implements SingleCompletionH
 	}
 }
 
-// kilocode_change start
+// oacode_change start
 function makeOpenRouterErrorReadable(error: any) {
 	if (error?.code !== 429 && error?.code !== 418) {
 		return `OpenRouter API Error: ${error?.message || error}`
@@ -284,4 +284,4 @@ function makeOpenRouterErrorReadable(error: any) {
 
 	return `Rate limit exceeded, try again later.\n${error?.message || error}`
 }
-// kilocode_change end
+// oacode_change end

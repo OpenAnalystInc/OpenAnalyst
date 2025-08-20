@@ -127,7 +127,7 @@ interface OllamaHandlerOptions {
 	ollamaModelId?: string
 }
 
-export class OacodeOllamaHandler extends BaseProvider {
+export class oacodeOllamaHandler extends BaseProvider {
 	private options: OllamaHandlerOptions
 	private client: Ollama | undefined
 	protected models: ModelRecord = {}

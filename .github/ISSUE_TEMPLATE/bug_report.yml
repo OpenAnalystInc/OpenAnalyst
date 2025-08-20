@@ -8,7 +8,7 @@ body:
           label: Description
           description: |
             Which app version are you using (e.g. v3.3.1)?
-            Which API Provider are you using (e.g. Kilo, OpenRouter, Anthropic)?
+            Which API Provider are you using (e.g. oa, OpenRouter, Anthropic)?
             Which Model are you using (e.g. Claude 3.7 Sonnet)?
             Steps to reproduce?
             Relevant API request output?

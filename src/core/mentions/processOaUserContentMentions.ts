@@ -4,14 +4,14 @@ import { UrlContentFetcher } from "../../services/browser/UrlContentFetcher"
 import { FileContextTracker } from "../context-tracking/FileContextTracker"
 
 import { GlobalFileNames } from "../../shared/globalFileNames"
-import { ensureLocalOarulesDirExists } from "../context/instructions/oa-rules"
-import { parseOaSlashCommands } from "../slash-commands/oa"
+import { ensureLocaloarulesDirExists } from "../context/instructions/oa-rules"
+import { parseoaSlashCommands } from "../slash-commands/oa"
 import { refreshWorkflowToggles } from "../context/instructions/workflows" // oacode_change
 
 import * as vscode from "vscode" // oacode_change
 
 // This function is a duplicate of processUserContentMentions, but it adds a check for the newrules command
-// and processes Oa-specific slash commands. It should be merged with processUserContentMentions in the future.
+// and processes oa-specific slash commands. It should be merged with processUserContentMentions in the future.
 export async function processOaUserContentMentions({
 	context, // oacode_change
 	userContent,
@@ -75,7 +75,7 @@ export async function processOaUserContentMentions({
 						)
 
 						// when parsing slash commands, we still want to allow the user to provide their desired context
-						const { processedText, needsRulesFileCheck: needsCheck } = await parseOaSlashCommands(
+						const { processedText, needsRulesFileCheck: needsCheck } = await parseoaSlashCommands(
 							parsedText,
 							localWorkflowToggles, // oacode_change
 							globalWorkflowToggles, // oacode_change
@@ -150,9 +150,9 @@ export async function processOaUserContentMentions({
 
 	const processedUserContent = await processUserContentMentions()
 
-	let oarulesError = false
+	let oaRulesError = false
 	if (needsRulesFileCheck) {
-		oarulesError = await ensureLocalOarulesDirExists(cwd, GlobalFileNames.oaRules)
+		oaRulesError = await ensureLocaloarulesDirExists(cwd, GlobalFileNames.oaRules)
 	}
-	return [processedUserContent, oarulesError]
+	return [processedUserContent, oaRulesError]
 }

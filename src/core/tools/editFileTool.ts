@@ -10,7 +10,7 @@ import { ToolUse, AskApproval, HandleError, PushToolResult, RemoveClosingTag } f
 import { fileExistsAtPath } from "../../utils/fs"
 import { getReadablePath } from "../../utils/path"
 import { Experiments, ProviderSettings } from "@roo-code/types"
-import { getOaBaseUriFromToken } from "../../utils/oacode-token"
+import { getoaBaseUriFromToken } from "../../utils/oacode-token"
 import { DEFAULT_HEADERS } from "../../api/providers/constants"
 import { TelemetryService } from "@roo-code/telemetry"
 
@@ -278,7 +278,7 @@ async function getMorphConfiguration(
 		return {
 			available: true,
 			apiKey: apiConfig.oacodeToken,
-			baseUrl: `${getOaBaseUriFromToken(apiConfig.oacodeToken)}/api/openrouter/`,
+			baseUrl: `${getoaBaseUriFromToken(apiConfig.oacodeToken)}/api/openrouter/`,
 			model: "morph/morph-v3-large", // Morph model via OpenRouter
 		}
 	}

@@ -41,7 +41,7 @@ import {
 } from "./providers"
 // oacode_change start
 import { OacodeOpenrouterHandler } from "./providers/oacode-openrouter"
-import { OacodeOllamaHandler } from "./providers/oacode-ollama"
+import { oacodeOllamaHandler } from "./providers/oacode-ollama"
 // oacode_change end
 
 export interface SingleCompletionHandler {
@@ -96,7 +96,7 @@ export function buildApiHandler(configuration: ProviderSettings): ApiHandler {
 		case "openai":
 			return new OpenAiHandler(options)
 		case "ollama":
-			return new OacodeOllamaHandler(options)
+			return new oacodeOllamaHandler(options)
 		case "lmstudio":
 			return new LmStudioHandler(options)
 		case "gemini":

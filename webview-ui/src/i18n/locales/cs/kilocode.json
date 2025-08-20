@@ -1,7 +1,7 @@
 {
 	"welcome": {
-		"greeting": "Vítej v Kilo Code!",
-		"introText1": "Kilo Code je bezplatný open source AI coding agent.",
+		"greeting": "Vítej v oa Code!",
+		"introText1": "oa Code je bezplatný open source AI coding agent.",
 		"introText2": "Funguje s nejnovějšími AI modely jako Claude 4 Sonnet, Gemini 2.5 Pro, GPT-4.1 a více než 450 dalšími.",
 		"introText3": "Vytvoř si bezplatný účet a získej $20 v tokenech pro použití s jakýmkoli AI modelem.",
 		"ctaButton": "Začít",
@@ -11,7 +11,7 @@
 	},
 	"lowCreditWarning": {
 		"addCredit": "Přidat kredit",
-		"lowBalance": "Tvůj Kilo Code zůstatek je nízký"
+		"lowBalance": "Tvůj oa Code zůstatek je nízký"
 	},
 	"pricing": {
 		"costUnknown": "neznámé náklady",
@@ -28,28 +28,28 @@
 			"mcp": "MCP servery"
 		},
 		"provider": {
-			"account": "Účet Kilo Code",
-			"apiKey": "Kilo Code API Key",
-			"login": "Přihlásit se do Kilo Code",
-			"logout": "Odhlásit se z Kilo Code",
-			"automaticFetch": "Nejnovější modely jsou v Kilo Code automaticky dostupné. Pokud si nejste jisti, který model zvolit, Kilo Code funguje nejlépe s doporučenými modely uvedenými nahoře <strong>tučně</strong>.",
+			"account": "Účet oa Code",
+			"apiKey": "oa Code API Key",
+			"login": "Přihlásit se do oa Code",
+			"logout": "Odhlásit se z oa Code",
+			"automaticFetch": "Nejnovější modely jsou v oa Code automaticky dostupné. Pokud si nejste jisti, který model zvolit, oa Code funguje nejlépe s doporučenými modely uvedenými nahoře <strong>tučně</strong>.",
 			"providerRouting": {
-				"title": "Kilo Code - Směrování poskytovatelů OpenRouter",
-				"description": "Kilo Code směruje požadavky na nejlepší dostupné poskytovatele pro váš model. Ve výchozím nastavení jsou požadavky rozloženy mezi nejlepší poskytovatele, aby se maximalizovala doba provozu. Můžete si však vybrat konkrétního poskytovatele, kterého chcete pro tento model použít."
+				"title": "oa Code - Směrování poskytovatelů OpenRouter",
+				"description": "oa Code směruje požadavky na nejlepší dostupné poskytovatele pro váš model. Ve výchozím nastavení jsou požadavky rozloženy mezi nejlepší poskytovatele, aby se maximalizovala doba provozu. Můžete si však vybrat konkrétního poskytovatele, kterého chcete pro tento model použít."
 			}
 		},
 		"contextManagement": {
 			"allowVeryLargeReads": {
 				"label": "Povolit čtení velmi velkých souborů",
-				"description": "Když je povoleno, Kilo Code provede čtení velmi velkých souborů nebo výstupů MCP i když existuje vysoká pravděpodobnost přetečení kontextového okna (velikost obsahu >80% kontextového okna)."
+				"description": "Když je povoleno, oa Code provede čtení velmi velkých souborů nebo výstupů MCP i když existuje vysoká pravděpodobnost přetečení kontextového okna (velikost obsahu >80% kontextového okna)."
 			}
 		},
 		"systemNotifications": {
 			"label": "Povolit systémová oznámení",
-			"description": "Když je povoleno, Kilo Code bude odesílat systémová oznámení pro důležité události jako dokončení úkolu nebo chyby.",
+			"description": "Když je povoleno, oa Code bude odesílat systémová oznámení pro důležité události jako dokončení úkolu nebo chyby.",
 			"testButton": "Otestovat oznámení",
-			"testTitle": "Kilo Code",
-			"testMessage": "Toto je testovací oznámení z Kilo Code."
+			"testTitle": "oa Code",
+			"testMessage": "Toto je testovací oznámení z oa Code."
 		},
 		"terminal": {
 			"commandGenerator": {
@@ -64,7 +64,7 @@
 	},
 	"chat": {
 		"condense": {
-			"wantsToCondense": "Kilo Code chce zkrátit tvou konverzaci",
+			"wantsToCondense": "oa Code chce zkrátit tvou konverzaci",
 			"condenseConversation": "Zkrátit konverzaci"
 		}
 	},
@@ -87,15 +87,15 @@
 	},
 	"docs": "Dokumentace",
 	"rules": {
-		"tooltip": "Spravovat Kilo Code Rules a Workflows",
-		"ariaLabel": "Kilo Code Rules",
+		"tooltip": "Spravovat oa Code Rules a Workflows",
+		"ariaLabel": "oa Code Rules",
 		"tabs": {
 			"rules": "Pravidla",
 			"workflows": "Pracovní postupy"
 		},
 		"description": {
-			"rules": "Pravidla ti umožňují poskytnout Kilo Code pokyny, které by měl dodržovat ve všech režimech a pro všechny prompty. Je to trvalý způsob, jak zahrnout kontext a preference pro všechny konverzace ve tvém pracovním prostoru nebo globálně.",
-			"workflows": "Pracovní postupy jsou připravená šablona pro konverzaci. Pracovní postupy ti mohou umožnit definovat prompty, které často používáš, a mohou zahrnovat řadu kroků k vedení Kilo Code přes opakující se úkoly, jako je nasazení služby nebo odeslání PR. Pro vyvolání pracovního postupu napiš",
+			"rules": "Pravidla ti umožňují poskytnout oa Code pokyny, které by měl dodržovat ve všech režimech a pro všechny prompty. Je to trvalý způsob, jak zahrnout kontext a preference pro všechny konverzace ve tvém pracovním prostoru nebo globálně.",
+			"workflows": "Pracovní postupy jsou připravená šablona pro konverzaci. Pracovní postupy ti mohou umožnit definovat prompty, které často používáš, a mohou zahrnovat řadu kroků k vedení oa Code přes opakující se úkoly, jako je nasazení služby nebo odeslání PR. Pro vyvolání pracovního postupu napiš",
 			"workflowsInChat": "v chatu."
 		},
 		"sections": {
@@ -168,19 +168,19 @@
 			},
 			"enableAutoInlineTaskKeybinding": {
 				"label": "Automatický inline úkol",
-				"description": "Potřebujete rychlou opravu, doplnění nebo refaktoring? Kilo využije okolní kontext a nabídne okamžitá vylepšení, abyste neztratili tempo. <DocsLink>Zobrazit klávesovou zkratku</DocsLink>"
+				"description": "Potřebujete rychlou opravu, doplnění nebo refaktoring? oa využije okolní kontext a nabídne okamžitá vylepšení, abyste neztratili tempo. <DocsLink>Zobrazit klávesovou zkratku</DocsLink>"
 			},
 			"enableAutoTrigger": {
 				"label": "Povolit automatické spuštění",
-				"description": "Když je povoleno, Kilo Code automaticky spustí Inline Assist, když přestaneš psát. To může být užitečné pro rychlé opravy a návrhy."
+				"description": "Když je povoleno, oa Code automaticky spustí Inline Assist, když přestaneš psát. To může být užitečné pro rychlé opravy a návrhy."
 			},
 			"autoTriggerDelay": {
 				"label": "Zpoždění automatického spuštění",
-				"description": "Zpoždění v sekundách před tím, než Kilo Code spustí Inline Assist poté, co přestaneš psát. Kratší zpoždění znamená rychlejší návrhy, ale může být náročnější na zdroje."
+				"description": "Zpoždění v sekundách před tím, než oa Code spustí Inline Assist poté, co přestaneš psát. Kratší zpoždění znamená rychlejší návrhy, ale může být náročnější na zdroje."
 			},
 			"enableSmartInlineTaskKeybinding": {
 				"label": "Chytrý inline úkol",
-				"description": "Potřebuješ rychlou opravu, dokončení nebo refaktoring? Kilo použije okolní kontext k nabídnutí okamžitých vylepšení, což tě udrží v pracovním tempu. <DocsLink>Zobrazit zkratku</DocsLink>"
+				"description": "Potřebuješ rychlou opravu, dokončení nebo refaktoring? oa použije okolní kontext k nabídnutí okamžitých vylepšení, což tě udrží v pracovním tempu. <DocsLink>Zobrazit zkratku</DocsLink>"
 			},
 			"provider": "Poskytovatel",
 			"apiConfigId": {

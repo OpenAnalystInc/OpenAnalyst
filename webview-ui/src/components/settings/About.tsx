@@ -51,7 +51,7 @@ export const About = ({ telemetrySetting, setTelemetrySetting, className, ...pro
 						<Trans
 							i18nKey="settings:footer.telemetry.description"
 							components={{
-								privacyLink: <VSCodeLink href="https://kilocode.ai/privacy" />,
+								privacyLink: <VSCodeLink href="https://oacode.ai/privacy" />,
 							}}
 						/>
 					</p>
@@ -61,23 +61,23 @@ export const About = ({ telemetrySetting, setTelemetrySetting, className, ...pro
 					<Trans
 						i18nKey="settings:footer.feedback"
 						components={{
-							githubLink: <VSCodeLink href="https://github.com/Kilo-Org/kilocode" />,
-							redditLink: <VSCodeLink href="https://reddit.com/r/kilocode" />,
-							discordLink: <VSCodeLink href="https://kilocode.ai/discord" />,
+							githubLink: <VSCodeLink href="https://github.com/oa-Org/oacode" />,
+							redditLink: <VSCodeLink href="https://reddit.com/r/oacode" />,
+							discordLink: <VSCodeLink href="https://oacode.ai/discord" />,
 						}}
 					/>
 				</div>
 
-				{/* kilocode_change start */}
+				{/* oacode_change start */}
 				<div>
 					<Trans
 						i18nKey="settings:footer.support"
 						components={{
-							supportLink: <VSCodeLink href="https://kilocode.ai/support" />,
+							supportLink: <VSCodeLink href="https://oacode.ai/support" />,
 						}}
 					/>
 				</div>
-				{/* kilocode_change end */}
+				{/* oacode_change end */}
 
 				<div className="flex flex-wrap items-center gap-2 mt-2">
 					<Button onClick={() => vscode.postMessage({ type: "exportSettings" })} className="w-28">

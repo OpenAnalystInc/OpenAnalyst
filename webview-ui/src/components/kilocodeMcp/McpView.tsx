@@ -38,7 +38,7 @@ const McpView = () => {
 			<SectionHeader>
 				<div className="flex items-center gap-2">
 					<Server className="w-4" />
-					<div>{t("kilocode:settings.sections.mcp")}</div>
+					<div>{t("oacode:settings.sections.mcp")}</div>
 				</div>
 			</SectionHeader>
 

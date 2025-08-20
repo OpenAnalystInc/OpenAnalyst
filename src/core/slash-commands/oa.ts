@@ -21,9 +21,9 @@ function enabledWorkflowToggles(workflowToggles: ClineRulesToggles) {
 
 /**
  * This file is a duplicate of parseSlashCommands, but it adds a check for the newrule command
- * and processes Oa-specific slash commands. It should be merged with parseSlashCommands in the future.
+ * and processes oa-specific slash commands. It should be merged with parseSlashCommands in the future.
  */
-export async function parseOaSlashCommands(
+export async function parseoaSlashCommands(
 	text: string,
 	localWorkflowToggles: ClineRulesToggles,
 	globalWorkflowToggles: ClineRulesToggles,

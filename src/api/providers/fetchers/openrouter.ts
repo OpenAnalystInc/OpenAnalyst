@@ -1,4 +1,4 @@
-import axios, { type RawAxiosRequestHeaders /*kilocode_change*/ } from "axios"
+import axios, { type RawAxiosRequestHeaders /*oacode_change*/ } from "axios"
 import { z } from "zod"
 
 import {
@@ -34,7 +34,7 @@ const modelRouterBaseModelSchema = z.object({
 	description: z.string().optional(),
 	context_length: z.number(),
 	max_completion_tokens: z.number().nullish(),
-	preferredIndex: z.number().nullish(), // kilocode_change
+	preferredIndex: z.number().nullish(), // oacode_change
 	pricing: openRouterPricingSchema.optional(),
 })
 
@@ -95,20 +95,20 @@ type OpenRouterModelEndpointsResponse = z.infer<typeof openRouterModelEndpointsR
  */
 
 export async function getOpenRouterModels(
-	options?: ApiHandlerOptions & { headers?: RawAxiosRequestHeaders }, // kilocode_change: added headers
+	options?: ApiHandlerOptions & { headers?: RawAxiosRequestHeaders }, // oacode_change: added headers
 ): Promise<Record<string, ModelInfo>> {
 	const models: Record<string, ModelInfo> = {}
 	const baseURL = options?.openRouterBaseUrl || "https://openrouter.ai/api/v1"
 
 	try {
 		const response = await axios.get<OpenRouterModelsResponse>(`${baseURL}/models`, {
-			headers: options?.headers, // kilocode_change: added headers
+			headers: options?.headers, // oacode_change: added headers
 		})
 		const result = openRouterModelsResponseSchema.safeParse(response.data)
 		const data = result.success ? result.data.data : response.data.data
 
 		if (!result.success) {
-			throw new Error("OpenRouter models response is invalid: " + result.error.format()) // kilocode_change
+			throw new Error("OpenRouter models response is invalid: " + result.error.format()) // oacode_change
 		}
 
 		for (const model of data) {
@@ -126,7 +126,7 @@ export async function getOpenRouterModels(
 		console.error(
 			`Error fetching OpenRouter models: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`,
 		)
-		throw error // kilocode_change
+		throw error // oacode_change
 	}
 
 	return models
@@ -208,7 +208,7 @@ export const parseOpenRouterModel = ({
 		description: model.description,
 		supportsReasoningEffort: supportedParameters ? supportedParameters.includes("reasoning") : undefined,
 		supportedParameters: supportedParameters ? supportedParameters.filter(isModelParameter) : undefined,
-		preferredIndex: model.preferredIndex, // kilocode_change
+		preferredIndex: model.preferredIndex, // oacode_change
 	}
 
 	// The OpenRouter model definition doesn't give us any hints about

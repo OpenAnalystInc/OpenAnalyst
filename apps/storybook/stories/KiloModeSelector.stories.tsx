@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import KiloModeSelector from "../../../webview-ui/src/components/kilocode/KiloModeSelector"
+import oaModeSelector from "../../../webview-ui/src/components/oacode/oaModeSelector"
 import { Mode } from "@roo/modes"
 import { DEFAULT_MODES } from "@roo-code/types"
 import { withI18n } from "../src/decorators/withI18n"
@@ -16,12 +16,12 @@ interface WrapperProps {
 	initiallyOpen?: boolean
 }
 
-const KiloModeSelectorWrapper = (props: WrapperProps) => {
+const oaModeSelectorWrapper = (props: WrapperProps) => {
 	const [selectedMode, setSelectedMode] = useState<Mode>(props.value || "code")
 
 	return (
 		<div style={{ padding: "20px", minHeight: "400px", maxWidth: "300px" }}>
-			<KiloModeSelector
+			<oaModeSelector
 				{...props}
 				value={selectedMode}
 				onChange={setSelectedMode}
@@ -31,9 +31,9 @@ const KiloModeSelectorWrapper = (props: WrapperProps) => {
 	)
 }
 
-const meta: Meta<typeof KiloModeSelectorWrapper> = {
-	title: "Chat/KiloModeSelector",
-	component: KiloModeSelectorWrapper,
+const meta: Meta<typeof oaModeSelectorWrapper> = {
+	title: "Chat/oaModeSelector",
+	component: oaModeSelectorWrapper,
 	decorators: [withI18n, withTheme, withTooltipProvider],
 }
 

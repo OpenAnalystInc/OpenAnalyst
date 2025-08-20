@@ -8,7 +8,7 @@ import {
 	VSCodeOption,
 	VSCodeTextField,
 } from "@vscode/webview-ui-toolkit/react"
-import { McpMarketplaceItem } from "../../../../../src/shared/kilocode/mcp"
+import { McpMarketplaceItem } from "../../../../../src/shared/oacode/mcp"
 import { useExtensionState } from "../../../context/ExtensionStateContext"
 import { vscode } from "../../../utils/vscode"
 import McpMarketplaceCard from "./McpMarketplaceCard"

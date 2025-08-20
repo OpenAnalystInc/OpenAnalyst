@@ -40,25 +40,25 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "Generator wiadomości commit Kilo Code aktywowany",
+		"activated": "Generator wiadomości commit oa Code aktywowany",
 		"gitNotFound": "⚠️ Nie znaleziono repozytorium Git lub git jest niedostępny",
 		"gitInitError": "⚠️ Błąd inicjalizacji Git: {{error}}",
-		"generating": "Kilo: Generowanie wiadomości commit...",
-		"noChanges": "Kilo: Nie znaleziono zmian do analizy",
-		"generated": "Kilo: Wiadomość commit wygenerowana!",
-		"generationFailed": "Kilo: Nie udało się wygenerować wiadomości commit: {{errorMessage}}",
-		"generatingFromUnstaged": "Kilo: Generowanie wiadomości przy użyciu niezatwierdzonych zmian",
-		"activationFailed": "Kilo: Nie udało się aktywować generatora wiadomości: {{error}}",
-		"providerRegistered": "Kilo: Zarejestrowano dostawcę wiadomości commit"
+		"generating": "oa: Generowanie wiadomości commit...",
+		"noChanges": "oa: Nie znaleziono zmian do analizy",
+		"generated": "oa: Wiadomość commit wygenerowana!",
+		"generationFailed": "oa: Nie udało się wygenerować wiadomości commit: {{errorMessage}}",
+		"generatingFromUnstaged": "oa: Generowanie wiadomości przy użyciu niezatwierdzonych zmian",
+		"activationFailed": "oa: Nie udało się aktywować generatora wiadomości: {{error}}",
+		"providerRegistered": "oa: Zarejestrowano dostawcę wiadomości commit"
 	},
 	"ghost": {
 		"statusBar": {
-			"enabled": "$(sparkle) Asystent Inline Kilo",
-			"disabled": "$(circle-slash) Asystent Inline Kilo",
-			"warning": "$(warning) Asystent Inline Kilo",
+			"enabled": "$(sparkle) Asystent Inline oa",
+			"disabled": "$(circle-slash) Asystent Inline oa",
+			"warning": "$(warning) Asystent Inline oa",
 			"tooltip": {
-				"basic": "Asystent Inline Kilo Code",
-				"disabled": "Asystent Inline Kilo Code (wyłączony)",
+				"basic": "Asystent Inline oa Code",
+				"disabled": "Asystent Inline oa Code (wyłączony)",
 				"tokenError": "Musisz ustawić prawidłowy token, aby korzystać z Asystenta Inline",
 				"lastCompletion": "Ostatnia sugestia:",
 				"sessionTotal": "Całkowity koszt sesji:",
@@ -69,32 +69,32 @@
 				"lessThanCent": "<$0.01"
 			}
 		},
-		"toggleMessage": "Asystent Inline Kilo {{status}}",
+		"toggleMessage": "Asystent Inline oa {{status}}",
 		"progress": {
-			"title": "Kilo Code",
+			"title": "oa Code",
 			"analyzing": "Analizowanie Twojego kodu...",
 			"generating": "Generowanie sugerowanych edycji...",
 			"processing": "Przetwarzanie sugerowanych edycji...",
 			"showing": "Wyświetlanie sugerowanych edycji..."
 		},
 		"input": {
-			"title": "Kilo Code: Szybkie Zadanie",
+			"title": "oa Code: Szybkie Zadanie",
 			"placeholder": "np. 'refaktoryzuj tę funkcję, aby była bardziej wydajna'"
 		},
 		"commands": {
-			"generateSuggestions": "Kilo Code: Generuj Sugerowane Edycje",
+			"generateSuggestions": "oa Code: Generuj Sugerowane Edycje",
 			"displaySuggestions": "Wyświetl Sugerowane Edycje",
 			"cancelSuggestions": "Anuluj Sugerowane Edycje",
 			"applyCurrentSuggestion": "Zastosuj Bieżącą Sugerowaną Edycję",
 			"applyAllSuggestions": "Zastosuj Wszystkie Sugerowane Edycje",
 			"promptCodeSuggestion": "Szybkie Zadanie",
-			"category": "Kilo Code"
+			"category": "oa Code"
 		},
 		"codeAction": {
-			"title": "Kilo Code: Sugerowane Edycje"
+			"title": "oa Code: Sugerowane Edycje"
 		},
 		"chatParticipant": {
-			"fullName": "Agent Kilo Code",
+			"fullName": "Agent oa Code",
 			"name": "Agent",
 			"description": "Mogę pomóc w szybkich zadaniach i sugerowanych edycjach."
 		},
@@ -102,24 +102,24 @@
 			"provideCodeSuggestions": "Dostarczanie sugestii kodu..."
 		},
 		"incompatibilityExtensionPopup": {
-			"message": "Asystent Kilo Code Inline jest blokowany przez konflikt z GitHub Copilot. Aby to naprawić, musisz wyłączyć sugestie inline Copilota.",
+			"message": "Asystent oa Code Inline jest blokowany przez konflikt z GitHub Copilot. Aby to naprawić, musisz wyłączyć sugestie inline Copilota.",
 			"disableCopilot": "Wyłącz Copilota",
 			"disableInlineAssist": "Wyłącz Asystenta Inline"
 		}
 	},
 	"terminalCommandGenerator": {
-		"inputPrompt": "Kilo: Opisz polecenie, które chcesz wygenerować",
+		"inputPrompt": "oa: Opisz polecenie, które chcesz wygenerować",
 		"inputPlaceholder": "np. zakończ proces działający na porcie 3001, znajdź duże pliki, itp.",
-		"generatingProgress": "Kilo: Generowanie polecenia terminala...",
-		"generationFailed": "Kilo: Nie udało się wygenerować polecenia: {{error}}",
-		"commandGenerated": "Kilo: Wygenerowane polecenie: {{command}}",
-		"noActiveTerminal": "Kilo: Nie znaleziono aktywnego terminala. Proszę najpierw otworzyć terminal.",
+		"generatingProgress": "oa: Generowanie polecenia terminala...",
+		"generationFailed": "oa: Nie udało się wygenerować polecenia: {{error}}",
+		"commandGenerated": "oa: Wygenerowane polecenie: {{command}}",
+		"noActiveTerminal": "oa: Nie znaleziono aktywnego terminala. Proszę najpierw otworzyć terminal.",
 		"warningDialog": {
 			"title": "Ostrzeżenie o Bezpieczeństwie Terminala",
 			"okButton": "Rozumiem",
 			"message": "Dokładnie sprawdzaj wszystkie wygenerowane polecenia przed ich uruchomieniem. Działań wykonanych w terminalu nie zawsze można cofnąć – uruchamianie niezweryfikowanych poleceń może spowodować nieodwracalną utratę danych lub uszkodzenie systemu. Przejrzyj i zrozum polecenie w całości zanim przejdziesz dalej!",
 			"cancelButton": "Anuluj"
 		},
-		"tipMessage": "Kilo: Naciśnij {{shortcut}}, aby wygenerować polecenia terminala"
+		"tipMessage": "oa: Naciśnij {{shortcut}}, aby wygenerować polecenia terminala"
 	}
 }

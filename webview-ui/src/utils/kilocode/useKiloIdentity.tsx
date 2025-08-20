@@ -2,43 +2,43 @@ import { useEffect, useState } from "react"
 import { ProfileDataResponsePayload } from "@roo/WebviewMessage"
 import { vscode } from "@/utils/vscode"
 
-export function useKiloIdentity(kilocodeToken: string, machineId: string) {
-	const [kiloIdentity, setKiloIdentity] = useState("")
+export function useoaIdentity(oacodeToken: string, machineId: string) {
+	const [oaIdentity, setoaIdentity] = useState("")
 	useEffect(() => {
 		const handleMessage = (event: MessageEvent) => {
 			if (event.data.type === "profileDataResponse") {
 				const payload = event.data.payload as ProfileDataResponsePayload | undefined
 				const success = payload?.success || false
-				const tokenFromMessage = payload?.data?.kilocodeToken || ""
+				const tokenFromMessage = payload?.data?.oacodeToken || ""
 				const email = payload?.data?.user?.email || ""
 				if (!success) {
-					console.error("KILOTEL: Failed to identify Kilo user, message doesn't indicate success:", payload)
-				} else if (tokenFromMessage !== kilocodeToken) {
-					console.error("KILOTEL: Failed to identify Kilo user, token mismatch:", payload)
+					console.error("oaTEL: Failed to identify oa user, message doesn't indicate success:", payload)
+				} else if (tokenFromMessage !== oacodeToken) {
+					console.error("oaTEL: Failed to identify oa user, token mismatch:", payload)
 				} else if (!email) {
-					console.error("KILOTEL: Failed to identify Kilo user, email missing:", payload)
+					console.error("oaTEL: Failed to identify oa user, email missing:", payload)
 				} else {
-					console.debug("KILOTEL: Kilo user identified:", email)
-					setKiloIdentity(email)
+					console.debug("oaTEL: oa user identified:", email)
+					setoaIdentity(email)
 					window.removeEventListener("message", handleMessage)
 				}
 			}
 		}
 
-		if (kilocodeToken) {
-			console.debug("KILOTEL: fetching profile...")
+		if (oacodeToken) {
+			console.debug("oaTEL: fetching profile...")
 			window.addEventListener("message", handleMessage)
 			vscode.postMessage({
 				type: "fetchProfileDataRequest",
 			})
 		} else {
-			console.debug("KILOTEL: no Kilo user")
-			setKiloIdentity("")
+			console.debug("oaTEL: no oa user")
+			setoaIdentity("")
 		}
 
 		return () => {
 			window.removeEventListener("message", handleMessage)
 		}
-	}, [kilocodeToken])
-	return kiloIdentity || machineId
+	}, [oacodeToken])
+	return oaIdentity || machineId
 }

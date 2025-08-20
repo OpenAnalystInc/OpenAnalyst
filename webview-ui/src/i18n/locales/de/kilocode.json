@@ -1,7 +1,7 @@
 {
 	"welcome": {
-		"greeting": "Willkommen bei Kilo Code!",
-		"introText1": "Kilo Code ist ein kostenloser Open-Source-KI-Coding-Agent.",
+		"greeting": "Willkommen bei oa Code!",
+		"introText1": "oa Code ist ein kostenloser Open-Source-KI-Coding-Agent.",
 		"introText2": "Er funktioniert mit den neuesten KI-Modellen wie Claude 4 Sonnet, Gemini 2.5 Pro, GPT-4.1 und über 450 weiteren.",
 		"introText3": "Erstelle ein kostenloses Konto und erhalte $20 an Tokens zur Nutzung mit jedem KI-Modell.",
 		"ctaButton": "Loslegen",
@@ -11,7 +11,7 @@
 	},
 	"lowCreditWarning": {
 		"addCredit": "Guthaben hinzufügen",
-		"lowBalance": "Ihr Kilo Code Guthaben ist niedrig"
+		"lowBalance": "Ihr oa Code Guthaben ist niedrig"
 	},
 	"pricing": {
 		"costUnknown": "Kosten unbekannt",
@@ -28,28 +28,28 @@
 			"mcp": "MCP-Server"
 		},
 		"provider": {
-			"account": "Kilo Code Konto",
-			"apiKey": "Kilo Code API-Schlüssel",
-			"login": "Bei Kilo Code anmelden",
-			"logout": "Von Kilo Code abmelden",
-			"automaticFetch": "Die neuesten Modelle sind automatisch in Kilo Code verfügbar. Wenn du dir nicht sicher bist, welches Modell du wählen sollst, funktioniert Kilo Code am besten mit den empfohlenen Modellen, die oben in <strong>fetter Schrift</strong> aufgeführt sind.",
+			"account": "oa Code Konto",
+			"apiKey": "oa Code API-Schlüssel",
+			"login": "Bei oa Code anmelden",
+			"logout": "Von oa Code abmelden",
+			"automaticFetch": "Die neuesten Modelle sind automatisch in oa Code verfügbar. Wenn du dir nicht sicher bist, welches Modell du wählen sollst, funktioniert oa Code am besten mit den empfohlenen Modellen, die oben in <strong>fetter Schrift</strong> aufgeführt sind.",
 			"providerRouting": {
-				"title": "Kilo Code - OpenRouter-Anbieter-Routing",
-				"description": "Kilo Code leitet Anfragen an die besten verfügbaren Anbieter für dein Modell weiter. Standardmäßig werden Anfragen über die Top-Anbieter verteilt, um die Betriebszeit zu maximieren. Du kannst jedoch einen bestimmten Anbieter für dieses Modell auswählen."
+				"title": "oa Code - OpenRouter-Anbieter-Routing",
+				"description": "oa Code leitet Anfragen an die besten verfügbaren Anbieter für dein Modell weiter. Standardmäßig werden Anfragen über die Top-Anbieter verteilt, um die Betriebszeit zu maximieren. Du kannst jedoch einen bestimmten Anbieter für dieses Modell auswählen."
 			}
 		},
 		"contextManagement": {
 			"allowVeryLargeReads": {
 				"label": "Sehr große Dateilesevorgänge erlauben",
-				"description": "Wenn aktiviert, führt Kilo Code sehr große Datei- oder MCP-Ausgabelesevorgänge durch, auch wenn eine hohe Wahrscheinlichkeit besteht, das Kontextfenster zu überschreiten (Inhaltsgröße >80% des Kontextfensters)."
+				"description": "Wenn aktiviert, führt oa Code sehr große Datei- oder MCP-Ausgabelesevorgänge durch, auch wenn eine hohe Wahrscheinlichkeit besteht, das Kontextfenster zu überschreiten (Inhaltsgröße >80% des Kontextfensters)."
 			}
 		},
 		"systemNotifications": {
 			"label": "Systembenachrichtigungen aktivieren",
-			"description": "Wenn aktiviert, sendet Kilo Code Systembenachrichtigungen für wichtige Ereignisse wie Aufgabenabschluss oder Fehler.",
+			"description": "Wenn aktiviert, sendet oa Code Systembenachrichtigungen für wichtige Ereignisse wie Aufgabenabschluss oder Fehler.",
 			"testButton": "Benachrichtigung testen",
-			"testTitle": "Kilo Code",
-			"testMessage": "Dies ist eine Testbenachrichtigung von Kilo Code."
+			"testTitle": "oa Code",
+			"testMessage": "Dies ist eine Testbenachrichtigung von oa Code."
 		},
 		"terminal": {
 			"commandGenerator": {
@@ -64,7 +64,7 @@
 	},
 	"chat": {
 		"condense": {
-			"wantsToCondense": "Kilo Code möchte deine Unterhaltung zusammenfassen",
+			"wantsToCondense": "oa Code möchte deine Unterhaltung zusammenfassen",
 			"condenseConversation": "Unterhaltung zusammenfassen"
 		}
 	},
@@ -87,15 +87,15 @@
 	},
 	"docs": "Dokumentation",
 	"rules": {
-		"tooltip": "Kilo Code Regeln & Workflows verwalten",
-		"ariaLabel": "Kilo Code Regeln",
+		"tooltip": "oa Code Regeln & Workflows verwalten",
+		"ariaLabel": "oa Code Regeln",
 		"tabs": {
 			"rules": "Regeln",
 			"workflows": "Workflows"
 		},
 		"description": {
-			"rules": "Regeln ermöglichen es dir, Kilo Code Anweisungen zu geben, die es in allen Modi und für alle Prompts befolgen soll. Sie sind eine dauerhafte Möglichkeit, Kontext und Präferenzen für alle Unterhaltungen in deinem Arbeitsbereich oder global einzubeziehen.",
-			"workflows": "Workflows sind eine vorbereitete Vorlage für eine Unterhaltung. Workflows ermöglichen es dir, Prompts zu definieren, die du häufig verwendest, und können eine Reihe von Schritten enthalten, um Kilo Code durch sich wiederholende Aufgaben zu führen, wie das Bereitstellen eines Dienstes oder das Einreichen einer PR. Um einen Workflow aufzurufen, tippe",
+			"rules": "Regeln ermöglichen es dir, oa Code Anweisungen zu geben, die es in allen Modi und für alle Prompts befolgen soll. Sie sind eine dauerhafte Möglichkeit, Kontext und Präferenzen für alle Unterhaltungen in deinem Arbeitsbereich oder global einzubeziehen.",
+			"workflows": "Workflows sind eine vorbereitete Vorlage für eine Unterhaltung. Workflows ermöglichen es dir, Prompts zu definieren, die du häufig verwendest, und können eine Reihe von Schritten enthalten, um oa Code durch sich wiederholende Aufgaben zu führen, wie das Bereitstellen eines Dienstes oder das Einreichen einer PR. Um einen Workflow aufzurufen, tippe",
 			"workflowsInChat": "im Chat."
 		},
 		"sections": {
@@ -168,19 +168,19 @@
 			},
 			"enableAutoInlineTaskKeybinding": {
 				"label": "Auto Inline Aufgabe",
-				"description": "Brauchen Sie eine schnelle Korrektur, Vervollständigung oder Umstrukturierung? Kilo nutzt den umliegenden Kontext, um sofortige Verbesserungen anzubieten und Sie im Flow zu halten. <DocsLink>Tastenkombination anzeigen</DocsLink>"
+				"description": "Brauchen Sie eine schnelle Korrektur, Vervollständigung oder Umstrukturierung? oa nutzt den umliegenden Kontext, um sofortige Verbesserungen anzubieten und Sie im Flow zu halten. <DocsLink>Tastenkombination anzeigen</DocsLink>"
 			},
 			"enableAutoTrigger": {
 				"label": "Automatischen Auslöser aktivieren",
-				"description": "Wenn aktiviert, löst Kilo Code automatisch die Inline-Assistenz aus, wenn du aufhörst zu tippen. Dies kann für schnelle Korrekturen und Vorschläge nützlich sein."
+				"description": "Wenn aktiviert, löst oa Code automatisch die Inline-Assistenz aus, wenn du aufhörst zu tippen. Dies kann für schnelle Korrekturen und Vorschläge nützlich sein."
 			},
 			"autoTriggerDelay": {
 				"label": "Verzögerung des automatischen Auslösers",
-				"description": "Die Verzögerung in Sekunden, bevor Kilo Code die Inline-Assistenz auslöst, nachdem du aufgehört hast zu tippen. Eine kürzere Verzögerung bedeutet schnellere Vorschläge, kann aber ressourcenintensiver sein."
+				"description": "Die Verzögerung in Sekunden, bevor oa Code die Inline-Assistenz auslöst, nachdem du aufgehört hast zu tippen. Eine kürzere Verzögerung bedeutet schnellere Vorschläge, kann aber ressourcenintensiver sein."
 			},
 			"enableSmartInlineTaskKeybinding": {
 				"label": "Intelligente Inline-Aufgabe",
-				"description": "Brauchst du eine schnelle Korrektur, Vervollständigung oder Refaktorierung? Kilo nutzt den umgebenden Kontext, um sofortige Verbesserungen anzubieten und dich im Flow zu halten. <DocsLink>Tastenkürzel anzeigen</DocsLink>"
+				"description": "Brauchst du eine schnelle Korrektur, Vervollständigung oder Refaktorierung? oa nutzt den umgebenden Kontext, um sofortige Verbesserungen anzubieten und dich im Flow zu halten. <DocsLink>Tastenkürzel anzeigen</DocsLink>"
 			},
 			"provider": "Anbieter",
 			"apiConfigId": {

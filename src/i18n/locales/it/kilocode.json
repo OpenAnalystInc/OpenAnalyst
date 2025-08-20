@@ -40,25 +40,25 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "Generatore di messaggi di commit Kilo Code attivato",
+		"activated": "Generatore di messaggi di commit oa Code attivato",
 		"gitNotFound": "⚠️ Repository Git non trovato o git non disponibile",
 		"gitInitError": "⚠️ Errore di inizializzazione Git: {{error}}",
-		"generating": "Kilo: Generazione messaggio di commit...",
-		"noChanges": "Kilo: Nessuna modifica trovata da analizzare",
-		"generated": "Kilo: Messaggio di commit generato!",
-		"generationFailed": "Kilo: Errore durante la generazione del messaggio di commit: {{errorMessage}}",
-		"generatingFromUnstaged": "Kilo: Generazione messaggio utilizzando modifiche non preparate",
-		"activationFailed": "Kilo: Impossibile attivare il generatore di messaggi: {{error}}",
-		"providerRegistered": "Kilo: Provider di messaggi di commit registrato"
+		"generating": "oa: Generazione messaggio di commit...",
+		"noChanges": "oa: Nessuna modifica trovata da analizzare",
+		"generated": "oa: Messaggio di commit generato!",
+		"generationFailed": "oa: Errore durante la generazione del messaggio di commit: {{errorMessage}}",
+		"generatingFromUnstaged": "oa: Generazione messaggio utilizzando modifiche non preparate",
+		"activationFailed": "oa: Impossibile attivare il generatore di messaggi: {{error}}",
+		"providerRegistered": "oa: Provider di messaggi di commit registrato"
 	},
 	"ghost": {
 		"statusBar": {
-			"enabled": "$(sparkle) Assistenza in linea Kilo",
-			"disabled": "$(circle-slash) Assistenza in linea Kilo",
-			"warning": "$(warning) Assistenza in linea Kilo",
+			"enabled": "$(sparkle) Assistenza in linea oa",
+			"disabled": "$(circle-slash) Assistenza in linea oa",
+			"warning": "$(warning) Assistenza in linea oa",
 			"tooltip": {
-				"basic": "Assistenza in linea Kilo Code",
-				"disabled": "Assistenza in linea Kilo Code (disabilitata)",
+				"basic": "Assistenza in linea oa Code",
+				"disabled": "Assistenza in linea oa Code (disabilitata)",
 				"tokenError": "È necessario impostare un token valido per utilizzare l'assistenza in linea",
 				"lastCompletion": "Ultimo suggerimento:",
 				"sessionTotal": "Costo totale sessione:",
@@ -69,32 +69,32 @@
 				"lessThanCent": "<$0.01"
 			}
 		},
-		"toggleMessage": "Assistenza in linea Kilo {{status}}",
+		"toggleMessage": "Assistenza in linea oa {{status}}",
 		"progress": {
-			"title": "Kilo Code",
+			"title": "oa Code",
 			"analyzing": "Analisi del tuo codice...",
 			"generating": "Generazione modifiche suggerite...",
 			"processing": "Elaborazione modifiche suggerite...",
 			"showing": "Visualizzazione modifiche suggerite..."
 		},
 		"input": {
-			"title": "Kilo Code: Attività Rapida",
+			"title": "oa Code: Attività Rapida",
 			"placeholder": "es. 'refactorizza questa funzione per renderla più efficiente'"
 		},
 		"commands": {
-			"generateSuggestions": "Kilo Code: Genera modifiche suggerite",
+			"generateSuggestions": "oa Code: Genera modifiche suggerite",
 			"displaySuggestions": "Mostra modifiche suggerite",
 			"cancelSuggestions": "Annulla modifiche suggerite",
 			"applyCurrentSuggestion": "Applica modifica suggerita corrente",
 			"applyAllSuggestions": "Applica tutte le modifiche suggerite",
 			"promptCodeSuggestion": "Attività Rapida",
-			"category": "Kilo Code"
+			"category": "oa Code"
 		},
 		"codeAction": {
-			"title": "Kilo Code: Modifiche suggerite"
+			"title": "oa Code: Modifiche suggerite"
 		},
 		"chatParticipant": {
-			"fullName": "Agente Kilo Code",
+			"fullName": "Agente oa Code",
 			"name": "Agente",
 			"description": "Posso aiutarti con attività rapide e modifiche suggerite."
 		},
@@ -102,24 +102,24 @@
 			"provideCodeSuggestions": "Fornitura suggerimenti codice..."
 		},
 		"incompatibilityExtensionPopup": {
-			"message": "L'assistenza in linea di Kilo Code è bloccata da un conflitto con GitHub Copilot. Per risolvere questo problema, devi disabilitare i suggerimenti in linea di Copilot.",
+			"message": "L'assistenza in linea di oa Code è bloccata da un conflitto con GitHub Copilot. Per risolvere questo problema, devi disabilitare i suggerimenti in linea di Copilot.",
 			"disableCopilot": "Disabilita Copilot",
 			"disableInlineAssist": "Disabilita Assistenza in Linea"
 		}
 	},
 	"terminalCommandGenerator": {
 		"inputPlaceholder": "ad es., terminare il processo in esecuzione sulla porta 3001, trovare file di grandi dimensioni, ecc.",
-		"inputPrompt": "Kilo: Descrivi il comando che vuoi generare",
-		"noActiveTerminal": "Kilo: Nessun terminale attivo trovato. Apri prima un terminale.",
-		"generatingProgress": "Kilo: Generazione del comando del terminale in corso...",
-		"commandGenerated": "Kilo: Comando generato: {{command}}",
-		"generationFailed": "Kilo: Impossibile generare il comando: {{error}}",
+		"inputPrompt": "oa: Descrivi il comando che vuoi generare",
+		"noActiveTerminal": "oa: Nessun terminale attivo trovato. Apri prima un terminale.",
+		"generatingProgress": "oa: Generazione del comando del terminale in corso...",
+		"commandGenerated": "oa: Comando generato: {{command}}",
+		"generationFailed": "oa: Impossibile generare il comando: {{error}}",
 		"warningDialog": {
 			"title": "Avviso di Sicurezza del Terminale",
 			"okButton": "Ho Capito",
 			"message": "Controlla attentamente tutti i comandi generati prima di eseguirli. Le azioni nel terminale non possono sempre essere annullate—eseguire comandi non verificati può causare una perdita di dati irreversibile o danni al sistema. Esamina e comprendi completamente il comando prima di procedere!",
 			"cancelButton": "Annulla"
 		},
-		"tipMessage": "Kilo: Premi {{shortcut}} per generare comandi del terminale"
+		"tipMessage": "oa: Premi {{shortcut}} per generare comandi del terminale"
 	}
 }

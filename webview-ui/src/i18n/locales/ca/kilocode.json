@@ -1,7 +1,7 @@
 {
 	"welcome": {
-		"greeting": "Benvingut a Kilo Code!",
-		"introText1": "Kilo Code és un agent de codificació d'IA gratuït i de codi obert.",
+		"greeting": "Benvingut a oa Code!",
+		"introText1": "oa Code és un agent de codificació d'IA gratuït i de codi obert.",
 		"introText2": "Funciona amb els models d'IA més recents com Claude 4 Sonnet, Gemini 2.5 Pro, GPT-4.1, i més de 450 més.",
 		"introText3": "Crea un compte gratuït i obtén $20 en tokens per utilitzar en qualsevol model d'IA.",
 		"ctaButton": "Comença",
@@ -11,7 +11,7 @@
 	},
 	"lowCreditWarning": {
 		"addCredit": "Afegir crèdit",
-		"lowBalance": "El teu saldo de Kilo Code és baix"
+		"lowBalance": "El teu saldo de oa Code és baix"
 	},
 	"pricing": {
 		"costUnknown": "cost desconegut",
@@ -28,28 +28,28 @@
 			"mcp": "Servidors MCP"
 		},
 		"provider": {
-			"account": "Compte de Kilo Code",
-			"apiKey": "Clau API de Kilo Code",
-			"login": "Iniciar sessió a Kilo Code",
-			"logout": "Tancar sessió de Kilo Code",
-			"automaticFetch": "Els models més recents estan disponibles automàticament a Kilo Code. Si no estàs segur de quin model triar, Kilo Code funciona millor amb els models recomanats que apareixen a la part superior en <strong>negreta</strong>.",
+			"account": "Compte de oa Code",
+			"apiKey": "Clau API de oa Code",
+			"login": "Iniciar sessió a oa Code",
+			"logout": "Tancar sessió de oa Code",
+			"automaticFetch": "Els models més recents estan disponibles automàticament a oa Code. Si no estàs segur de quin model triar, oa Code funciona millor amb els models recomanats que apareixen a la part superior en <strong>negreta</strong>.",
 			"providerRouting": {
-				"title": "Kilo Code - Encaminament de proveïdors OpenRouter",
-				"description": "Kilo Code encamina les sol·licituds als millors proveïdors disponibles per al vostre model. Per defecte, les sol·licituds es distribueixen entre els principals proveïdors per maximitzar el temps de funcionament. No obstant això, podeu triar un proveïdor específic per a aquest model."
+				"title": "oa Code - Encaminament de proveïdors OpenRouter",
+				"description": "oa Code encamina les sol·licituds als millors proveïdors disponibles per al vostre model. Per defecte, les sol·licituds es distribueixen entre els principals proveïdors per maximitzar el temps de funcionament. No obstant això, podeu triar un proveïdor específic per a aquest model."
 			}
 		},
 		"contextManagement": {
 			"allowVeryLargeReads": {
 				"label": "Permet lectures de fitxers molt grans",
-				"description": "Quan està activat, Kilo Code realitzarà lectures de fitxers o sortides MCP molt grans encara que hi hagi una alta probabilitat de desbordar la finestra de context (mida del contingut >80% de la finestra de context)."
+				"description": "Quan està activat, oa Code realitzarà lectures de fitxers o sortides MCP molt grans encara que hi hagi una alta probabilitat de desbordar la finestra de context (mida del contingut >80% de la finestra de context)."
 			}
 		},
 		"systemNotifications": {
 			"label": "Activar notificacions del sistema",
-			"description": "Quan està activat, Kilo Code enviarà notificacions del sistema per a esdeveniments importants com la finalització de tasques o errors.",
+			"description": "Quan està activat, oa Code enviarà notificacions del sistema per a esdeveniments importants com la finalització de tasques o errors.",
 			"testButton": "Provar notificació",
-			"testTitle": "Kilo Code",
-			"testMessage": "Aquesta és una notificació de prova de Kilo Code."
+			"testTitle": "oa Code",
+			"testMessage": "Aquesta és una notificació de prova de oa Code."
 		},
 		"terminal": {
 			"commandGenerator": {
@@ -78,7 +78,7 @@
 	},
 	"chat": {
 		"condense": {
-			"wantsToCondense": "Kilo Code vol condensar la teva conversa",
+			"wantsToCondense": "oa Code vol condensar la teva conversa",
 			"condenseConversation": "Condensar Conversa"
 		}
 	},
@@ -87,15 +87,15 @@
 	},
 	"docs": "Documentació",
 	"rules": {
-		"tooltip": "Gestionar Regles i Fluxos de Treball de Kilo Code",
-		"ariaLabel": "Regles de Kilo Code",
+		"tooltip": "Gestionar Regles i Fluxos de Treball de oa Code",
+		"ariaLabel": "Regles de oa Code",
 		"tabs": {
 			"rules": "Regles",
 			"workflows": "Fluxos de Treball"
 		},
 		"description": {
-			"rules": "Les regles et permeten proporcionar a Kilo Code instruccions que ha de seguir en tots els modes i per a tots els prompts. Són una manera persistent d'incloure context i preferències per a totes les converses al teu espai de treball o globalment.",
-			"workflows": "Els fluxos de treball són una plantilla preparada per a una conversa. Els fluxos de treball et permeten definir prompts que uses freqüentment, i poden incloure una sèrie de passos per guiar Kilo Code a través de tasques repetitives, com desplegar un servei o enviar una PR. Per invocar un flux de treball, escriu",
+			"rules": "Les regles et permeten proporcionar a oa Code instruccions que ha de seguir en tots els modes i per a tots els prompts. Són una manera persistent d'incloure context i preferències per a totes les converses al teu espai de treball o globalment.",
+			"workflows": "Els fluxos de treball són una plantilla preparada per a una conversa. Els fluxos de treball et permeten definir prompts que uses freqüentment, i poden incloure una sèrie de passos per guiar oa Code a través de tasques repetitives, com desplegar un servei o enviar una PR. Per invocar un flux de treball, escriu",
 			"workflowsInChat": "al xat."
 		},
 		"sections": {
@@ -168,19 +168,19 @@
 			},
 			"enableAutoInlineTaskKeybinding": {
 				"label": "Tasca automàtica en línia",
-				"description": "Necessites una solució ràpida, completar alguna cosa o refactoritzar? Kilo utilitzarà el context del voltant per oferir millores immediates, mantenint el teu flux de treball. <DocsLink>Veure drecera</DocsLink>"
+				"description": "Necessites una solució ràpida, completar alguna cosa o refactoritzar? oa utilitzarà el context del voltant per oferir millores immediates, mantenint el teu flux de treball. <DocsLink>Veure drecera</DocsLink>"
 			},
 			"enableAutoTrigger": {
 				"label": "Activar l'activació automàtica",
-				"description": "Quan està activat, Kilo Code activarà automàticament l'Assistència en línia quan deixis d'escriure. Això pot ser útil per a correccions i suggeriments ràpids."
+				"description": "Quan està activat, oa Code activarà automàticament l'Assistència en línia quan deixis d'escriure. Això pot ser útil per a correccions i suggeriments ràpids."
 			},
 			"autoTriggerDelay": {
 				"label": "Retard de l'activació automàtica",
-				"description": "El retard en segons abans que Kilo Code activi l'Assistència en línia després que deixis d'escriure. Un retard més curt significa suggeriments més ràpids, però pot consumir més recursos."
+				"description": "El retard en segons abans que oa Code activi l'Assistència en línia després que deixis d'escriure. Un retard més curt significa suggeriments més ràpids, però pot consumir més recursos."
 			},
 			"enableSmartInlineTaskKeybinding": {
 				"label": "Tasca intel·ligent en línia",
-				"description": "Necessites una correcció ràpida, completar o refactoritzar? Kilo utilitzarà el context del voltant per oferir millores immediates, mantenint-te en el flux. <DocsLink>Veure drecera</DocsLink>"
+				"description": "Necessites una correcció ràpida, completar o refactoritzar? oa utilitzarà el context del voltant per oferir millores immediates, mantenint-te en el flux. <DocsLink>Veure drecera</DocsLink>"
 			},
 			"provider": "Proveïdor",
 			"apiConfigId": {

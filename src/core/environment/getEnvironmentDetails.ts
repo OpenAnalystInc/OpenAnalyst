@@ -25,7 +25,7 @@ import { formatReminderSection } from "./reminder"
 import { OpenRouterHandler } from "../../api/providers/openrouter"
 import { TelemetryService } from "@roo-code/telemetry"
 import { t } from "../../i18n"
-import { OacodeOllamaHandler } from "../../api/providers/oacode-ollama"
+import { oacodeOllamaHandler } from "../../api/providers/oacode-ollama"
 // oacode_change end
 
 export async function getEnvironmentDetails(cline: Task, includeFileDetails: boolean = false) {
@@ -212,7 +212,7 @@ export async function getEnvironmentDetails(cline: Task, includeFileDetails: boo
 
 	// oacode_change start
 	// Be sure to fetch the model information before we need it.
-	if (cline.api instanceof OpenRouterHandler || cline.api instanceof OacodeOllamaHandler) {
+	if (cline.api instanceof OpenRouterHandler || cline.api instanceof oacodeOllamaHandler) {
 		try {
 			await cline.api.fetchModel()
 		} catch (e) {
