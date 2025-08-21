@@ -40,7 +40,7 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "oa Code Commit 訊息產生器已啟用",
+		"activated": "OpenAnalyst Commit 訊息產生器已啟用",
 		"gitNotFound": "⚠️找不到 Git 儲存庫或 Git 不可用",
 		"gitInitError": "⚠️ Git 初始化錯誤：{{error}}",
 		"generating": "oa：正在產生 Commit 訊息...",
@@ -57,8 +57,8 @@
 			"disabled": "$(circle-slash) oa 行內輔助",
 			"warning": "$(warning) oa 行內輔助",
 			"tooltip": {
-				"basic": "oa Code 行內輔助",
-				"disabled": "oa Code 行內輔助 (已停用)",
+				"basic": "OpenAnalyst 行內輔助",
+				"disabled": "OpenAnalyst 行內輔助 (已停用)",
 				"tokenError": "必須設定有效的令牌才能使用行內輔助",
 				"lastCompletion": "最後建議：",
 				"sessionTotal": "工作階段總費用：",
@@ -71,30 +71,30 @@
 		},
 		"toggleMessage": "oa 行內輔助 {{status}}",
 		"progress": {
-			"title": "oa Code",
+			"title": "OpenAnalyst",
 			"analyzing": "正在分析您的程式碼...",
 			"generating": "正在產生建議的編輯...",
 			"processing": "正在處理建議的編輯...",
 			"showing": "正在顯示建議的編輯..."
 		},
 		"input": {
-			"title": "oa Code：快速任務",
+			"title": "OpenAnalyst：快速任務",
 			"placeholder": "例如：'重構此函數以提高效率'"
 		},
 		"commands": {
-			"generateSuggestions": "oa Code：產生建議的編輯",
+			"generateSuggestions": "OpenAnalyst：產生建議的編輯",
 			"displaySuggestions": "顯示建議的編輯",
 			"cancelSuggestions": "取消建議的編輯",
 			"applyCurrentSuggestion": "套用目前的建議編輯",
 			"applyAllSuggestions": "套用所有建議的編輯",
 			"promptCodeSuggestion": "快速任務",
-			"category": "oa Code"
+			"category": "OpenAnalyst"
 		},
 		"codeAction": {
-			"title": "oa Code：建議的編輯"
+			"title": "OpenAnalyst：建議的編輯"
 		},
 		"chatParticipant": {
-			"fullName": "oa Code Agent",
+			"fullName": "OpenAnalyst Agent",
 			"name": "Agent",
 			"description": "我可以幫助您處理快速任務和建議的編輯。"
 		},
@@ -102,7 +102,7 @@
 			"provideCodeSuggestions": "正在提供程式碼建議..."
 		},
 		"incompatibilityExtensionPopup": {
-			"message": "oa Code 行內輔助被 GitHub Copilot 的衝突所阻擋。為了解決此問題，您必須停用 Copilot 的內嵌建議。",
+			"message": "OpenAnalyst 行內輔助被 GitHub Copilot 的衝突所阻擋。為了解決此問題，您必須停用 Copilot 的內嵌建議。",
 			"disableCopilot": "停用 Copilot",
 			"disableInlineAssist": "停用行內輔助"
 		}

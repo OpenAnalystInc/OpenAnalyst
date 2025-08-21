@@ -40,7 +40,7 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "Trình tạo thông báo commit oa Code đã được kích hoạt",
+		"activated": "Trình tạo thông báo commit OpenAnalyst đã được kích hoạt",
 		"gitNotFound": "⚠️ Không tìm thấy kho lưu trữ Git hoặc git không khả dụng",
 		"gitInitError": "⚠️ Lỗi khởi tạo Git: {{error}}",
 		"generating": "oa: Đang tạo thông báo commit...",
@@ -57,8 +57,8 @@
 			"disabled": "$(circle-slash) oa Inline Assist",
 			"warning": "$(warning) oa Inline Assist",
 			"tooltip": {
-				"basic": "oa Code Inline Assist",
-				"disabled": "oa Code Inline Assist (đã tắt)",
+				"basic": "OpenAnalyst Inline Assist",
+				"disabled": "OpenAnalyst Inline Assist (đã tắt)",
 				"tokenError": "Phải đặt một token hợp lệ để sử dụng Inline Assist",
 				"lastCompletion": "Đề xuất cuối cùng:",
 				"sessionTotal": "Tổng chi phí phiên:",
@@ -71,30 +71,30 @@
 		},
 		"toggleMessage": "oa Inline Assist {{status}}",
 		"progress": {
-			"title": "oa Code",
+			"title": "OpenAnalyst",
 			"analyzing": "Đang phân tích mã của bạn...",
 			"generating": "Đang tạo các chỉnh sửa được đề xuất...",
 			"processing": "Đang xử lý các chỉnh sửa được đề xuất...",
 			"showing": "Đang hiển thị các chỉnh sửa được đề xuất..."
 		},
 		"input": {
-			"title": "oa Code: Nhiệm vụ Nhanh",
+			"title": "OpenAnalyst: Nhiệm vụ Nhanh",
 			"placeholder": "ví dụ: 'tái cấu trúc hàm này để hiệu quả hơn'"
 		},
 		"commands": {
-			"generateSuggestions": "oa Code: Tạo các chỉnh sửa được đề xuất",
+			"generateSuggestions": "OpenAnalyst: Tạo các chỉnh sửa được đề xuất",
 			"displaySuggestions": "Hiển thị các chỉnh sửa được đề xuất",
 			"cancelSuggestions": "Hủy các chỉnh sửa được đề xuất",
 			"applyCurrentSuggestion": "Áp dụng chỉnh sửa được đề xuất hiện tại",
 			"applyAllSuggestions": "Áp dụng tất cả các chỉnh sửa được đề xuất",
 			"promptCodeSuggestion": "Nhiệm vụ Nhanh",
-			"category": "oa Code"
+			"category": "OpenAnalyst"
 		},
 		"codeAction": {
-			"title": "oa Code: Chỉnh sửa được đề xuất"
+			"title": "OpenAnalyst: Chỉnh sửa được đề xuất"
 		},
 		"chatParticipant": {
-			"fullName": "oa Code Agent",
+			"fullName": "OpenAnalyst Agent",
 			"name": "Agent",
 			"description": "Tôi có thể giúp bạn với các nhiệm vụ nhanh chóng và các chỉnh sửa được đề xuất."
 		},
@@ -102,7 +102,7 @@
 			"provideCodeSuggestions": "Đang cung cấp các đề xuất mã..."
 		},
 		"incompatibilityExtensionPopup": {
-			"message": "oa Code Inline Assist bị chặn bởi xung đột với GitHub Copilot. Để khắc phục điều này, bạn phải tắt các đề xuất nội dòng của Copilot.",
+			"message": "OpenAnalyst Inline Assist bị chặn bởi xung đột với GitHub Copilot. Để khắc phục điều này, bạn phải tắt các đề xuất nội dòng của Copilot.",
 			"disableCopilot": "Tắt Copilot",
 			"disableInlineAssist": "Tắt Trợ lý Nội dòng"
 		}

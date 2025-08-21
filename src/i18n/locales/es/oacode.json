@@ -40,7 +40,7 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "Generador de mensajes de commit de oa Code activado",
+		"activated": "Generador de mensajes de commit de OpenAnalyst activado",
 		"gitNotFound": "⚠️ Repositorio Git no encontrado o git no disponible",
 		"gitInitError": "⚠️ Error de inicialización de Git: {{error}}",
 		"generating": "oa: Generando mensaje de confirmación...",
@@ -57,8 +57,8 @@
 			"disabled": "$(circle-slash) Asistencia en línea oa",
 			"warning": "$(warning) Asistencia Integrada oa",
 			"tooltip": {
-				"basic": "Asistencia Integrada oa Code",
-				"disabled": "Asistente Integrado oa Code (desactivado)",
+				"basic": "Asistencia Integrada OpenAnalyst",
+				"disabled": "Asistente Integrado OpenAnalyst (desactivado)",
 				"tokenError": "Se debe establecer un token válido para usar Inline Assist",
 				"lastCompletion": "Última sugerencia:",
 				"sessionTotal": "Costo total de la sesión:",
@@ -75,26 +75,26 @@
 			"generating": "Generando sugerencias de edición...",
 			"processing": "Procesando ediciones sugeridas...",
 			"showing": "Mostrando ediciones sugeridas...",
-			"title": "oa Code"
+			"title": "OpenAnalyst"
 		},
 		"input": {
-			"title": "oa Code: Tarea Rápida",
+			"title": "OpenAnalyst: Tarea Rápida",
 			"placeholder": "p. ej., 'refactorizar esta función para que sea más eficiente'"
 		},
 		"commands": {
 			"displaySuggestions": "Mostrar Ediciones Sugeridas",
 			"cancelSuggestions": "Cancelar Ediciones Sugeridas",
-			"generateSuggestions": "oa Code: Generar Ediciones Sugeridas",
+			"generateSuggestions": "OpenAnalyst: Generar Ediciones Sugeridas",
 			"applyCurrentSuggestion": "Aplicar edición sugerida actual",
 			"applyAllSuggestions": "Aplicar todas las ediciones sugeridas",
 			"promptCodeSuggestion": "Tarea Rápida de Prompt",
-			"category": "oa Code"
+			"category": "OpenAnalyst"
 		},
 		"codeAction": {
-			"title": "oa Code: Ediciones sugeridas"
+			"title": "OpenAnalyst: Ediciones sugeridas"
 		},
 		"chatParticipant": {
-			"fullName": "oa Code Agente",
+			"fullName": "OpenAnalyst Agente",
 			"description": "Puedo ayudarte con tareas rápidas y ediciones sugeridas.",
 			"name": "Agente"
 		},
@@ -102,7 +102,7 @@
 			"provideCodeSuggestions": "Proporcionando sugerencias de código..."
 		},
 		"incompatibilityExtensionPopup": {
-			"message": "La Asistencia Integrada de oa Code está siendo bloqueada por un conflicto con GitHub Copilot. Para solucionar esto, debes deshabilitar las sugerencias integradas de Copilot.",
+			"message": "La Asistencia Integrada de OpenAnalyst está siendo bloqueada por un conflicto con GitHub Copilot. Para solucionar esto, debes deshabilitar las sugerencias integradas de Copilot.",
 			"disableCopilot": "Deshabilitar Copilot",
 			"disableInlineAssist": "Deshabilitar Asistencia Integrada"
 		}

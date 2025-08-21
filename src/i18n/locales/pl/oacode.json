@@ -40,7 +40,7 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "Generator wiadomości commit oa Code aktywowany",
+		"activated": "Generator wiadomości commit OpenAnalyst aktywowany",
 		"gitNotFound": "⚠️ Nie znaleziono repozytorium Git lub git jest niedostępny",
 		"gitInitError": "⚠️ Błąd inicjalizacji Git: {{error}}",
 		"generating": "oa: Generowanie wiadomości commit...",
@@ -57,8 +57,8 @@
 			"disabled": "$(circle-slash) Asystent Inline oa",
 			"warning": "$(warning) Asystent Inline oa",
 			"tooltip": {
-				"basic": "Asystent Inline oa Code",
-				"disabled": "Asystent Inline oa Code (wyłączony)",
+				"basic": "Asystent Inline OpenAnalyst",
+				"disabled": "Asystent Inline OpenAnalyst (wyłączony)",
 				"tokenError": "Musisz ustawić prawidłowy token, aby korzystać z Asystenta Inline",
 				"lastCompletion": "Ostatnia sugestia:",
 				"sessionTotal": "Całkowity koszt sesji:",
@@ -71,30 +71,30 @@
 		},
 		"toggleMessage": "Asystent Inline oa {{status}}",
 		"progress": {
-			"title": "oa Code",
+			"title": "OpenAnalyst",
 			"analyzing": "Analizowanie Twojego kodu...",
 			"generating": "Generowanie sugerowanych edycji...",
 			"processing": "Przetwarzanie sugerowanych edycji...",
 			"showing": "Wyświetlanie sugerowanych edycji..."
 		},
 		"input": {
-			"title": "oa Code: Szybkie Zadanie",
+			"title": "OpenAnalyst: Szybkie Zadanie",
 			"placeholder": "np. 'refaktoryzuj tę funkcję, aby była bardziej wydajna'"
 		},
 		"commands": {
-			"generateSuggestions": "oa Code: Generuj Sugerowane Edycje",
+			"generateSuggestions": "OpenAnalyst: Generuj Sugerowane Edycje",
 			"displaySuggestions": "Wyświetl Sugerowane Edycje",
 			"cancelSuggestions": "Anuluj Sugerowane Edycje",
 			"applyCurrentSuggestion": "Zastosuj Bieżącą Sugerowaną Edycję",
 			"applyAllSuggestions": "Zastosuj Wszystkie Sugerowane Edycje",
 			"promptCodeSuggestion": "Szybkie Zadanie",
-			"category": "oa Code"
+			"category": "OpenAnalyst"
 		},
 		"codeAction": {
-			"title": "oa Code: Sugerowane Edycje"
+			"title": "OpenAnalyst: Sugerowane Edycje"
 		},
 		"chatParticipant": {
-			"fullName": "Agent oa Code",
+			"fullName": "Agent OpenAnalyst",
 			"name": "Agent",
 			"description": "Mogę pomóc w szybkich zadaniach i sugerowanych edycjach."
 		},
@@ -102,7 +102,7 @@
 			"provideCodeSuggestions": "Dostarczanie sugestii kodu..."
 		},
 		"incompatibilityExtensionPopup": {
-			"message": "Asystent oa Code Inline jest blokowany przez konflikt z GitHub Copilot. Aby to naprawić, musisz wyłączyć sugestie inline Copilota.",
+			"message": "Asystent OpenAnalyst Inline jest blokowany przez konflikt z GitHub Copilot. Aby to naprawić, musisz wyłączyć sugestie inline Copilota.",
 			"disableCopilot": "Wyłącz Copilota",
 			"disableInlineAssist": "Wyłącz Asystenta Inline"
 		}

@@ -40,7 +40,7 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "Generatore di messaggi di commit oa Code attivato",
+		"activated": "Generatore di messaggi di commit OpenAnalyst attivato",
 		"gitNotFound": "⚠️ Repository Git non trovato o git non disponibile",
 		"gitInitError": "⚠️ Errore di inizializzazione Git: {{error}}",
 		"generating": "oa: Generazione messaggio di commit...",
@@ -57,8 +57,8 @@
 			"disabled": "$(circle-slash) Assistenza in linea oa",
 			"warning": "$(warning) Assistenza in linea oa",
 			"tooltip": {
-				"basic": "Assistenza in linea oa Code",
-				"disabled": "Assistenza in linea oa Code (disabilitata)",
+				"basic": "Assistenza in linea OpenAnalyst",
+				"disabled": "Assistenza in linea OpenAnalyst (disabilitata)",
 				"tokenError": "È necessario impostare un token valido per utilizzare l'assistenza in linea",
 				"lastCompletion": "Ultimo suggerimento:",
 				"sessionTotal": "Costo totale sessione:",
@@ -71,30 +71,30 @@
 		},
 		"toggleMessage": "Assistenza in linea oa {{status}}",
 		"progress": {
-			"title": "oa Code",
+			"title": "OpenAnalyst",
 			"analyzing": "Analisi del tuo codice...",
 			"generating": "Generazione modifiche suggerite...",
 			"processing": "Elaborazione modifiche suggerite...",
 			"showing": "Visualizzazione modifiche suggerite..."
 		},
 		"input": {
-			"title": "oa Code: Attività Rapida",
+			"title": "OpenAnalyst: Attività Rapida",
 			"placeholder": "es. 'refactorizza questa funzione per renderla più efficiente'"
 		},
 		"commands": {
-			"generateSuggestions": "oa Code: Genera modifiche suggerite",
+			"generateSuggestions": "OpenAnalyst: Genera modifiche suggerite",
 			"displaySuggestions": "Mostra modifiche suggerite",
 			"cancelSuggestions": "Annulla modifiche suggerite",
 			"applyCurrentSuggestion": "Applica modifica suggerita corrente",
 			"applyAllSuggestions": "Applica tutte le modifiche suggerite",
 			"promptCodeSuggestion": "Attività Rapida",
-			"category": "oa Code"
+			"category": "OpenAnalyst"
 		},
 		"codeAction": {
-			"title": "oa Code: Modifiche suggerite"
+			"title": "OpenAnalyst: Modifiche suggerite"
 		},
 		"chatParticipant": {
-			"fullName": "Agente oa Code",
+			"fullName": "Agente OpenAnalyst",
 			"name": "Agente",
 			"description": "Posso aiutarti con attività rapide e modifiche suggerite."
 		},
@@ -102,7 +102,7 @@
 			"provideCodeSuggestions": "Fornitura suggerimenti codice..."
 		},
 		"incompatibilityExtensionPopup": {
-			"message": "L'assistenza in linea di oa Code è bloccata da un conflitto con GitHub Copilot. Per risolvere questo problema, devi disabilitare i suggerimenti in linea di Copilot.",
+			"message": "L'assistenza in linea di OpenAnalyst è bloccata da un conflitto con GitHub Copilot. Per risolvere questo problema, devi disabilitare i suggerimenti in linea di Copilot.",
 			"disableCopilot": "Disabilita Copilot",
 			"disableInlineAssist": "Disabilita Assistenza in Linea"
 		}

@@ -40,7 +40,7 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "oa Code: 提交信息生成器已启动",
+		"activated": "OpenAnalyst: 提交信息生成器已启动",
 		"gitNotFound": "⚠️ Git 仓库未找到或 git 不可用",
 		"gitInitError": "⚠️ Git 初始化错误：{{error}}",
 		"generating": "oa: 正在生成提交信息...",
@@ -57,8 +57,8 @@
 			"disabled": "$(circle-slash) oa 内联辅助",
 			"warning": "$(warning) oa 内联辅助",
 			"tooltip": {
-				"basic": "oa Code 内联辅助",
-				"disabled": "oa Code 内联辅助",
+				"basic": "OpenAnalyst 内联辅助",
+				"disabled": "OpenAnalyst 内联辅助",
 				"lastCompletion": "最后建议：",
 				"tokenError": "必须设置有效令牌才能使用行内助手",
 				"sessionTotal": "会话总费用：",
@@ -75,7 +75,7 @@
 			"generating": "正在生成建议修改...",
 			"processing": "正在处理建议的编辑...",
 			"showing": "显示建议的编辑...",
-			"title": "oa Code"
+			"title": "OpenAnalyst"
 		},
 		"input": {
 			"title": "oa：快速任务",
@@ -88,13 +88,13 @@
 			"cancelSuggestions": "取消建议的编辑",
 			"applyAllSuggestions": "应用所有建议的编辑",
 			"promptCodeSuggestion": "快速任务提示",
-			"category": "oa Code"
+			"category": "OpenAnalyst"
 		},
 		"codeAction": {
-			"title": "oa Code：建议编辑"
+			"title": "OpenAnalyst：建议编辑"
 		},
 		"chatParticipant": {
-			"fullName": "oa Code 代理",
+			"fullName": "OpenAnalyst 代理",
 			"description": "我可以帮助你完成快速任务和提供建议的编辑。",
 			"name": "代理"
 		},
@@ -102,7 +102,7 @@
 			"provideCodeSuggestions": "正在提供代码建议..."
 		},
 		"incompatibilityExtensionPopup": {
-			"message": "oa Code 内联辅助 被 GitHub Copilot 的冲突阻止了。要解决此问题，你需要禁用 Copilot 的内联辅助。",
+			"message": "OpenAnalyst 内联辅助 被 GitHub Copilot 的冲突阻止了。要解决此问题，你需要禁用 Copilot 的内联辅助。",
 			"disableCopilot": "禁用 Copilot",
 			"disableInlineAssist": "禁用 内联辅助"
 		}
@@ -120,6 +120,6 @@
 			"okButton": "我明白",
 			"cancelButton": "取消"
 		},
-		"tipMessage": "oa Code: 按下 {{shortcut}} 生成终端命令"
+		"tipMessage": "OpenAnalyst: 按下 {{shortcut}} 生成终端命令"
 	}
 }

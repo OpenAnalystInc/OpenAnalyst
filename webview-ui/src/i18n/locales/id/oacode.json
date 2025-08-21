@@ -1,7 +1,7 @@
 {
 	"welcome": {
-		"greeting": "Selamat datang di oa Code!",
-		"introText1": "oa Code adalah agen coding AI gratis dan open source.",
+		"greeting": "Selamat datang di OpenAnalyst!",
+		"introText1": "OpenAnalyst adalah agen coding AI gratis dan open source.",
 		"introText2": "Bekerja dengan model AI terbaru seperti Claude 4 Sonnet, Gemini 2.5 Pro, GPT-4.1, dan lebih dari 450 model lainnya.",
 		"introText3": "Buat akun gratis dan dapatkan $20 token untuk digunakan dengan model AI apapun.",
 		"ctaButton": "Mulai",
@@ -11,7 +11,7 @@
 	},
 	"lowCreditWarning": {
 		"addCredit": "Tambah Kredit",
-		"lowBalance": "Saldo oa Code kamu rendah"
+		"lowBalance": "Saldo OpenAnalyst kamu rendah"
 	},
 	"pricing": {
 		"costUnknown": "biaya tidak diketahui",
@@ -28,28 +28,28 @@
 			"mcp": "Server MCP"
 		},
 		"provider": {
-			"account": "Akun oa Code",
-			"apiKey": "API Key oa Code",
-			"login": "Masuk ke oa Code",
-			"logout": "Keluar dari oa Code",
-			"automaticFetch": "Model terbaru tersedia secara otomatis di oa Code. Jika Anda tidak yakin model mana yang harus dipilih, oa Code bekerja paling baik dengan model yang direkomendasikan yang tercantum di bagian atas dengan <strong>huruf tebal</strong>.",
+			"account": "Akun OpenAnalyst",
+			"apiKey": "API Key OpenAnalyst",
+			"login": "Masuk ke OpenAnalyst",
+			"logout": "Keluar dari OpenAnalyst",
+			"automaticFetch": "Model terbaru tersedia secara otomatis di OpenAnalyst. Jika Anda tidak yakin model mana yang harus dipilih, OpenAnalyst bekerja paling baik dengan model yang direkomendasikan yang tercantum di bagian atas dengan <strong>huruf tebal</strong>.",
 			"providerRouting": {
-				"title": "oa Code - Perutean Penyedia OpenRouter",
-				"description": "oa Code merutekan permintaan ke penyedia terbaik yang tersedia untuk model Anda. Secara default, permintaan diseimbangkan bebannya di seluruh penyedia teratas untuk memaksimalkan waktu aktif. Namun, Anda dapat memilih penyedia tertentu untuk digunakan untuk model ini."
+				"title": "OpenAnalyst - Perutean Penyedia OpenRouter",
+				"description": "OpenAnalyst merutekan permintaan ke penyedia terbaik yang tersedia untuk model Anda. Secara default, permintaan diseimbangkan bebannya di seluruh penyedia teratas untuk memaksimalkan waktu aktif. Namun, Anda dapat memilih penyedia tertentu untuk digunakan untuk model ini."
 			}
 		},
 		"contextManagement": {
 			"allowVeryLargeReads": {
 				"label": "Izinkan pembacaan file yang sangat besar",
-				"description": "Saat diaktifkan, oa Code akan melakukan pembacaan file atau output MCP yang sangat besar meskipun ada kemungkinan tinggi meluapnya jendela konteks (ukuran konten >80% dari jendela konteks)."
+				"description": "Saat diaktifkan, OpenAnalyst akan melakukan pembacaan file atau output MCP yang sangat besar meskipun ada kemungkinan tinggi meluapnya jendela konteks (ukuran konten >80% dari jendela konteks)."
 			}
 		},
 		"systemNotifications": {
 			"label": "Aktifkan Notifikasi Sistem",
-			"description": "Saat diaktifkan, oa Code akan mengirim notifikasi sistem untuk kejadian penting seperti penyelesaian tugas atau kesalahan.",
+			"description": "Saat diaktifkan, OpenAnalyst akan mengirim notifikasi sistem untuk kejadian penting seperti penyelesaian tugas atau kesalahan.",
 			"testButton": "Uji Notifikasi",
-			"testTitle": "oa Code",
-			"testMessage": "Ini adalah notifikasi uji dari oa Code."
+			"testTitle": "OpenAnalyst",
+			"testMessage": "Ini adalah notifikasi uji dari OpenAnalyst."
 		},
 		"terminal": {
 			"commandGenerator": {
@@ -64,7 +64,7 @@
 	},
 	"chat": {
 		"condense": {
-			"wantsToCondense": "oa Code ingin mengondensasi percakapan kamu",
+			"wantsToCondense": "OpenAnalyst ingin mengondensasi percakapan kamu",
 			"condenseConversation": "Kondensasi Percakapan"
 		}
 	},
@@ -87,15 +87,15 @@
 	},
 	"docs": "Dokumentasi",
 	"rules": {
-		"tooltip": "Kelola Aturan & Alur Kerja oa Code",
-		"ariaLabel": "Aturan oa Code",
+		"tooltip": "Kelola Aturan & Alur Kerja OpenAnalyst",
+		"ariaLabel": "Aturan OpenAnalyst",
 		"tabs": {
 			"rules": "Aturan",
 			"workflows": "Alur Kerja"
 		},
 		"description": {
-			"rules": "Aturan memungkinkan kamu memberikan instruksi kepada oa Code yang harus diikuti di semua mode dan untuk semua prompt. Mereka adalah cara persisten untuk menyertakan konteks dan preferensi untuk semua percakapan di workspace kamu atau secara global.",
-			"workflows": "Alur kerja adalah template yang disiapkan untuk percakapan. Alur kerja memungkinkan kamu menentukan prompt yang sering kamu gunakan, dan dapat mencakup serangkaian langkah untuk memandu oa Code melalui tugas-tugas berulang, seperti menerapkan layanan atau mengirim PR. Untuk memanggil alur kerja, ketik",
+			"rules": "Aturan memungkinkan kamu memberikan instruksi kepada OpenAnalyst yang harus diikuti di semua mode dan untuk semua prompt. Mereka adalah cara persisten untuk menyertakan konteks dan preferensi untuk semua percakapan di workspace kamu atau secara global.",
+			"workflows": "Alur kerja adalah template yang disiapkan untuk percakapan. Alur kerja memungkinkan kamu menentukan prompt yang sering kamu gunakan, dan dapat mencakup serangkaian langkah untuk memandu OpenAnalyst melalui tugas-tugas berulang, seperti menerapkan layanan atau mengirim PR. Untuk memanggil alur kerja, ketik",
 			"workflowsInChat": "di chat."
 		},
 		"sections": {
@@ -172,11 +172,11 @@
 			},
 			"enableAutoTrigger": {
 				"label": "Aktifkan Pemicu Otomatis",
-				"description": "Saat diaktifkan, oa Code akan secara otomatis memicu Bantuan Inline ketika kamu berhenti mengetik. Ini bisa berguna untuk perbaikan dan saran cepat."
+				"description": "Saat diaktifkan, OpenAnalyst akan secara otomatis memicu Bantuan Inline ketika kamu berhenti mengetik. Ini bisa berguna untuk perbaikan dan saran cepat."
 			},
 			"autoTriggerDelay": {
 				"label": "Penundaan Pemicu Otomatis",
-				"description": "Penundaan dalam detik sebelum oa Code memicu Bantuan Inline setelah kamu berhenti mengetik. Penundaan yang lebih singkat berarti saran lebih cepat, tetapi mungkin lebih intensif sumber daya."
+				"description": "Penundaan dalam detik sebelum OpenAnalyst memicu Bantuan Inline setelah kamu berhenti mengetik. Penundaan yang lebih singkat berarti saran lebih cepat, tetapi mungkin lebih intensif sumber daya."
 			},
 			"enableSmartInlineTaskKeybinding": {
 				"label": "Tugas Inline Pintar",

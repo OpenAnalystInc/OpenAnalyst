@@ -40,7 +40,7 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "ตัวสร้างข้อความคอมมิต oa Code เปิดใช้งานแล้ว",
+		"activated": "ตัวสร้างข้อความคอมมิต OpenAnalyst เปิดใช้งานแล้ว",
 		"gitNotFound": "⚠️ ไม่พบที่เก็บ Git หรือ git ไม่พร้อมใช้งาน",
 		"gitInitError": "⚠️ ข้อผิดพลาดในการเริ่มต้น Git: {{error}}",
 		"generating": "oa: กำลังสร้างข้อความคอมมิต...",
@@ -57,8 +57,8 @@
 			"disabled": "$(circle-slash) oa Inline Assist",
 			"warning": "$(warning) oa Inline Assist",
 			"tooltip": {
-				"basic": "oa Code Inline Assist",
-				"disabled": "oa Code Inline Assist (ปิดใช้งาน)",
+				"basic": "OpenAnalyst Inline Assist",
+				"disabled": "OpenAnalyst Inline Assist (ปิดใช้งาน)",
 				"tokenError": "ต้องตั้งค่าโทเค็นที่ถูกต้องเพื่อใช้ Inline Assist",
 				"lastCompletion": "คำแนะนำล่าสุด:",
 				"sessionTotal": "ค่าใช้จ่ายเซสชันทั้งหมด:",
@@ -71,30 +71,30 @@
 		},
 		"toggleMessage": "oa Inline Assist {{status}}",
 		"progress": {
-			"title": "oa Code",
+			"title": "OpenAnalyst",
 			"analyzing": "กำลังวิเคราะห์โค้ดของคุณ...",
 			"generating": "กำลังสร้างการแก้ไขที่แนะนำ...",
 			"processing": "กำลังประมวลผลการแก้ไขที่แนะนำ...",
 			"showing": "กำลังแสดงการแก้ไขที่แนะนำ..."
 		},
 		"input": {
-			"title": "oa Code: งานด่วน",
+			"title": "OpenAnalyst: งานด่วน",
 			"placeholder": "เช่น 'ปรับปรุงฟังก์ชันนี้ให้มีประสิทธิภาพมากขึ้น'"
 		},
 		"commands": {
-			"generateSuggestions": "oa Code: สร้างการแก้ไขที่แนะนำ",
+			"generateSuggestions": "OpenAnalyst: สร้างการแก้ไขที่แนะนำ",
 			"displaySuggestions": "แสดงการแก้ไขที่แนะนำ",
 			"cancelSuggestions": "ยกเลิกการแก้ไขที่แนะนำ",
 			"applyCurrentSuggestion": "ใช้การแก้ไขที่แนะนำปัจจุบัน",
 			"applyAllSuggestions": "ใช้การแก้ไขที่แนะนำทั้งหมด",
 			"promptCodeSuggestion": "งานด่วน",
-			"category": "oa Code"
+			"category": "OpenAnalyst"
 		},
 		"codeAction": {
-			"title": "oa Code: การแก้ไขที่แนะนำ"
+			"title": "OpenAnalyst: การแก้ไขที่แนะนำ"
 		},
 		"chatParticipant": {
-			"fullName": "oa Code Agent",
+			"fullName": "OpenAnalyst Agent",
 			"name": "Agent",
 			"description": "ฉันสามารถช่วยคุณเกี่ยวกับงานด่วนและการแก้ไขที่แนะนำได้"
 		},
@@ -102,7 +102,7 @@
 			"provideCodeSuggestions": "กำลังให้คำแนะนำโค้ด..."
 		},
 		"incompatibilityExtensionPopup": {
-			"message": "oa Code Inline Assist ถูกบล็อกโดยความขัดแย้งกับ GitHub Copilot หากต้องการแก้ไขปัญหานี้ คุณต้องปิดใช้งานคำแนะนำในบรรทัดของ Copilot",
+			"message": "OpenAnalyst Inline Assist ถูกบล็อกโดยความขัดแย้งกับ GitHub Copilot หากต้องการแก้ไขปัญหานี้ คุณต้องปิดใช้งานคำแนะนำในบรรทัดของ Copilot",
 			"disableCopilot": "ปิดใช้งาน Copilot",
 			"disableInlineAssist": "ปิดใช้งาน Inline Assist"
 		}

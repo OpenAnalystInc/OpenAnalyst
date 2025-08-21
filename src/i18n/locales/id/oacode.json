@@ -40,7 +40,7 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "Generator pesan komit oa Code diaktifkan",
+		"activated": "Generator pesan komit OpenAnalyst diaktifkan",
 		"gitNotFound": "⚠️ Repositori Git tidak ditemukan atau git tidak tersedia",
 		"gitInitError": "⚠️ Kesalahan inisialisasi Git: {{error}}",
 		"generating": "oa: Menghasilkan pesan komit...",
@@ -57,8 +57,8 @@
 			"disabled": "$(circle-slash) Bantuan Dalam Baris oa",
 			"warning": "$(warning) Bantuan Dalam Baris oa",
 			"tooltip": {
-				"basic": "Bantuan Dalam Baris oa Code",
-				"disabled": "Bantuan Dalam Baris oa Code (dinonaktifkan)",
+				"basic": "Bantuan Dalam Baris OpenAnalyst",
+				"disabled": "Bantuan Dalam Baris OpenAnalyst (dinonaktifkan)",
 				"tokenError": "Token yang valid harus diatur untuk menggunakan Bantuan Dalam Baris",
 				"lastCompletion": "Saran terakhir:",
 				"sessionTotal": "Total biaya sesi:",
@@ -71,30 +71,30 @@
 		},
 		"toggleMessage": "Bantuan Dalam Baris oa {{status}}",
 		"progress": {
-			"title": "oa Code",
+			"title": "OpenAnalyst",
 			"analyzing": "Menganalisis kode Anda...",
 			"generating": "Menghasilkan saran pengeditan...",
 			"processing": "Memproses saran pengeditan...",
 			"showing": "Menampilkan saran pengeditan..."
 		},
 		"input": {
-			"title": "oa Code: Tugas Cepat",
+			"title": "OpenAnalyst: Tugas Cepat",
 			"placeholder": "misalnya, 'refactor fungsi ini agar lebih efisien'"
 		},
 		"commands": {
-			"generateSuggestions": "oa Code: Hasilkan Saran Pengeditan",
+			"generateSuggestions": "OpenAnalyst: Hasilkan Saran Pengeditan",
 			"displaySuggestions": "Tampilkan Saran Pengeditan",
 			"cancelSuggestions": "Batalkan Saran Pengeditan",
 			"applyCurrentSuggestion": "Terapkan Saran Pengeditan Saat Ini",
 			"applyAllSuggestions": "Terapkan Semua Saran Pengeditan",
 			"promptCodeSuggestion": "Tugas Cepat",
-			"category": "oa Code"
+			"category": "OpenAnalyst"
 		},
 		"codeAction": {
-			"title": "oa Code: Saran Pengeditan"
+			"title": "OpenAnalyst: Saran Pengeditan"
 		},
 		"chatParticipant": {
-			"fullName": "Agen oa Code",
+			"fullName": "Agen OpenAnalyst",
 			"name": "Agen",
 			"description": "Saya dapat membantu Anda dengan tugas-tugas cepat dan saran pengeditan."
 		},
@@ -102,7 +102,7 @@
 			"provideCodeSuggestions": "Menyediakan saran kode..."
 		},
 		"incompatibilityExtensionPopup": {
-			"message": "Bantuan Dalam Baris oa Code diblokir oleh konflik dengan GitHub Copilot. Untuk memperbaikinya, Anda harus menonaktifkan saran dalam baris Copilot.",
+			"message": "Bantuan Dalam Baris OpenAnalyst diblokir oleh konflik dengan GitHub Copilot. Untuk memperbaikinya, Anda harus menonaktifkan saran dalam baris Copilot.",
 			"disableCopilot": "Nonaktifkan Copilot",
 			"disableInlineAssist": "Nonaktifkan Bantuan Dalam Baris"
 		}

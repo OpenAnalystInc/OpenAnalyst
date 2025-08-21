@@ -1,7 +1,7 @@
 {
 	"welcome": {
-		"greeting": "Welcome to oa Code!",
-		"introText1": "oa Code is a free, open source AI coding agent.",
+		"greeting": "Welcome to OpenAnalyst!",
+		"introText1": "OpenAnalyst is a free, open source AI coding agent.",
 		"introText2": "It works with the latest AI models like Claude 4 Sonnet, Gemini 2.5 Pro, GPT-4.1, and 450+ more.",
 		"introText3": "Create a free account and get $20 worth of tokens to use across any AI model.",
 		"ctaButton": "Get Started",
@@ -11,7 +11,7 @@
 	},
 	"lowCreditWarning": {
 		"addCredit": "Add Credit",
-		"lowBalance": "Your oa Code balance is low"
+		"lowBalance": "Your OpenAnalyst balance is low"
 	},
 	"pricing": {
 		"costUnknown": "cost unknown",
@@ -28,28 +28,28 @@
 			"mcp": "MCP Servers"
 		},
 		"provider": {
-			"account": "oa Code Account",
-			"apiKey": "oa Code API Key",
-			"login": "Log in at oa Code",
-			"logout": "Log out from oa Code",
+			"account": "OpenAnalyst Account",
+			"apiKey": "OpenAnalyst API Key",
+			"login": "Log in at OpenAnalyst",
+			"logout": "Log out from OpenAnalyst",
 			"providerRouting": {
-				"title": "oa Code - OpenRouter Provider Routing",
-				"description": "oa Code routes requests to the best available providers for your model. By default, requests are load balanced across the top providers to maximize uptime. However, you can choose a specific provider to use for this model."
+				"title": "OpenAnalyst - OpenRouter Provider Routing",
+				"description": "OpenAnalyst routes requests to the best available providers for your model. By default, requests are load balanced across the top providers to maximize uptime. However, you can choose a specific provider to use for this model."
 			},
-			"automaticFetch": "The latest models are automatically available in oa Code. If you're unsure which model to choose, oa Code works best with the recommended models listed at the top in <strong>bold face</strong>."
+			"automaticFetch": "The latest models are automatically available in OpenAnalyst. If you're unsure which model to choose, OpenAnalyst works best with the recommended models listed at the top in <strong>bold face</strong>."
 		},
 		"contextManagement": {
 			"allowVeryLargeReads": {
 				"label": "Allow very large file reads",
-				"description": "When enabled, oa Code will perform very large file or MCP output reads even if there is a high chance of overflowing the context window (content size >80% of context window)."
+				"description": "When enabled, OpenAnalyst will perform very large file or MCP output reads even if there is a high chance of overflowing the context window (content size >80% of context window)."
 			}
 		},
 		"systemNotifications": {
 			"label": "Enable System Notifications",
-			"description": "When enabled, oa Code will send system notifications for important events like task completion or errors.",
+			"description": "When enabled, OpenAnalyst will send system notifications for important events like task completion or errors.",
 			"testButton": "Test Notification",
-			"testTitle": "oa Code",
-			"testMessage": "This is a test notification from oa Code."
+			"testTitle": "OpenAnalyst",
+			"testMessage": "This is a test notification from OpenAnalyst."
 		},
 		"terminal": {
 			"commandGenerator": {
@@ -64,7 +64,7 @@
 	},
 	"chat": {
 		"condense": {
-			"wantsToCondense": "oa Code wants to condense your conversation",
+			"wantsToCondense": "OpenAnalyst wants to condense your conversation",
 			"condenseConversation": "Condense Conversation"
 		}
 	},
@@ -87,15 +87,15 @@
 	},
 	"docs": "Docs",
 	"rules": {
-		"tooltip": "Manage oa Code Rules & Workflows",
-		"ariaLabel": "oa Code Rules",
+		"tooltip": "Manage OpenAnalyst Rules & Workflows",
+		"ariaLabel": "OpenAnalyst Rules",
 		"tabs": {
 			"rules": "Rules",
 			"workflows": "Workflows"
 		},
 		"description": {
-			"rules": "Rules allow you to provide oa Code with instructions it should follow in all modes and for all prompts. They are a persistent way to include context and preferences for all conversations in your workspace or globally.",
-			"workflows": "Workflows are a prepared template for a conversation. Workflows can allow you to define prompts you use frequently, and can include a series of steps to guide oa Code through repetitive tasks, such as deploying a service or submitting a PR. To invoke a workflow, type",
+			"rules": "Rules allow you to provide OpenAnalyst with instructions it should follow in all modes and for all prompts. They are a persistent way to include context and preferences for all conversations in your workspace or globally.",
+			"workflows": "Workflows are a prepared template for a conversation. Workflows can allow you to define prompts you use frequently, and can include a series of steps to guide OpenAnalyst through repetitive tasks, such as deploying a service or submitting a PR. To invoke a workflow, type",
 			"workflowsInChat": "in the chat."
 		},
 		"sections": {
@@ -166,11 +166,11 @@
 			"keybindingDescription": "Inline Assist features are triggered by commands. You can configure the <DocsLink>Keyboard Shortcuts here</DocsLink>.",
 			"enableAutoTrigger": {
 				"label": "Enable Auto Trigger",
-				"description": "When enabled, oa Code will automatically trigger Inline Assist when you stop typing. This can be useful for quick fixes and suggestions."
+				"description": "When enabled, OpenAnalyst will automatically trigger Inline Assist when you stop typing. This can be useful for quick fixes and suggestions."
 			},
 			"autoTriggerDelay": {
 				"label": "Auto Trigger Delay",
-				"description": "The delay in seconds before oa Code triggers Inline Assist after you stop typing. A shorter delay means quicker suggestions, but may be more resource-intensive."
+				"description": "The delay in seconds before OpenAnalyst triggers Inline Assist after you stop typing. A shorter delay means quicker suggestions, but may be more resource-intensive."
 			},
 			"enableQuickInlineTaskKeybinding": {
 				"label": "Quick Inline Task",

@@ -40,7 +40,7 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "تم تفعيل منشئ رسائل التزام oa Code",
+		"activated": "تم تفعيل منشئ رسائل التزام OpenAnalyst",
 		"gitNotFound": "⚠️ مستودع Git غير موجود أو Git غير متاح",
 		"gitInitError": "⚠️ خطأ في تهيئة Git: {{error}}",
 		"generating": "oa: جارٍ إنشاء رسالة الالتزام...",
@@ -51,7 +51,7 @@
 		"analyzingChanges": "oa: جاري تحليل التعديلات الجاهزة...",
 		"noStagedChangesRepo": "oa: ما فيه تعديلات مضافة في مستودع git",
 		"noStagedChanges": "oa: ما فيه تعديلات مضافة لتحليلها",
-		"tokenRequired": "يتطلب توليد الرسالة رمز oa Code",
+		"tokenRequired": "يتطلب توليد الرسالة رمز OpenAnalyst",
 		"activationFailed": "oa: فشل تفعيل مولّد الرسائل: {{error}}",
 		"providerRegistered": "oa: تم تسجيل موفر رسائل الاعتماد"
 	},
@@ -61,26 +61,26 @@
 			"showing": "عرض التعديلات المقترحة...",
 			"generating": "جاري توليد التعديلات المقترحة...",
 			"processing": "جارِ معالجة التعديلات المقترحة...",
-			"title": "oa Code"
+			"title": "OpenAnalyst"
 		},
 		"input": {
-			"title": "oa Code: مهمة سريعة",
+			"title": "OpenAnalyst: مهمة سريعة",
 			"placeholder": "مثلاً، 'أعد هيكلة هذه الدالة لتكون أكثر كفاءة'"
 		},
 		"commands": {
 			"displaySuggestions": "عرض التعديلات المقترحة",
-			"generateSuggestions": "oa Code: توليد تعديلات مقترحة",
+			"generateSuggestions": "OpenAnalyst: توليد تعديلات مقترحة",
 			"applyCurrentSuggestion": "تطبيق التعديل المُقترح الحالي",
 			"cancelSuggestions": "إلغاء التعديلات المقترحة",
 			"promptCodeSuggestion": "مهمة سريعة",
 			"applyAllSuggestions": "تطبيق كافة التعديلات المقترحة",
-			"category": "oa Code"
+			"category": "OpenAnalyst"
 		},
 		"codeAction": {
-			"title": "oa Code: التعديلات المقترحة"
+			"title": "OpenAnalyst: التعديلات المقترحة"
 		},
 		"chatParticipant": {
-			"fullName": "oa Code وكيل",
+			"fullName": "OpenAnalyst وكيل",
 			"description": "يمكنني مساعدتك بالمهام السريعة والتعديلات المقترحة.",
 			"name": "وكيل"
 		},

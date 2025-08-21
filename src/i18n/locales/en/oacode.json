@@ -40,7 +40,7 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "oa Code commit message generator activated",
+		"activated": "OpenAnalyst commit message generator activated",
 		"gitNotFound": "⚠️ Git repository not found or git not available",
 		"gitInitError": "⚠️ Git initialization error: {{error}}",
 		"generating": "oa: Generating commit message...",
@@ -57,8 +57,8 @@
 			"disabled": "$(circle-slash) oa Inline Assist",
 			"warning": "$(warning) oa Inline Assist",
 			"tooltip": {
-				"basic": "oa Code Inline Assist",
-				"disabled": "oa Code Inline Assist (disabled)",
+				"basic": "OpenAnalyst Inline Assist",
+				"disabled": "OpenAnalyst Inline Assist (disabled)",
 				"tokenError": "A valid token must be set to use Inline Assist",
 				"lastCompletion": "Last suggestion:",
 				"sessionTotal": "Session total cost:",
@@ -71,35 +71,35 @@
 		},
 		"toggleMessage": "oa Inline Assist {{status}}",
 		"progress": {
-			"title": "oa Code",
+			"title": "OpenAnalyst",
 			"analyzing": "Analyzing your code...",
 			"generating": "Generating suggested edits...",
 			"processing": "Processing suggested edits...",
 			"showing": "Displaying suggested edits..."
 		},
 		"input": {
-			"title": "oa Code: Quick Task",
+			"title": "OpenAnalyst: Quick Task",
 			"placeholder": "e.g., 'refactor this function to be more efficient'"
 		},
 		"commands": {
-			"generateSuggestions": "oa Code: Generate Suggested Edits",
+			"generateSuggestions": "OpenAnalyst: Generate Suggested Edits",
 			"displaySuggestions": "Display Suggested Edits",
 			"cancelSuggestions": "Cancel Suggested Edits",
 			"applyCurrentSuggestion": "Apply Current Suggested Edit",
 			"applyAllSuggestions": "Apply All Suggested Edits",
 			"promptCodeSuggestion": "Quick Task",
-			"category": "oa Code"
+			"category": "OpenAnalyst"
 		},
 		"codeAction": {
-			"title": "oa Code: Suggested Edits"
+			"title": "OpenAnalyst: Suggested Edits"
 		},
 		"chatParticipant": {
-			"fullName": "oa Code Agent",
+			"fullName": "OpenAnalyst Agent",
 			"name": "Agent",
 			"description": "I can help you with quick tasks and suggested edits."
 		},
 		"incompatibilityExtensionPopup": {
-			"message": "The oa Code Inline Assist is being blocked by a conflict with GitHub Copilot. To fix this, you must disable Copilot's inline suggestions.",
+			"message": "The OpenAnalyst Inline Assist is being blocked by a conflict with GitHub Copilot. To fix this, you must disable Copilot's inline suggestions.",
 			"disableCopilot": "Disable Copilot",
 			"disableInlineAssist": "Disable Inline Assist"
 		}

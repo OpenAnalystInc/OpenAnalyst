@@ -40,7 +40,7 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "Генератор повідомлень коммітів oa Code активовано",
+		"activated": "Генератор повідомлень коммітів OpenAnalyst активовано",
 		"gitNotFound": "⚠️ Репозиторій Git не знайдено або git недоступний",
 		"gitInitError": "⚠️ Помилка ініціалізації Git: {{error}}",
 		"generating": "oa: Генерування повідомлення комміту...",
@@ -57,8 +57,8 @@
 			"disabled": "$(circle-slash) Вбудована допомога oa",
 			"warning": "$(warning) Вбудована допомога oa",
 			"tooltip": {
-				"basic": "Вбудована допомога oa Code",
-				"disabled": "Вбудована допомога oa Code (вимкнено)",
+				"basic": "Вбудована допомога OpenAnalyst",
+				"disabled": "Вбудована допомога OpenAnalyst (вимкнено)",
 				"tokenError": "Для використання вбудованої допомоги необхідно встановити дійсний токен",
 				"lastCompletion": "Остання пропозиція:",
 				"sessionTotal": "Загальна вартість сесії:",
@@ -71,30 +71,30 @@
 		},
 		"toggleMessage": "Вбудована допомога oa {{status}}",
 		"progress": {
-			"title": "oa Code",
+			"title": "OpenAnalyst",
 			"analyzing": "Аналіз вашого коду...",
 			"generating": "Генерація запропонованих правок...",
 			"processing": "Обробка запропонованих правок...",
 			"showing": "Відображення запропонованих правок..."
 		},
 		"input": {
-			"title": "oa Code: Швидке завдання",
+			"title": "OpenAnalyst: Швидке завдання",
 			"placeholder": "наприклад, 'рефакторити цю функцію, щоб зробити її ефективнішою'"
 		},
 		"commands": {
-			"generateSuggestions": "oa Code: Згенерувати запропоновані правки",
+			"generateSuggestions": "OpenAnalyst: Згенерувати запропоновані правки",
 			"displaySuggestions": "Показати запропоновані правки",
 			"cancelSuggestions": "Скасувати запропоновані правки",
 			"applyCurrentSuggestion": "Застосувати поточну запропоновану правку",
 			"applyAllSuggestions": "Застосувати всі запропоновані правки",
 			"promptCodeSuggestion": "Швидке завдання",
-			"category": "oa Code"
+			"category": "OpenAnalyst"
 		},
 		"codeAction": {
-			"title": "oa Code: Запропоновані правки"
+			"title": "OpenAnalyst: Запропоновані правки"
 		},
 		"chatParticipant": {
-			"fullName": "Агент oa Code",
+			"fullName": "Агент OpenAnalyst",
 			"name": "Агент",
 			"description": "Я можу допомогти вам зі швидкими завданнями та запропонованими правками."
 		},
@@ -102,7 +102,7 @@
 			"provideCodeSuggestions": "Надання пропозицій коду..."
 		},
 		"incompatibilityExtensionPopup": {
-			"message": "Вбудована допомога oa Code блокується конфліктом із GitHub Copilot. Щоб вирішити цю проблему, вам потрібно вимкнути вбудовані пропозиції Copilot.",
+			"message": "Вбудована допомога OpenAnalyst блокується конфліктом із GitHub Copilot. Щоб вирішити цю проблему, вам потрібно вимкнути вбудовані пропозиції Copilot.",
 			"disableCopilot": "Вимкнути Copilot",
 			"disableInlineAssist": "Вимкнути вбудовану допомогу"
 		}

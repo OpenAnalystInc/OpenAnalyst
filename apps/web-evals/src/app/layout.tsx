@@ -11,7 +11,7 @@ const fontSans = Geist({ variable: "--font-sans", subsets: ["latin"] })
 const fontMono = Geist_Mono({ variable: "--font-mono", subsets: ["latin"] })
 
 export const metadata: Metadata = {
-	title: "oa Code Evals",
+	title: "OpenAnalyst Evals",
 }
 
 export default function RootLayout({

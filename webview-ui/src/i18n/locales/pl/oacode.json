@@ -1,7 +1,7 @@
 {
 	"welcome": {
-		"greeting": "Witaj w oa Code!",
-		"introText1": "oa Code to darmowy, otwartoźródłowy agent kodowania AI.",
+		"greeting": "Witaj w OpenAnalyst!",
+		"introText1": "OpenAnalyst to darmowy, otwartoźródłowy agent kodowania AI.",
 		"introText2": "Współpracuje z najnowszymi modelami AI, takimi jak Claude 4 Sonnet, Gemini 2.5 Pro, GPT-4.1 i ponad 450 innymi.",
 		"introText3": "Stwórz darmowe konto i otrzymaj tokeny o wartości $20 do wykorzystania z dowolnym modelem AI.",
 		"ctaButton": "Rozpocznij",
@@ -11,7 +11,7 @@
 	},
 	"lowCreditWarning": {
 		"addCredit": "Dodaj kredyt",
-		"lowBalance": "Twój stan konta oa Code jest niski"
+		"lowBalance": "Twój stan konta OpenAnalyst jest niski"
 	},
 	"pricing": {
 		"costUnknown": "koszt nieznany",
@@ -28,28 +28,28 @@
 			"mcp": "Serwery MCP"
 		},
 		"provider": {
-			"account": "Konto oa Code",
-			"apiKey": "Klucz API oa Code",
-			"login": "Zaloguj się do oa Code",
-			"logout": "Wyloguj się z oa Code",
-			"automaticFetch": "Najnowsze modele są automatycznie dostępne w oa Code. Jeśli nie jesteś pewien, który model wybrać, oa Code działa najlepiej z zalecanymi modelami wymienionymi na górze <strong>pogrubioną czcionką</strong>.",
+			"account": "Konto OpenAnalyst",
+			"apiKey": "Klucz API OpenAnalyst",
+			"login": "Zaloguj się do OpenAnalyst",
+			"logout": "Wyloguj się z OpenAnalyst",
+			"automaticFetch": "Najnowsze modele są automatycznie dostępne w OpenAnalyst. Jeśli nie jesteś pewien, który model wybrać, OpenAnalyst działa najlepiej z zalecanymi modelami wymienionymi na górze <strong>pogrubioną czcionką</strong>.",
 			"providerRouting": {
-				"title": "oa Code - Routing dostawców OpenRouter",
-				"description": "oa Code kieruje żądania do najlepszych dostępnych dostawców dla Twojego modelu. Domyślnie żądania są równoważone obciążeniem między najlepszymi dostawcami, aby zmaksymalizować czas działania. Możesz jednak wybrać konkretnego dostawcę do użycia dla tego modelu."
+				"title": "OpenAnalyst - Routing dostawców OpenRouter",
+				"description": "OpenAnalyst kieruje żądania do najlepszych dostępnych dostawców dla Twojego modelu. Domyślnie żądania są równoważone obciążeniem między najlepszymi dostawcami, aby zmaksymalizować czas działania. Możesz jednak wybrać konkretnego dostawcę do użycia dla tego modelu."
 			}
 		},
 		"contextManagement": {
 			"allowVeryLargeReads": {
 				"label": "Zezwól na odczyt bardzo dużych plików",
-				"description": "Gdy włączone, oa Code będzie wykonywać odczyty bardzo dużych plików lub wyjść MCP, nawet jeśli istnieje duże prawdopodobieństwo przepełnienia okna kontekstu (rozmiar zawartości >80% okna kontekstu)."
+				"description": "Gdy włączone, OpenAnalyst będzie wykonywać odczyty bardzo dużych plików lub wyjść MCP, nawet jeśli istnieje duże prawdopodobieństwo przepełnienia okna kontekstu (rozmiar zawartości >80% okna kontekstu)."
 			}
 		},
 		"systemNotifications": {
 			"label": "Włącz powiadomienia systemowe",
-			"description": "Gdy włączone, oa Code będzie wysyłać powiadomienia systemowe o ważnych wydarzeniach, takich jak zakończenie zadania lub błędy.",
+			"description": "Gdy włączone, OpenAnalyst będzie wysyłać powiadomienia systemowe o ważnych wydarzeniach, takich jak zakończenie zadania lub błędy.",
 			"testButton": "Testuj powiadomienie",
-			"testTitle": "oa Code",
-			"testMessage": "To jest testowe powiadomienie z oa Code."
+			"testTitle": "OpenAnalyst",
+			"testMessage": "To jest testowe powiadomienie z OpenAnalyst."
 		},
 		"terminal": {
 			"commandGenerator": {
@@ -64,7 +64,7 @@
 	},
 	"chat": {
 		"condense": {
-			"wantsToCondense": "oa Code chce skondensować Twoją rozmowę",
+			"wantsToCondense": "OpenAnalyst chce skondensować Twoją rozmowę",
 			"condenseConversation": "Skondensuj Rozmowę"
 		}
 	},
@@ -87,15 +87,15 @@
 	},
 	"docs": "Dokumentacja",
 	"rules": {
-		"tooltip": "Zarządzaj Regułami i Przepływami Pracy oa Code",
-		"ariaLabel": "Reguły oa Code",
+		"tooltip": "Zarządzaj Regułami i Przepływami Pracy OpenAnalyst",
+		"ariaLabel": "Reguły OpenAnalyst",
 		"tabs": {
 			"rules": "Reguły",
 			"workflows": "Przepływy Pracy"
 		},
 		"description": {
-			"rules": "Reguły pozwalają dostarczyć oa Code instrukcje, których powinien przestrzegać we wszystkich trybach i dla wszystkich promptów. To trwały sposób dołączania kontekstu i preferencji dla wszystkich rozmów w twoim obszarze roboczym lub globalnie.",
-			"workflows": "Przepływy pracy to przygotowany szablon dla rozmowy. Przepływy pracy pozwalają zdefiniować prompty, których często używasz, i mogą zawierać serię kroków, aby poprowadzić oa Code przez powtarzalne zadania, takie jak wdrażanie usługi lub przesyłanie PR. Aby wywołać przepływ pracy, wpisz",
+			"rules": "Reguły pozwalają dostarczyć OpenAnalyst instrukcje, których powinien przestrzegać we wszystkich trybach i dla wszystkich promptów. To trwały sposób dołączania kontekstu i preferencji dla wszystkich rozmów w twoim obszarze roboczym lub globalnie.",
+			"workflows": "Przepływy pracy to przygotowany szablon dla rozmowy. Przepływy pracy pozwalają zdefiniować prompty, których często używasz, i mogą zawierać serię kroków, aby poprowadzić OpenAnalyst przez powtarzalne zadania, takie jak wdrażanie usługi lub przesyłanie PR. Aby wywołać przepływ pracy, wpisz",
 			"workflowsInChat": "w czacie."
 		},
 		"sections": {
@@ -172,11 +172,11 @@
 			},
 			"enableAutoTrigger": {
 				"label": "Włącz automatyczne wyzwalanie",
-				"description": "Gdy włączone, oa Code automatycznie uruchomi Inline Assist, gdy przestaniesz pisać. Może to być przydatne do szybkich poprawek i sugestii."
+				"description": "Gdy włączone, OpenAnalyst automatycznie uruchomi Inline Assist, gdy przestaniesz pisać. Może to być przydatne do szybkich poprawek i sugestii."
 			},
 			"autoTriggerDelay": {
 				"label": "Opóźnienie automatycznego wyzwalania",
-				"description": "Opóźnienie w sekundach przed uruchomieniem Inline Assist przez oa Code po zakończeniu pisania. Krótsze opóźnienie oznacza szybsze sugestie, ale może być bardziej wymagające dla zasobów."
+				"description": "Opóźnienie w sekundach przed uruchomieniem Inline Assist przez OpenAnalyst po zakończeniu pisania. Krótsze opóźnienie oznacza szybsze sugestie, ale może być bardziej wymagające dla zasobów."
 			},
 			"enableSmartInlineTaskKeybinding": {
 				"label": "Inteligentne zadanie w tekście",

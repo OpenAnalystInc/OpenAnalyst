@@ -40,7 +40,7 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "Generátor zpráv pro commit oa Code aktivován",
+		"activated": "Generátor zpráv pro commit OpenAnalyst aktivován",
 		"gitNotFound": "⚠️ Git repozitář nebyl nalezen nebo git není dostupný",
 		"gitInitError": "⚠️ Chyba inicializace Gitu: {{error}}",
 		"generating": "oa: Generuji zprávu commitu...",
@@ -57,27 +57,27 @@
 			"analyzing": "Analyzuji váš kód...",
 			"processing": "Zpracování navržených úprav...",
 			"showing": "Zobrazuji navrhované úpravy...",
-			"title": "oa Code"
+			"title": "OpenAnalyst"
 		},
 		"input": {
-			"title": "oa Code: Rychlý úkol",
+			"title": "OpenAnalyst: Rychlý úkol",
 			"placeholder": "např. \"přepracovat tuto funkci, aby byla efektivnější\""
 		},
 		"commands": {
-			"generateSuggestions": "oa Code: Generování navrhovaných úprav",
+			"generateSuggestions": "OpenAnalyst: Generování navrhovaných úprav",
 			"applyCurrentSuggestion": "Použít aktuální navrhovanou úpravu",
 			"displaySuggestions": "Zobrazit navrhované úpravy",
 			"cancelSuggestions": "Zrušit navrhované úpravy",
 			"applyAllSuggestions": "Použít všechny navrhované úpravy",
 			"promptCodeSuggestion": "Rychlý úkol",
-			"category": "oa Code"
+			"category": "OpenAnalyst"
 		},
 		"codeAction": {
-			"title": "oa Code: Navrhované úpravy"
+			"title": "OpenAnalyst: Navrhované úpravy"
 		},
 		"chatParticipant": {
 			"name": "Agent",
-			"fullName": "oa Code Agent",
+			"fullName": "OpenAnalyst Agent",
 			"description": "Mohu vám pomoci s rychlými úkoly a navrženými úpravami."
 		},
 		"messages": {
@@ -88,8 +88,8 @@
 			"enabled": "$(sparkle) oa Inline Asistent",
 			"warning": "$(warning) Inline asistence oa",
 			"tooltip": {
-				"disabled": "oa Code Inline Assist (deaktivováno)",
-				"basic": "Inline asistent oa Code",
+				"disabled": "OpenAnalyst Inline Assist (deaktivováno)",
+				"basic": "Inline asistent OpenAnalyst",
 				"tokenError": "Pro použití Inline Assist je nutné nastavit platný token",
 				"sessionTotal": "Celková cena sezení:",
 				"model": "Model:",
@@ -102,7 +102,7 @@
 		},
 		"toggleMessage": "oa Inline Assist {{status}}",
 		"incompatibilityExtensionPopup": {
-			"message": "Inline asistent oa Code je blokován kvůli konfliktu s GitHub Copilot. Pro vyřešení tohoto problému musíš deaktivovat inline návrhy Copilotu.",
+			"message": "Inline asistent OpenAnalyst je blokován kvůli konfliktu s GitHub Copilot. Pro vyřešení tohoto problému musíš deaktivovat inline návrhy Copilotu.",
 			"disableCopilot": "Deaktivovat Copilot",
 			"disableInlineAssist": "Deaktivovat Inline asistenta"
 		}

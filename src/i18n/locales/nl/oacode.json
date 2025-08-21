@@ -40,7 +40,7 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "oa Code commit bericht generator geactiveerd",
+		"activated": "OpenAnalyst commit bericht generator geactiveerd",
 		"gitNotFound": "⚠️ Git-repository niet gevonden of git niet beschikbaar",
 		"gitInitError": "⚠️ Git-initialisatiefout: {{error}}",
 		"generating": "oa: Commit bericht genereren...",
@@ -57,8 +57,8 @@
 			"disabled": "$(circle-slash) oa In-line Assistent",
 			"warning": "$(warning) oa In-line Assistent",
 			"tooltip": {
-				"basic": "oa Code In-line Assistent",
-				"disabled": "oa Code In-line Assistent (uitgeschakeld)",
+				"basic": "OpenAnalyst In-line Assistent",
+				"disabled": "OpenAnalyst In-line Assistent (uitgeschakeld)",
 				"tokenError": "Een geldig token moet zijn ingesteld om In-line Assistent te gebruiken",
 				"lastCompletion": "Laatste suggestie:",
 				"sessionTotal": "Totale sessiekosten:",
@@ -71,30 +71,30 @@
 		},
 		"toggleMessage": "oa In-line Assistent {{status}}",
 		"progress": {
-			"title": "oa Code",
+			"title": "OpenAnalyst",
 			"analyzing": "Uw code analyseren...",
 			"generating": "Suggesties voor bewerkingen genereren...",
 			"processing": "Suggesties voor bewerkingen verwerken...",
 			"showing": "Suggesties voor bewerkingen weergeven..."
 		},
 		"input": {
-			"title": "oa Code: Snelle Taak",
+			"title": "OpenAnalyst: Snelle Taak",
 			"placeholder": "bijv. 'refactor deze functie om deze efficiënter te maken'"
 		},
 		"commands": {
-			"generateSuggestions": "oa Code: Genereer Voorgestelde Bewerkingen",
+			"generateSuggestions": "OpenAnalyst: Genereer Voorgestelde Bewerkingen",
 			"displaySuggestions": "Voorgestelde Bewerkingen Weergeven",
 			"cancelSuggestions": "Voorgestelde Bewerkingen Annuleren",
 			"applyCurrentSuggestion": "Huidige Voorgestelde Bewerking Toepassen",
 			"applyAllSuggestions": "Alle Voorgestelde Bewerkingen Toepassen",
 			"promptCodeSuggestion": "Snelle Taak",
-			"category": "oa Code"
+			"category": "OpenAnalyst"
 		},
 		"codeAction": {
-			"title": "oa Code: Voorgestelde Bewerkingen"
+			"title": "OpenAnalyst: Voorgestelde Bewerkingen"
 		},
 		"chatParticipant": {
-			"fullName": "oa Code Agent",
+			"fullName": "OpenAnalyst Agent",
 			"name": "Agent",
 			"description": "Ik kan u helpen met snelle taken en voorgestelde bewerkingen."
 		},
@@ -102,7 +102,7 @@
 			"provideCodeSuggestions": "Code suggesties worden verstrekt..."
 		},
 		"incompatibilityExtensionPopup": {
-			"message": "De oa Code In-line Assistent wordt geblokkeerd door een conflict met GitHub Copilot. Om dit op te lossen, moet u de in-line suggesties van Copilot uitschakelen.",
+			"message": "De OpenAnalyst In-line Assistent wordt geblokkeerd door een conflict met GitHub Copilot. Om dit op te lossen, moet u de in-line suggesties van Copilot uitschakelen.",
 			"disableCopilot": "Copilot uitschakelen",
 			"disableInlineAssist": "In-line Assistent uitschakelen"
 		}

@@ -40,7 +40,7 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "oa Code कमिट संदेश जनरेटर सक्रिय",
+		"activated": "OpenAnalyst कमिट संदेश जनरेटर सक्रिय",
 		"gitNotFound": "⚠️ Git रिपॉजिटरी नहीं मिली या Git उपलब्ध नहीं है",
 		"gitInitError": "⚠️ Git इनिशियलाइज़ेशन त्रुटि: {{error}}",
 		"generating": "oa: कमिट संदेश उत्पन्न कर रहा है...",
@@ -57,8 +57,8 @@
 			"disabled": "$(circle-slash) oa इनलाइन सहायता",
 			"warning": "$(warning) oa इनलाइन सहायता",
 			"tooltip": {
-				"basic": "oa Code इनलाइन सहायता",
-				"disabled": "oa Code इनलाइन सहायता (अक्षम)",
+				"basic": "OpenAnalyst इनलाइन सहायता",
+				"disabled": "OpenAnalyst इनलाइन सहायता (अक्षम)",
 				"tokenError": "इनलाइन सहायता का उपयोग करने के लिए एक वैध टोकन सेट होना चाहिए",
 				"lastCompletion": "अंतिम सुझाव:",
 				"sessionTotal": "सत्र कुल लागत:",
@@ -71,30 +71,30 @@
 		},
 		"toggleMessage": "oa इनलाइन सहायता {{status}}",
 		"progress": {
-			"title": "oa Code",
+			"title": "OpenAnalyst",
 			"analyzing": "आपका कोड विश्लेषण कर रहा है...",
 			"generating": "सुझाए गए संपादन उत्पन्न कर रहा है...",
 			"processing": "सुझाए गए संपादन संसाधित कर रहा है...",
 			"showing": "सुझाए गए संपादन प्रदर्शित कर रहा है..."
 		},
 		"input": {
-			"title": "oa Code: त्वरित कार्य",
+			"title": "OpenAnalyst: त्वरित कार्य",
 			"placeholder": "जैसे, 'इस फ़ंक्शन को अधिक कुशल बनाने के लिए रीफैक्टर करें'"
 		},
 		"commands": {
-			"generateSuggestions": "oa Code: सुझाए गए संपादन उत्पन्न करें",
+			"generateSuggestions": "OpenAnalyst: सुझाए गए संपादन उत्पन्न करें",
 			"displaySuggestions": "सुझाए गए संपादन प्रदर्शित करें",
 			"cancelSuggestions": "सुझाए गए संपादन रद्द करें",
 			"applyCurrentSuggestion": "वर्तमान सुझाए गए संपादन लागू करें",
 			"applyAllSuggestions": "सभी सुझाए गए संपादन लागू करें",
 			"promptCodeSuggestion": "त्वरित कार्य",
-			"category": "oa Code"
+			"category": "OpenAnalyst"
 		},
 		"codeAction": {
-			"title": "oa Code: सुझाए गए संपादन"
+			"title": "OpenAnalyst: सुझाए गए संपादन"
 		},
 		"chatParticipant": {
-			"fullName": "oa Code एजेंट",
+			"fullName": "OpenAnalyst एजेंट",
 			"name": "एजेंट",
 			"description": "मैं त्वरित कार्यों और सुझाए गए संपादनों में आपकी सहायता कर सकता हूँ।"
 		},
@@ -102,7 +102,7 @@
 			"provideCodeSuggestions": "कोड सुझाव प्रदान किए जा रहे हैं..."
 		},
 		"incompatibilityExtensionPopup": {
-			"message": "oa Code Inline Assist GitHub Copilot के साथ टकराव के कारण अवरुद्ध हो रहा है। इसे ठीक करने के लिए, आपको Copilot के इनलाइन सुझावों को अक्षम करना होगा।",
+			"message": "OpenAnalyst Inline Assist GitHub Copilot के साथ टकराव के कारण अवरुद्ध हो रहा है। इसे ठीक करने के लिए, आपको Copilot के इनलाइन सुझावों को अक्षम करना होगा।",
 			"disableCopilot": "Copilot अक्षम करें",
 			"disableInlineAssist": "Inline Assist अक्षम करें"
 		}

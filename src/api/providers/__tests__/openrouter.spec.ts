@@ -62,7 +62,7 @@ describe("OpenRouterHandler", () => {
 			apiKey: mockOptions.openRouterApiKey,
 			defaultHeaders: {
 				"HTTP-Referer": "https://oacode.ai",
-				"X-Title": "oa Code",
+				"X-Title": "OpenAnalyst",
 				"X-oacode-Version": Package.version,
 				"User-Agent": `oa-Code/${Package.version}`,
 			},

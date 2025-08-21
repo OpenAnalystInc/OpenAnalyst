@@ -40,7 +40,7 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "Генератор сообщений коммитов oa Code активирован",
+		"activated": "Генератор сообщений коммитов OpenAnalyst активирован",
 		"gitNotFound": "⚠️ Репозиторий Git не найден или git недоступен",
 		"gitInitError": "⚠️ Ошибка инициализации Git: {{error}}",
 		"generating": "oa: Генерация сообщения коммита...",
@@ -57,8 +57,8 @@
 			"disabled": "$(circle-slash) Встроенная помощь oa",
 			"warning": "$(warning) Встроенная помощь oa",
 			"tooltip": {
-				"basic": "Встроенная помощь oa Code",
-				"disabled": "Встроенная помощь oa Code (отключена)",
+				"basic": "Встроенная помощь OpenAnalyst",
+				"disabled": "Встроенная помощь OpenAnalyst (отключена)",
 				"tokenError": "Для использования встроенной помощи необходимо установить действительный токен",
 				"lastCompletion": "Последнее предложение:",
 				"sessionTotal": "Общая стоимость сессии:",
@@ -71,30 +71,30 @@
 		},
 		"toggleMessage": "Встроенная помощь oa {{status}}",
 		"progress": {
-			"title": "oa Code",
+			"title": "OpenAnalyst",
 			"analyzing": "Анализ вашего кода...",
 			"generating": "Генерация предлагаемых правок...",
 			"processing": "Обработка предлагаемых правок...",
 			"showing": "Отображение предлагаемых правок..."
 		},
 		"input": {
-			"title": "oa Code: Быстрая задача",
+			"title": "OpenAnalyst: Быстрая задача",
 			"placeholder": "например, 'рефакторить эту функцию, чтобы сделать ее более эффективной'"
 		},
 		"commands": {
-			"generateSuggestions": "oa Code: Сгенерировать предлагаемые правки",
+			"generateSuggestions": "OpenAnalyst: Сгенерировать предлагаемые правки",
 			"displaySuggestions": "Показать предлагаемые правки",
 			"cancelSuggestions": "Отменить предлагаемые правки",
 			"applyCurrentSuggestion": "Применить текущую предложенную правку",
 			"applyAllSuggestions": "Применить все предложенные правки",
 			"promptCodeSuggestion": "Быстрая задача",
-			"category": "oa Code"
+			"category": "OpenAnalyst"
 		},
 		"codeAction": {
-			"title": "oa Code: Предлагаемые правки"
+			"title": "OpenAnalyst: Предлагаемые правки"
 		},
 		"chatParticipant": {
-			"fullName": "Агент oa Code",
+			"fullName": "Агент OpenAnalyst",
 			"name": "Агент",
 			"description": "Я могу помочь вам с быстрыми задачами и предлагаемыми правками."
 		},
@@ -102,7 +102,7 @@
 			"provideCodeSuggestions": "Предоставление предложений кода..."
 		},
 		"incompatibilityExtensionPopup": {
-			"message": "Встроенная помощь oa Code блокируется конфликтом с GitHub Copilot. Чтобы исправить это, вам необходимо отключить встроенные предложения Copilot.",
+			"message": "Встроенная помощь OpenAnalyst блокируется конфликтом с GitHub Copilot. Чтобы исправить это, вам необходимо отключить встроенные предложения Copilot.",
 			"disableCopilot": "Отключить Copilot",
 			"disableInlineAssist": "Отключить встроенную помощь"
 		}

@@ -5,7 +5,7 @@ export function getoaBaseUriFromToken(oacodeToken: string) {
 		//note: this is UNTRUSTED, so we need to make sure we're OK with this being manipulated by an attacker; e.g. we should not read uri's from the JWT directly.
 		if (payload.env === "development") return "http://localhost:3000"
 	} catch (_error) {
-		console.warn("Failed to get base URL from oa Code token")
+		console.warn("Failed to get base URL from OpenAnalyst token")
 	}
 	return "https://oacode.ai"
 }

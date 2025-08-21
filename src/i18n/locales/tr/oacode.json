@@ -40,7 +40,7 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "oa Code commit mesajı oluşturucu etkinleştirildi",
+		"activated": "OpenAnalyst commit mesajı oluşturucu etkinleştirildi",
 		"gitNotFound": "⚠️ Git deposu bulunamadı veya git kullanılamıyor",
 		"gitInitError": "⚠️ Git başlatma hatası: {{error}}",
 		"generating": "oa: Commit mesajı oluşturuluyor...",
@@ -57,8 +57,8 @@
 			"disabled": "$(circle-slash) oa Satır İçi Yardım",
 			"warning": "$(warning) oa Satır İçi Yardım",
 			"tooltip": {
-				"basic": "oa Code Satır İçi Yardım",
-				"disabled": "oa Code Satır İçi Yardım (devre dışı)",
+				"basic": "OpenAnalyst Satır İçi Yardım",
+				"disabled": "OpenAnalyst Satır İçi Yardım (devre dışı)",
 				"tokenError": "Satır İçi Yardım'ı kullanmak için geçerli bir belirteç ayarlanmalıdır",
 				"lastCompletion": "Son öneri:",
 				"sessionTotal": "Oturum toplam maliyeti:",
@@ -71,30 +71,30 @@
 		},
 		"toggleMessage": "oa Satır İçi Yardım {{status}}",
 		"progress": {
-			"title": "oa Code",
+			"title": "OpenAnalyst",
 			"analyzing": "Kodunuz analiz ediliyor...",
 			"generating": "Önerilen düzenlemeler oluşturuluyor...",
 			"processing": "Önerilen düzenlemeler işleniyor...",
 			"showing": "Önerilen düzenlemeler gösteriliyor..."
 		},
 		"input": {
-			"title": "oa Code: Hızlı Görev",
+			"title": "OpenAnalyst: Hızlı Görev",
 			"placeholder": "örn. 'bu fonksiyonu daha verimli hale getirmek için yeniden düzenle'"
 		},
 		"commands": {
-			"generateSuggestions": "oa Code: Önerilen Düzenlemeler Oluştur",
+			"generateSuggestions": "OpenAnalyst: Önerilen Düzenlemeler Oluştur",
 			"displaySuggestions": "Önerilen Düzenlemeleri Göster",
 			"cancelSuggestions": "Önerilen Düzenlemeleri İptal Et",
 			"applyCurrentSuggestion": "Geçerli Önerilen Düzenlemeyi Uygula",
 			"applyAllSuggestions": "Tüm Önerilen Düzenlemeleri Uygula",
 			"promptCodeSuggestion": "Hızlı Görev",
-			"category": "oa Code"
+			"category": "OpenAnalyst"
 		},
 		"codeAction": {
-			"title": "oa Code: Önerilen Düzenlemeler"
+			"title": "OpenAnalyst: Önerilen Düzenlemeler"
 		},
 		"chatParticipant": {
-			"fullName": "oa Code Ajanı",
+			"fullName": "OpenAnalyst Ajanı",
 			"name": "Ajan",
 			"description": "Hızlı görevler ve önerilen düzenlemeler konusunda size yardımcı olabilirim."
 		},
@@ -102,7 +102,7 @@
 			"provideCodeSuggestions": "Kod önerileri sağlanıyor..."
 		},
 		"incompatibilityExtensionPopup": {
-			"message": "oa Code Satır İçi Yardım, GitHub Copilot ile çakışma nedeniyle engelleniyor. Bunu düzeltmek için Copilot'un satır içi önerilerini devre dışı bırakmalısınız.",
+			"message": "OpenAnalyst Satır İçi Yardım, GitHub Copilot ile çakışma nedeniyle engelleniyor. Bunu düzeltmek için Copilot'un satır içi önerilerini devre dışı bırakmalısınız.",
 			"disableCopilot": "Copilot'u Devre Dışı Bırak",
 			"disableInlineAssist": "Satır İçi Yardım'ı Devre Dışı Bırak"
 		}

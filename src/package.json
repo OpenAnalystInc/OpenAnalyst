@@ -111,8 +111,8 @@
 					"id": "oa-code-ActivityBar",
 					"title": "%views.activitybar.title%",
 					"icon": "assets/icons/oa.png",
-					"darkIcon": "assets/icons/oa.png",
-					"when": "isMac"
+					"darkIcon": "assets/icons/oa-dark.png"
+					
 				}
 			]
 		},

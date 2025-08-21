@@ -40,7 +40,7 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "oa Code Commit-Nachrichten-Generator aktiviert",
+		"activated": "OpenAnalyst Commit-Nachrichten-Generator aktiviert",
 		"gitNotFound": "⚠️ Git-Repository nicht gefunden oder Git nicht verfügbar",
 		"gitInitError": "⚠️ Git-Initialisierungsfehler: {{error}}",
 		"generating": "oa: Generiere Commit-Nachricht...",
@@ -57,8 +57,8 @@
 			"disabled": "$(circle-slash) oa Inline Assist",
 			"warning": "$(warning) oa Inline Assist",
 			"tooltip": {
-				"basic": "oa Code Inline-Unterstützung",
-				"disabled": "oa Code Inline-Hilfe (deaktiviert)",
+				"basic": "OpenAnalyst Inline-Unterstützung",
+				"disabled": "OpenAnalyst Inline-Hilfe (deaktiviert)",
 				"tokenError": "Ein gültiges Token muss festgelegt werden, um Inline-Unterstützung zu nutzen",
 				"lastCompletion": "Letzter Vorschlag:",
 				"sessionTotal": "Gesamtkosten der Sitzung:",
@@ -71,38 +71,38 @@
 		},
 		"toggleMessage": "oa Inline Assist {{status}}",
 		"progress": {
-			"title": "oa Code",
+			"title": "OpenAnalyst",
 			"analyzing": "Analysiere deinen Code...",
 			"generating": "Generiere vorgeschlagene Änderungen...",
 			"processing": "Verarbeitung von Änderungsvorschlägen...",
 			"showing": "Zeige Bearbeitungsvorschläge an..."
 		},
 		"input": {
-			"title": "oa Code: Schnellaufgabe",
+			"title": "OpenAnalyst: Schnellaufgabe",
 			"placeholder": "z.B. 'diese Funktion umgestalten, um effizienter zu sein'"
 		},
 		"commands": {
-			"generateSuggestions": "oa Code: Vorgeschlagene Änderungen generieren",
+			"generateSuggestions": "OpenAnalyst: Vorgeschlagene Änderungen generieren",
 			"displaySuggestions": "Vorgeschlagene Änderungen anzeigen",
 			"cancelSuggestions": "Vorgeschlagene Änderungen abbrechen",
 			"applyAllSuggestions": "Alle vorgeschlagenen Änderungen übernehmen",
 			"promptCodeSuggestion": "Schnellaufgabe erstellen",
 			"applyCurrentSuggestion": "Aktuelle Vorgeschlagene Änderung Übernehmen",
-			"category": "oa Code"
+			"category": "OpenAnalyst"
 		},
 		"chatParticipant": {
 			"name": "Agent",
-			"fullName": "oa Code Agent",
+			"fullName": "OpenAnalyst Agent",
 			"description": "Ich kann Ihnen mit schnellen Aufgaben und vorgeschlagenen Änderungen helfen."
 		},
 		"codeAction": {
-			"title": "oa Code: Vorgeschlagene Änderungen"
+			"title": "OpenAnalyst: Vorgeschlagene Änderungen"
 		},
 		"messages": {
 			"provideCodeSuggestions": "Code-Vorschläge werden bereitgestellt..."
 		},
 		"incompatibilityExtensionPopup": {
-			"message": "Die oa Code Inline Assist wird durch einen Konflikt mit GitHub Copilot blockiert. Um dies zu beheben, musst du die Inline-Vorschläge von Copilot deaktivieren.",
+			"message": "Die OpenAnalyst Inline Assist wird durch einen Konflikt mit GitHub Copilot blockiert. Um dies zu beheben, musst du die Inline-Vorschläge von Copilot deaktivieren.",
 			"disableCopilot": "Copilot deaktivieren",
 			"disableInlineAssist": "Inline Assist deaktivieren"
 		}

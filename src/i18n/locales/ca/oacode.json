@@ -40,7 +40,7 @@
 		}
 	},
 	"commitMessage": {
-		"activated": "Generador de missatges de commit de oa Code activat",
+		"activated": "Generador de missatges de commit de OpenAnalyst activat",
 		"gitNotFound": "⚠️ No s'ha trobat el repositori Git o git no està disponible",
 		"gitInitError": "⚠️ Error d'inicialització de Git: {{error}}",
 		"generating": "oa: Generant missatge de commit...",
@@ -57,27 +57,27 @@
 			"generating": "Generant suggeriments d'edició...",
 			"processing": "Processant les edicions suggerides...",
 			"showing": "Mostrant edicions suggerides...",
-			"title": "oa Code"
+			"title": "OpenAnalyst"
 		},
 		"input": {
-			"title": "oa Code: Tasca Ràpida",
+			"title": "OpenAnalyst: Tasca Ràpida",
 			"placeholder": "p. ex., 'refactora aquesta funció perquè sigui més eficient'"
 		},
 		"commands": {
-			"generateSuggestions": "oa Code: Genera suggeriments d'edició",
+			"generateSuggestions": "OpenAnalyst: Genera suggeriments d'edició",
 			"displaySuggestions": "Mostrar Suggeriments d'Edició",
 			"cancelSuggestions": "Cancel·la les edicions suggerides",
 			"applyAllSuggestions": "Aplica totes les edicions suggerides",
 			"applyCurrentSuggestion": "Aplica l'edició suggerida actual",
 			"promptCodeSuggestion": "Petició de Tasca Ràpida",
-			"category": "oa Code"
+			"category": "OpenAnalyst"
 		},
 		"codeAction": {
-			"title": "oa Code: Edicions suggerides"
+			"title": "OpenAnalyst: Edicions suggerides"
 		},
 		"chatParticipant": {
 			"name": "Agent",
-			"fullName": "oa Code Agent",
+			"fullName": "OpenAnalyst Agent",
 			"description": "Et puc ajudar amb tasques ràpides i edicions suggerides."
 		},
 		"messages": {
@@ -88,8 +88,8 @@
 			"disabled": "$(circle-slash) oa Inline Assist",
 			"warning": "$(warning) Assistència de oa en línia",
 			"tooltip": {
-				"disabled": "Assistència en línia de oa Code (desactivat)",
-				"basic": "Assistència en línia oa Code",
+				"disabled": "Assistència en línia de OpenAnalyst (desactivat)",
+				"basic": "Assistència en línia OpenAnalyst",
 				"tokenError": "S'ha d'establir un token vàlid per utilitzar l'Assistència Integrada",
 				"lastCompletion": "Última suggerència:",
 				"sessionTotal": "Cost total de la sessió:",
@@ -102,7 +102,7 @@
 		},
 		"toggleMessage": "Assistència en línia oa {{status}}",
 		"incompatibilityExtensionPopup": {
-			"message": "L'Assistència en línia de oa Code està bloquejada per un conflicte amb GitHub Copilot. Per solucionar-ho, has de desactivar els suggeriments en línia de Copilot.",
+			"message": "L'Assistència en línia de OpenAnalyst està bloquejada per un conflicte amb GitHub Copilot. Per solucionar-ho, has de desactivar els suggeriments en línia de Copilot.",
 			"disableCopilot": "Desactivar Copilot",
 			"disableInlineAssist": "Desactivar Assistència en línia"
 		}

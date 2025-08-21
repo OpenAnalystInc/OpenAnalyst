@@ -1,5 +1,5 @@
 {
-  description = "oa Code development environment";
+  description = "OpenAnalyst development environment";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
