@@ -1,0 +1,24 @@
+# Requirements for System Prompt Extraction Script
+# Python 3.8+ required
+
+# Core dependencies for file operations and path handling
+pathlib2>=2.3.7; python_version<"3.4"
+
+# Optional: For JSON processing (included in standard library)
+# json - built-in module
+
+# Optional: For regex operations (included in standard library) 
+# re - built-in module
+
+# Optional: For operating system interface (included in standard library)
+# os - built-in module
+
+# Optional: For platform detection (included in standard library)
+# platform - built-in module
+
+# Development dependencies (optional)
+# pytest>=6.0.0 - for testing
+# black>=21.0.0 - for code formatting
+# flake8>=3.8.0 - for linting
+
+# No external dependencies required - script uses only Python standard library

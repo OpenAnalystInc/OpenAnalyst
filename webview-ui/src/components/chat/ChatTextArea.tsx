@@ -24,6 +24,8 @@ import { DropdownOptionType, Button, StandardTooltip } from "@/components/ui" //
 import Thumbnails from "../common/Thumbnails"
 import ModeSelector from "./ModeSelector"
 import OaModeSelector from "../oacode/OaModeSelector"
+// oacode_change
+import { TemplateSelector } from "../oacode/TemplateSelector"
 import { OaProfileSelector } from "../oacode/chat/OaProfileSelector" // oacode_change
 import { MAX_IMAGES_PER_MESSAGE } from "./ChatView"
 import ContextMenu from "./ContextMenu"
@@ -1189,6 +1191,11 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 							customModes={customModes}
 						/>
 						{/* oacode_change end */}
+					</div>
+					
+					{/* oacode_change - template selector */}
+					<div className="shrink-0">
+						<TemplateSelector />
 					</div>
 
 					<OaProfileSelector

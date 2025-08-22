@@ -3014,5 +3014,174 @@ export const webviewMessageHandler = async (
 			}
 			break
 		}
+
+		// oacode_change - template management handlers
+		case "getTemplateList": {
+			try {
+				const templates = await provider.templateManager.getAvailableTemplates()
+				const activeTemplate = provider.templateManager.getActiveTemplateName()
+				
+				await provider.postMessageToWebview({
+					type: "templateList",
+					payload: {
+						templates,
+						activeTemplate
+					}
+				})
+			} catch (error) {
+				provider.log(`Error getting template list: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`)
+			}
+			break
+		}
+
+		case "activateTemplate": {
+			if (message.templateName) {
+				try {
+					await provider.templateManager.activateTemplate(message.templateName)
+					// Refresh template list
+					const templates = await provider.templateManager.getAvailableTemplates()
+					const activeTemplate = provider.templateManager.getActiveTemplateName()
+					
+					await provider.postMessageToWebview({
+						type: "templateList",
+						payload: {
+							templates,
+							activeTemplate
+						}
+					})
+				} catch (error) {
+					provider.log(`Error activating template: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`)
+					vscode.window.showErrorMessage(`Failed to activate template: ${error instanceof Error ? error.message : String(error)}`)
+				}
+			}
+			break
+		}
+
+		case "deactivateTemplate": {
+			try {
+				await provider.templateManager.deactivateTemplate()
+				// Refresh template list
+				const templates = await provider.templateManager.getAvailableTemplates()
+				const activeTemplate = provider.templateManager.getActiveTemplateName()
+				
+				await provider.postMessageToWebview({
+					type: "templateList",
+					payload: {
+						templates,
+						activeTemplate
+					}
+				})
+			} catch (error) {
+				provider.log(`Error deactivating template: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`)
+				vscode.window.showErrorMessage(`Failed to deactivate template: ${error instanceof Error ? error.message : String(error)}`)
+			}
+			break
+		}
+
+		case "deleteTemplate": {
+			if (message.templateName) {
+				try {
+					await provider.templateManager.deleteTemplate(message.templateName)
+					// Refresh template list
+					const templates = await provider.templateManager.getAvailableTemplates()
+					const activeTemplate = provider.templateManager.getActiveTemplateName()
+					
+					await provider.postMessageToWebview({
+						type: "templateList",
+						payload: {
+							templates,
+							activeTemplate
+						}
+					})
+				} catch (error) {
+					provider.log(`Error deleting template: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`)
+					vscode.window.showErrorMessage(`Failed to delete template: ${error instanceof Error ? error.message : String(error)}`)
+				}
+			}
+			break
+		}
+
+		case "uploadTemplateFile": {
+			if (message.filename && message.content) {
+				try {
+					// Directly use the TemplateManager for cleaner upload handling
+					const path = require("path")
+					const fs = require("fs/promises")
+					const yaml = require("yaml")
+					const { customModesSettingsSchema } = require("@roo-code/types")
+					const { getWorkspacePath } = require("../../utils/path")
+					
+					// Validate filename extension
+					if (!message.filename.endsWith('.yaml') && !message.filename.endsWith('.yml')) {
+						vscode.window.showErrorMessage(`Template files must have .yaml or .yml extension`)
+						return
+					}
+
+					// Get workspace path
+					const workspacePath = getWorkspacePath()
+					if (!workspacePath) {
+						vscode.window.showErrorMessage(`No workspace found. Please open a workspace to upload templates.`)
+						return
+					}
+
+					// Validate YAML content
+					let parsedContent: any
+					try {
+						parsedContent = yaml.parse(message.content)
+					} catch (yamlError: any) {
+						vscode.window.showErrorMessage(`Invalid YAML format: ${yamlError.message || 'Failed to parse YAML'}`)
+						return
+					}
+
+					// Validate against schema
+					const validationResult = customModesSettingsSchema.safeParse(parsedContent)
+					if (!validationResult.success) {
+						const issues = validationResult.error.issues
+							.map((issue: any) => `• ${issue.path.join(".")}: ${issue.message}`)
+							.join("\n")
+						vscode.window.showErrorMessage(`Template validation failed:\n${issues}`)
+						return
+					}
+
+					// Create templates directory if it doesn't exist
+					const templatesDir = path.join(workspacePath, ".oacode/templates")
+					await fs.mkdir(templatesDir, { recursive: true })
+
+					// Write the template file
+					const filePath = path.join(templatesDir, message.filename)
+					await fs.writeFile(filePath, message.content, "utf-8")
+
+					// Count modes in the template
+					const modeCount = validationResult.data.customModes?.length || 0
+					const modeNames = validationResult.data.customModes?.map((m: any) => m.name || m.slug).join(", ") || ""
+
+					// Automatically activate the uploaded template
+					const templateName = path.basename(message.filename, path.extname(message.filename))
+					await provider.templateManager.activateTemplate(templateName)
+
+					// Show success message
+					vscode.window.showInformationMessage(
+						`Template "${message.filename}" uploaded and activated successfully! Contains ${modeCount} mode(s): ${modeNames}`
+					)
+
+					// Refresh template list
+					const templates = await provider.templateManager.getAvailableTemplates()
+					const activeTemplate = provider.templateManager.getActiveTemplateName()
+					
+					await provider.postMessageToWebview({
+						type: "templateList",
+						payload: {
+							templates,
+							activeTemplate
+						}
+					})
+
+				} catch (error) {
+					console.error(`Error uploading template:`, error)
+					vscode.window.showErrorMessage(`Failed to upload template: ${error instanceof Error ? error.message : String(error)}`)
+				}
+			}
+			break
+		}
 	}
 }

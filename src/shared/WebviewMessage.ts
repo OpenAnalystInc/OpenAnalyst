@@ -27,6 +27,30 @@ export interface UpdateTodoListPayload {
 	todos: any[]
 }
 
+// oacode_change - template management payloads
+export interface TemplateListPayload {
+	templates: Array<{
+		name: string
+		filename: string
+		modeCount: number
+		modes: Array<{ slug: string; name: string }>
+	}>
+	activeTemplate: string | null
+}
+
+export interface ActivateTemplatePayload {
+	templateName: string
+}
+
+export interface DeleteTemplatePayload {
+	templateName: string
+}
+
+export interface UploadTemplateFilePayload {
+	filename: string
+	content: string
+}
+
 export interface WebviewMessage {
 	type:
 		| "updateTodoList"
@@ -243,6 +267,12 @@ export interface WebviewMessage {
 		| "profileThresholds"
 		| "editMessage" // oacode_change
 		| "systemNotificationsEnabled" // oacode_change
+		// oacode_change - template management
+		| "getTemplateList"
+		| "activateTemplate"
+		| "deactivateTemplate"
+		| "deleteTemplate"
+		| "uploadTemplateFile"
 		| "dismissNotificationId" // oacode_change
 		| "shareTaskSuccess"
 		| "exportMode"
@@ -288,6 +318,9 @@ export interface WebviewMessage {
 	filename?: string // oacode_change
 	ruleType?: string // oacode_change
 	notificationId?: string // oacode_change
+	// oacode_change - template management
+	templateName?: string
+	content?: string
 	// oacode_change end
 	serverName?: string
 	toolName?: string
@@ -410,3 +443,7 @@ export type WebViewMessagePayload =
 	| BalanceDataResponsePayload // oacode_change
 	| InstallMarketplaceItemWithParametersPayload
 	| UpdateTodoListPayload
+	// oacode_change - template management payloads
+	| TemplateListPayload
+	| ActivateTemplatePayload
+	| DeleteTemplatePayload

@@ -4,7 +4,7 @@ import { z } from "zod"
  * ToolGroup
  */
 
-export const toolGroups = ["read", "edit", "browser", "command", "mcp", "modes"] as const
+export const toolGroups = ["read", "edit", "browser", "command", "mcp", "modes", "templates"] as const
 
 export const toolGroupsSchema = z.enum(toolGroups)
 
@@ -40,6 +40,12 @@ export const toolNames = [
 	"condense",
 	// oacode_change end
 	"update_todo_list",
+	// oacode_change - template tools
+	"upload_template",
+	"list_templates",
+	"activate_template",
+	"deactivate_template",
+	"delete_template",
 ] as const
 
 export const toolNamesSchema = z.enum(toolNames)

@@ -72,6 +72,10 @@ export const toolParamNames = [
 	"query",
 	"args",
 	"todos",
+	// oacode_change - template parameters
+	"filename",
+	"overwrite",
+	"template_name",
 ] as const
 
 export type ToolParamName = (typeof toolParamNames)[number]
@@ -213,6 +217,11 @@ export const TOOL_DISPLAY_NAMES: Record<ToolName, string> = {
 	condense: "condense the current context window", // oacode_change
 	codebase_search: "codebase search",
 	update_todo_list: "update todo list",
+	upload_template: "upload template", // oacode_change: Template system
+	list_templates: "list templates", // oacode_change: Template system
+	activate_template: "activate template", // oacode_change: Template system
+	deactivate_template: "deactivate template", // oacode_change: Template system
+	delete_template: "delete template", // oacode_change: Template system
 } as const
 
 // Define available tool groups.
@@ -250,6 +259,10 @@ export const TOOL_GROUPS: Record<ToolGroup, ToolGroupConfig> = {
 		tools: ["switch_mode", "new_task"],
 		alwaysAvailable: true,
 	},
+	templates: {
+		tools: ["upload_template", "list_templates", "activate_template", "deactivate_template", "delete_template"],
+		alwaysAvailable: true,
+	},
 }
 
 // Tools that are always available to all modes.
@@ -261,6 +274,12 @@ export const ALWAYS_AVAILABLE_TOOLS: ToolName[] = [
 	"report_bug",
 	"condense", // oacode_Change
 	"update_todo_list",
+	// oacode_change - template management tools
+	"upload_template",
+	"list_templates",
+	"activate_template",
+	"deactivate_template",
+	"delete_template",
 ] as const
 
 export type DiffResult =

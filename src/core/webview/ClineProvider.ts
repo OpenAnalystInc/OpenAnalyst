@@ -78,6 +78,8 @@ import { ContextProxy } from "../config/ContextProxy"
 import { getEnabledRules } from "./oarules"
 import { ProviderSettingsManager } from "../config/ProviderSettingsManager"
 import { CustomModesManager } from "../config/CustomModesManager"
+// oacode_change
+import { TemplateManager } from "../config/TemplateManager"
 import { Task, TaskOptions } from "../task/Task"
 import { getSystemPromptFilePath } from "../prompts/sections/custom-system-prompt"
 
@@ -127,6 +129,8 @@ export class ClineProvider
 	public readonly latestAnnouncementId = "jul-29-2025-3-25-0" // Update for v3.25.0 announcement
 	public readonly providerSettingsManager: ProviderSettingsManager
 	public readonly customModesManager: CustomModesManager
+	// oacode_change
+	public readonly templateManager: TemplateManager
 
 	constructor(
 		readonly context: vscode.ExtensionContext,
@@ -158,6 +162,11 @@ export class ClineProvider
 			await this.postStateToWebview()
 		})
 
+		// oacode_change - initialize template manager
+		this.templateManager = new TemplateManager(this.context, async () => {
+			await this.postStateToWebview()
+		})
+
 		// Initialize MCP Hub through the singleton manager
 		McpServerManager.getInstance(this.context, this)
 			.then((hub) => {
@@ -173,6 +182,11 @@ export class ClineProvider
 		// Initialize Roo Code Cloud profile sync.
 		this.initializeCloudProfileSync().catch((error) => {
 			this.log(`Failed to initialize cloud profile sync: ${error}`)
+		})
+
+		// oacode_change - initialize template system
+		this.templateManager.initialize().catch((error) => {
+			this.log(`Failed to initialize template manager: ${error}`)
 		})
 	}
 
@@ -396,6 +410,8 @@ export class ClineProvider
 		this.mcpHub = undefined
 		this.marketplaceManager?.cleanup()
 		this.customModesManager?.dispose()
+		// oacode_change
+		this.templateManager?.dispose()
 		this.log("Disposed all disposables")
 		ClineProvider.activeInstances.delete(this)
 
@@ -1849,7 +1865,18 @@ export class ClineProvider
 
 	async getState() {
 		const stateValues = this.contextProxy.getValues()
-		const customModes = await this.customModesManager.getCustomModes()
+		let customModes = await this.customModesManager.getCustomModes()
+
+		// oacode_change - include template modes in customModes for webview
+		try {
+			const templateModes = await this.templateManager.getActiveTemplateModes()
+			// Merge template modes with custom modes, avoiding duplicates
+			const templateModesSlugs = templateModes.map(mode => mode.slug)
+			const filteredCustomModes = customModes.filter(mode => !templateModesSlugs.includes(mode.slug))
+			customModes = [...templateModes, ...filteredCustomModes]
+		} catch (error) {
+			console.warn('[ClineProvider] Failed to load template modes for state:', error)
+		}
 
 		// Determine apiProvider with the same logic as before.
 		const apiProvider: ProviderName = stateValues.apiProvider ? stateValues.apiProvider : "oacode" // oacode_change: fall back to oacode

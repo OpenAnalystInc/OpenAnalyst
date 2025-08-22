@@ -18,7 +18,7 @@ import { McpServer } from "./mcp"
 import { McpMarketplaceCatalog, McpDownloadResponse } from "./oacode/mcp"
 import { Mode } from "./modes"
 import { ModelRecord, RouterModels } from "./api"
-import { ProfileDataResponsePayload, BalanceDataResponsePayload } from "./WebviewMessage" // oacode_change
+import { ProfileDataResponsePayload, BalanceDataResponsePayload, TemplateListPayload } from "./WebviewMessage" // oacode_change
 import { ClineRulesToggles } from "./cline-rules" // oacode_change
 import type { MarketplaceItem } from "@roo-code/types"
 
@@ -137,8 +137,10 @@ export interface ExtensionMessage {
 		| "usageDataResponse" // oacode_change
 		| "commands"
 		| "insertTextIntoTextarea"
+		// oacode_change - template management
+		| "templateList"
 	text?: string
-	payload?: ProfileDataResponsePayload | BalanceDataResponsePayload // oacode_change: Add payload for profile and balance data
+	payload?: ProfileDataResponsePayload | BalanceDataResponsePayload | TemplateListPayload // oacode_change: Add payload for profile, balance, and template data
 	action?:
 		| "chatButtonClicked"
 		| "mcpButtonClicked"

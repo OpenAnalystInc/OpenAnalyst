@@ -12,6 +12,19 @@ import {
 } from "@roo-code/types"
 
 import { addCustomInstructions } from "../core/prompts/sections/custom-instructions"
+// oacode_change start
+// Conditionally import templateModeLoader only in Node.js environment (not webview)
+let loadTemplateModes: (() => Promise<import("@roo-code/types").ModeConfig[]>) | undefined
+try {
+	// This will fail in browser/webview environment
+	if (typeof window === 'undefined' && typeof process !== 'undefined' && process.versions?.node) {
+		loadTemplateModes = require("./templateModeLoader").loadTemplateModes
+	}
+} catch (error) {
+	// Ignore import errors in webview environment
+	loadTemplateModes = undefined
+}
+// oacode_change end
 
 import { EXPERIMENT_IDS } from "./experiments"
 import { TOOL_GROUPS, ALWAYS_AVAILABLE_TOOLS } from "./tools"
@@ -60,11 +73,70 @@ export function getToolsForMode(groups: readonly GroupEntry[]): string[] {
 	return Array.from(tools)
 }
 
-// Main modes configuration as an ordered array
-export const modes = DEFAULT_MODES
+// oacode_change start
+// Dynamic modes that includes template modes loaded from .oacode/templates/
+let _dynamicModes: ModeConfig[] = [...DEFAULT_MODES]
+let _templateModesLoaded = false
+
+/**
+ * Load template modes and merge them with DEFAULT_MODES
+ */
+export async function initializeModes(): Promise<void> {
+	if (_templateModesLoaded) {
+		return
+	}
+
+	try {
+		// Only load template modes in Node.js environment (extension), not in webview
+		if (loadTemplateModes) {
+			const templateModes = await loadTemplateModes()
+			const slugs = new Set(DEFAULT_MODES.map(mode => mode.slug))
+			
+			// Add template modes that don't conflict with built-in modes
+			const uniqueTemplateModes = templateModes.filter(mode => {
+				if (slugs.has(mode.slug)) {
+					console.warn(`[Modes] Template mode "${mode.slug}" conflicts with built-in mode, skipping`)
+					return false
+				}
+				return true
+			})
+
+			_dynamicModes = [...DEFAULT_MODES, ...uniqueTemplateModes]
+			_templateModesLoaded = true
+			
+			console.log(`[Modes] Initialized with ${DEFAULT_MODES.length} built-in modes and ${uniqueTemplateModes.length} template modes`)
+		} else {
+			// In webview environment, just use built-in modes
+			_dynamicModes = [...DEFAULT_MODES]
+			_templateModesLoaded = true
+			console.log(`[Modes] Initialized with ${DEFAULT_MODES.length} built-in modes (webview environment)`)
+		}
+	} catch (error) {
+		console.error("[Modes] Failed to load template modes:", error)
+		_dynamicModes = [...DEFAULT_MODES]
+		_templateModesLoaded = true
+	}
+}
+
+/**
+ * Reload template modes - useful for hot reloading
+ */
+export async function reloadTemplateModes(): Promise<void> {
+	_templateModesLoaded = false
+	await initializeModes()
+}
+
+// Main modes configuration as an ordered array (now dynamic)
+export function getModes(): readonly ModeConfig[] {
+	return _dynamicModes
+}
+
+// Legacy export for backward compatibility
+export const modes = _dynamicModes
 
 // Export the default mode slug
-export const defaultModeSlug = modes[0].slug
+export const defaultModeSlug = DEFAULT_MODES[0].slug
+// oacode_change end
 
 // Helper functions
 export function getModeBySlug(slug: string, customModes?: ModeConfig[]): ModeConfig | undefined {
@@ -73,8 +145,9 @@ export function getModeBySlug(slug: string, customModes?: ModeConfig[]): ModeCon
 	if (customMode) {
 		return customMode
 	}
-	// Then check built-in modes
-	return modes.find((mode) => mode.slug === slug)
+	// oacode_change - use dynamic modes
+	// Then check built-in and template modes
+	return _dynamicModes.find((mode) => mode.slug === slug)
 }
 
 export function getModeConfig(slug: string, customModes?: ModeConfig[]): ModeConfig {
@@ -85,14 +158,15 @@ export function getModeConfig(slug: string, customModes?: ModeConfig[]): ModeCon
 	return mode
 }
 
-// Get all available modes, with custom modes overriding built-in modes
+// Get all available modes, with custom modes overriding built-in and template modes
 export function getAllModes(customModes?: ModeConfig[]): ModeConfig[] {
 	if (!customModes?.length) {
-		return [...modes]
+		// oacode_change - use dynamic modes
+		return [..._dynamicModes]
 	}
 
-	// Start with built-in modes
-	const allModes = [...modes]
+	// oacode_change - start with built-in and template modes
+	const allModes = [..._dynamicModes]
 
 	// Process custom modes
 	customModes.forEach((customMode) => {
@@ -129,7 +203,8 @@ export function findModeBySlug(slug: string, modes: readonly ModeConfig[] | unde
  */
 export function getModeSelection(mode: string, promptComponent?: PromptComponent, customModes?: ModeConfig[]) {
 	const customMode = findModeBySlug(mode, customModes)
-	const builtInMode = findModeBySlug(mode, modes)
+	// oacode_change - use dynamic modes
+	const builtInMode = findModeBySlug(mode, _dynamicModes)
 
 	// If we have a custom mode, use it entirely
 	if (customMode) {
@@ -141,7 +216,7 @@ export function getModeSelection(mode: string, promptComponent?: PromptComponent
 	}
 
 	// Otherwise, use built-in mode as base and merge with promptComponent
-	const baseMode = builtInMode || modes[0] // fallback to default mode
+	const baseMode = builtInMode || _dynamicModes[0] // fallback to default mode
 
 	return {
 		roleDefinition: promptComponent?.roleDefinition || baseMode.roleDefinition || "",
@@ -268,10 +343,28 @@ export function isToolAllowedForMode(
 	return false
 }
 
-// Create the mode-specific default prompts
+// oacode_change start
+// Create the mode-specific default prompts (now dynamic)
+export function getDefaultPrompts(): Readonly<CustomModePrompts> {
+	return Object.freeze(
+		Object.fromEntries(
+			_dynamicModes.map((mode) => [
+				mode.slug,
+				{
+					roleDefinition: mode.roleDefinition,
+					whenToUse: mode.whenToUse,
+					customInstructions: mode.customInstructions,
+					description: mode.description,
+				},
+			]),
+		),
+	)
+}
+
+// Legacy export for backward compatibility - will be created from built-in modes only
 export const defaultPrompts: Readonly<CustomModePrompts> = Object.freeze(
 	Object.fromEntries(
-		modes.map((mode) => [
+		DEFAULT_MODES.map((mode) => [
 			mode.slug,
 			{
 				roleDefinition: mode.roleDefinition,
@@ -282,6 +375,7 @@ export const defaultPrompts: Readonly<CustomModePrompts> = Object.freeze(
 		]),
 	),
 )
+// oacode_change end
 
 // Helper function to get all modes with their prompt overrides from extension state
 export async function getAllModesWithPrompts(context: vscode.ExtensionContext): Promise<ModeConfig[]> {
@@ -310,7 +404,8 @@ export async function getFullModeDetails(
 	},
 ): Promise<ModeConfig> {
 	// First get the base mode config from custom modes or built-in modes
-	const baseMode = getModeBySlug(modeSlug, customModes) || modes.find((m) => m.slug === modeSlug) || modes[0]
+	// oacode_change - use dynamic modes
+	const baseMode = getModeBySlug(modeSlug, customModes) || _dynamicModes.find((m) => m.slug === modeSlug) || _dynamicModes[0]
 
 	// Check for any prompt component overrides
 	const promptComponent = customModePrompts?.[modeSlug]

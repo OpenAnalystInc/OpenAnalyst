@@ -111,7 +111,8 @@
 					"id": "oa-code-ActivityBar",
 					"title": "%views.activitybar.title%",
 					"icon": "assets/icons/oa.png",
-					"darkIcon": "assets/icons/oa-dark.png"
+					"darkIcon": "assets/icons/oa-dark.png",
+					"when": "isMac"
 					
 				}
 			]
@@ -119,6 +120,7 @@
 		"views": {
 			"oa-code-ActivityBar": [
 				{
+					"icon": "assets/icons/oa.png",
 					"type": "webview",
 					"id": "oa-code.SidebarProvider",
 					"name": "%views.sidebar.name%"

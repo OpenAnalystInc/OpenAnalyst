@@ -110,7 +110,7 @@ export default defineConfig(({ mode }) => {
 			// Ensure source maps are properly included in the build
 			minify: mode === "production" ? "esbuild" : false,
 			rollupOptions: {
-				external: ["vscode"], // oacode_change: we inadvertently import vscode into the webview: @roo/modes => src/shared/modes => ../core/prompts/sections/custom-instructions
+				external: ["vscode", "path", "os", "fs/promises", "fs", "yaml", "strip-bom"], // oacode_change: we inadvertently import vscode into the webview: @roo/modes => src/shared/modes => templateModeLoader => ../utils/path
 				output: {
 					entryFileNames: `assets/[name].js`,
 					chunkFileNames: (chunkInfo) => {

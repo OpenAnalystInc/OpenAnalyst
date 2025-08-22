@@ -31,6 +31,8 @@ export interface SelectDropdownProps {
 	value: string
 	options: DropdownOption[]
 	onChange: (value: string) => void
+	onAction?: (value: string) => void // oacode_change - for action items
+	onDrop?: (files: FileList) => void // oacode_change - for drag & drop
 	disabled?: boolean
 	initiallyOpen?: boolean // oacode_change
 	title?: string
@@ -44,6 +46,7 @@ export interface SelectDropdownProps {
 	renderItem?: (option: DropdownOption) => React.ReactNode
 	disableSearch?: boolean
 	triggerIcon?: React.ForwardRefExoticComponent<IconProps & React.RefAttributes<SVGSVGElement>> | boolean | undefined // oacode_change
+	dragActive?: boolean // oacode_change - for drag visual feedback
 }
 
 export const SelectDropdown = React.memo(
@@ -53,6 +56,8 @@ export const SelectDropdown = React.memo(
 				value,
 				options,
 				onChange,
+				onAction, // oacode_change
+				onDrop, // oacode_change
 				disabled = false,
 				initiallyOpen = false, // oacode_change
 				title = "",
@@ -66,6 +71,7 @@ export const SelectDropdown = React.memo(
 				renderItem,
 				disableSearch = false,
 				triggerIcon = CaretUpIcon, // oacode_change
+				dragActive = false, // oacode_change
 			},
 			ref,
 		) => {
@@ -181,7 +187,7 @@ export const SelectDropdown = React.memo(
 					if (!option) return
 
 					if (option.type === DropdownOptionType.ACTION) {
-						window.postMessage({ type: "action", action: option.value })
+						onAction?.(option.value) // oacode_change - use callback instead of postMessage
 						setSearchValue("")
 						setOpen(false)
 						return
@@ -194,14 +200,44 @@ export const SelectDropdown = React.memo(
 					setOpen(false)
 					// Clear search value immediately
 				},
-				[onChange, options],
+				[onChange, onAction, options], // oacode_change - add onAction to deps
 			)
+
+			// oacode_change start - drag & drop handlers
+			const handleDragEnter = React.useCallback((e: React.DragEvent) => {
+				e.preventDefault()
+				e.stopPropagation()
+			}, [])
+
+			const handleDragLeave = React.useCallback((e: React.DragEvent) => {
+				e.preventDefault()
+				e.stopPropagation()
+			}, [])
+
+			const handleDragOver = React.useCallback((e: React.DragEvent) => {
+				e.preventDefault()
+				e.stopPropagation()
+			}, [])
+
+			const handleDrop = React.useCallback((e: React.DragEvent) => {
+				e.preventDefault()
+				e.stopPropagation()
+				
+				if (onDrop && e.dataTransfer.files.length > 0) {
+					onDrop(e.dataTransfer.files)
+				}
+			}, [onDrop])
+			// oacode_change end
 
 			const triggerContent = (
 				<PopoverTrigger
 					ref={ref}
 					disabled={disabled}
 					data-testid="dropdown-trigger"
+					onDragEnter={handleDragEnter} // oacode_change
+					onDragLeave={handleDragLeave} // oacode_change
+					onDragOver={handleDragOver} // oacode_change
+					onDrop={handleDrop} // oacode_change
 					className={cn(
 						"w-full min-w-0 max-w-full inline-flex items-center gap-1.5 relative whitespace-nowrap px-1.5 py-1 text-xs",
 						"bg-transparent border border-[rgba(255,255,255,0.08)] rounded-md text-vscode-foreground w-auto",
@@ -209,6 +245,7 @@ export const SelectDropdown = React.memo(
 						disabled
 							? "opacity-50 cursor-not-allowed"
 							: "opacity-90 hover:opacity-100 hover:bg-[rgba(255,255,255,0.03)] hover:border-[rgba(255,255,255,0.15)] cursor-pointer",
+						dragActive && "border-vscode-focusBorder bg-vscode-input-background", // oacode_change - drag feedback
 						triggerClassName,
 					)}>
 					{/* oacode_change start */}
