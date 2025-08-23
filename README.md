@@ -7,6 +7,8 @@
   <a href="https://huggingface.co/OpenAnalyst"><img src="https://img.shields.io/badge/🤗%20Hugging%20Face-OpenAnalyst-yellow" alt="Hugging Face"></a>
   <a href="https://www.instagram.com/openanalyst/"><img src="https://img.shields.io/badge/Instagram-openanalyst-E4405F?style=flat&logo=instagram&logoColor=white" alt="Instagram"></a>
   <a href="https://www.kaggle.com/openanalystinc"><img src="https://img.shields.io/badge/Kaggle-openanalystinc-20BEFF?style=flat&logo=kaggle&logoColor=white" alt="Kaggle"></a>
+  <a href="https://medium.com/@openanalystinc"><img src="https://img.shields.io/badge/Medium-OpenAnalyst-00AB6C?style=flat&logo=medium&logoColor=white" alt="Medium"></a>
+  <a href="https://substack.com/@openanalyst"><img src="https://img.shields.io/badge/Substack-OpenAnalyst-FF6719?style=flat&logo=substack&logoColor=white" alt="Substack"></a>
 </p>
 
 # 🚀 OpenAnalyst
