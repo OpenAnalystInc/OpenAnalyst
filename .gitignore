@@ -15,6 +15,7 @@ bin/
 
 # Local prompts and rules
 /local-prompts
+CLAUDE.md
 
 # Test environment
 .test_env

@@ -187,3 +187,4 @@ The system prompt is highly dynamic, with content generated based on:
 - **Environment**: Operating system, shell, file structure
 
 This architecture ensures that the system prompt is always tailored to the current context while maintaining consistency across different environments and configurations.
+

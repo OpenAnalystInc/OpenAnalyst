@@ -10,6 +10,7 @@ import { vscode } from "@src/utils/vscode"
 
 import CodeBlock from "./CodeBlock"
 import MermaidBlock from "./MermaidBlock"
+import ChartBlock from "./ChartBlock"
 
 interface MarkdownBlockProps {
 	markdown?: string
@@ -256,6 +257,15 @@ const MarkdownBlock = memo(({ markdown }: MarkdownBlockProps) => {
 					return (
 						<div style={{ margin: "1em 0" }}>
 							<MermaidBlock code={codeString} />
+						</div>
+					)
+				}
+
+				// Handle chart visualizations
+				if (className.includes("language-chart")) {
+					return (
+						<div style={{ margin: "1em 0" }}>
+							<ChartBlock code={codeString} />
 						</div>
 					)
 				}

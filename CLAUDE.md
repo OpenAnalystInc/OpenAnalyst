@@ -36,9 +36,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Core Extension (`src/`):**
 
 - `core/` - Core business logic including Task management, tool execution, and AI provider integration
-- `api/providers/` - AI model provider implementations (Anthropic, OpenAI, etc.)
-- `services/` - Platform services (terminal, browser, git, etc.)
-- `webview/ClineProvider.ts` - Main webview communication hub
+- `api/providers/` - AI model provider implementations (Anthropic, OpenAI, Ollama, etc.)
+- `services/` - Platform services (terminal, browser, git, MCP servers, code indexing, etc.)
+- `core/webview/ClineProvider.ts` - Main webview communication hub
 - `extension.ts` - VS Code extension entry point
 
 **Key Components:**
@@ -108,6 +108,8 @@ pnpm test <test-file-pattern>
 - `src/core/webview/webviewMessageHandler.ts` - Extension-webview communication
 - `src/core/prompts/system.ts` - AI system prompts
 - `src/shared/` - Utilities shared between extension and webview
+- `modes.json` - Configuration for different AI agent modes (Architect, Coder, Debugger, etc.)
+- `src/core/config/CustomModesManager.ts` - Custom mode management and template system
 
 **VS Code Integration:**
 
@@ -115,4 +117,21 @@ pnpm test <test-file-pattern>
 - Webview uses VS Code theming and UI components
 - Terminal integration with shell detection and command execution
 
-This codebase is a VS Code AI coding assistant extension that combines features from Roo Code and Cline, providing an integrated development experience with multiple AI providers and tool capabilities.
+## OpenAnalyst-Specific Features
+
+**Mode System:**
+- Multiple AI agent modes: Architect (planning), Coder (implementation), Debugger (fixing issues)
+- Custom mode creation through template system
+- Mode-specific prompts and behaviors defined in `modes.json`
+
+**Ghost Code Features:**
+- Inline code suggestions and completions
+- Ghost text previews before applying changes
+- Keyboard shortcuts for ghost code interactions (Tab, Shift+Tab, Ctrl/Cmd+I, Ctrl/Cmd+L)
+
+**MCP Integration:**
+- Model Context Protocol server management in `src/services/mcp/`
+- Extensible capabilities through MCP servers
+- MCP marketplace integration for discovering new tools
+
+This codebase is a VS Code AI coding assistant extension that combines features from Roo Code and Cline, providing an integrated development experience with multiple AI providers, custom modes, and advanced tool capabilities.

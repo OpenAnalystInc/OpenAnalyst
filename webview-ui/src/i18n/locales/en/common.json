@@ -67,6 +67,23 @@
 			"copyError": "Error copying image"
 		}
 	},
+	"chart": {
+		"loading": "Generating chart...",
+		"parse_error": "Unable to Parse Chart Configuration",
+		"fix_syntax": "Fix JSON syntax",
+		"export_png": "Export as PNG",
+		"errors": {
+			"invalid_json": "Invalid JSON format",
+			"missing_type": "Chart type is required",
+			"missing_data": "Chart data is required",
+			"unsupported_type": "Unsupported chart type: {{type}}"
+		},
+		"buttons": {
+			"copy": "Copy",
+			"export": "Export",
+			"fix": "Fix"
+		}
+	},
 	"file": {
 		"errors": {
 			"invalidDataUri": "Invalid data URI format",

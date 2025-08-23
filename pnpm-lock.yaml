@@ -1089,6 +1089,9 @@ importers:
       axios:
         specifier: ^1.7.4
         version: 1.9.0
+      chart.js:
+        specifier: ^4.5.0
+        version: 4.5.0
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -1146,6 +1149,9 @@ importers:
       react:
         specifier: ^18.3.1
         version: 18.3.1
+      react-chartjs-2:
+        specifier: ^5.3.0
+        version: 5.3.0(chart.js@4.5.0)(react@18.3.1)
       react-countup:
         specifier: ^6.5.3
         version: 6.5.3(react@18.3.1)
@@ -2364,6 +2370,9 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
+
+  '@kurkle/color@0.3.4':
+    resolution: {integrity: sha512-M5UknZPHRu3DEDWoipU6sE8PdkZ6Z/S+v4dD+Ke8IaNlpdSQah50lz1KtcFBa2vsdOnwbbnxJwVM4wty6udA5w==}
 
   '@kwsites/file-exists@1.1.1':
     resolution: {integrity: sha512-m9/5YGR18lIwxSFDwfE3oA7bWuq9kdau6ugN4H2rJeyhFQZcG9AgSHkQtSD15a8WvTgfz9aikZMrKPHvbpqFiw==}
@@ -5230,6 +5239,10 @@ packages:
 
   chardet@0.7.0:
     resolution: {integrity: sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==}
+
+  chart.js@4.5.0:
+    resolution: {integrity: sha512-aYeC/jDgSEx8SHWZvANYMioYMZ2KX02W6f6uVfyteuCGcadDLcYVHdfdygsTQkQ4TKn5lghoojAsPj5pu0SnvQ==}
+    engines: {pnpm: '>=8'}
 
   check-error@2.1.1:
     resolution: {integrity: sha512-OAlb+T7V4Op9OwdkjmguYRqncdlx5JiofwOAUkmTF+jNdHwzTaTs4sRAGpzLF3oOz5xAyDGrPgeIDFQmDOTiJw==}
@@ -9337,6 +9350,12 @@ packages:
     resolution: {integrity: sha512-y3bGgqKj3QBdxLbLkomlohkvsA8gdAiUQlSBJnBhfn+BPxg4bc62d8TcBW15wavDfgexCgccckhcZvywyQYPOw==}
     hasBin: true
 
+  react-chartjs-2@5.3.0:
+    resolution: {integrity: sha512-UfZZFnDsERI3c3CZGxzvNJd02SHjaSJ8kgW1djn65H1KK8rehwTjyrRKOG3VTMG8wtHZ5rgAO5oTHtHi9GCCmw==}
+    peerDependencies:
+      chart.js: ^4.1.1
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
   react-countup@6.5.3:
     resolution: {integrity: sha512-udnqVQitxC7QWADSPDOxVWULkLvKUWrDapn5i53HE4DPRVgs+Y5rr4bo25qEl8jSh+0l2cToJgGMx+clxPM3+w==}
     peerDependencies:
@@ -9969,6 +9988,7 @@ packages:
   source-map@0.8.0-beta.0:
     resolution: {integrity: sha512-2ymg6oRBpebeZi9UUNsgQ89bhx01TcTkmNTGnNO88imTmbSgy4nfujrgVEFKWpMTEGA11EDkTt7mqObTPdigIA==}
     engines: {node: '>= 8'}
+    deprecated: The work that was done in this beta branch won't be included in future versions
 
   space-separated-tokens@1.1.5:
     resolution: {integrity: sha512-q/JSVd1Lptzhf5bkYm4ob4iWPjx0KiRe3sRFBNrVqbJkFaBm5vbbowy1mymoPNLRa52+oadOhJ+K49wsSeSjTA==}
@@ -12914,6 +12934,8 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
+
+  '@kurkle/color@0.3.4': {}
 
   '@kwsites/file-exists@1.1.1':
     dependencies:
@@ -16234,6 +16256,10 @@ snapshots:
   character-reference-invalid@2.0.1: {}
 
   chardet@0.7.0: {}
+
+  chart.js@4.5.0:
+    dependencies:
+      '@kurkle/color': 0.3.4
 
   check-error@2.1.1: {}
 
@@ -21217,6 +21243,11 @@ snapshots:
       minimist: 1.2.8
       strip-json-comments: 2.0.1
     optional: true
+
+  react-chartjs-2@5.3.0(chart.js@4.5.0)(react@18.3.1):
+    dependencies:
+      chart.js: 4.5.0
+      react: 18.3.1
 
   react-countup@6.5.3(react@18.3.1):
     dependencies:
