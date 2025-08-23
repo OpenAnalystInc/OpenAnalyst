@@ -73,7 +73,6 @@ In development mode (NODE_ENV="development"), changing the core code will trigge
 > 2. Kill any npm tasks running in the background (see screenshot below)
 > 3. Start debugging again
 
-<img width="600" alt="Stopping background tasks" src="../Open-Analyst/src/assets/images/terminal_tasks.png" />
 
 ### Building the Extension
 
