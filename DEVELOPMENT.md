@@ -7,7 +7,7 @@ Welcome to the OpenAnalyst development guide! This document will help you set up
 Before you begin, make sure you have the following installed:
 
 1. **Git** - For version control
-2. **Node.js** (version [v20.19.2](https://github.com/Oa-Org/oacode/blob/main/.nvmrc) recommended)
+2. **Node.js** (version [v20.19.2] recommended)
 3. **pnpm** - Package manager (https://pnpm.io/)
 4. **Visual Studio Code** - Our recommended IDE for development
 
@@ -18,12 +18,12 @@ Before you begin, make sure you have the following installed:
 1. **Fork and Clone the Repository**:
 
     - **Fork the Repository**:
-        - Visit the [OpenAnalyst GitHub repository](https://github.com/Oa-Org/oacode)
+        - Visit the [OpenAnalyst GitHub repository](https://github.com/OpenAnalystInc/OpenAnalyst)
         - Click the "Fork" button in the top-right corner to create your own copy.
     - **Clone Your Fork**:
         ```bash
-        git clone https://github.com/[YOUR-USERNAME]/oacode.git
-        cd oacode
+        git clone https://github.com/[YOUR-USERNAME]/OpenAnalyst.git
+        cd OpenAnalyst
         ```
         Replace `[YOUR-USERNAME]` with your actual GitHub username.
 
@@ -35,15 +35,10 @@ Before you begin, make sure you have the following installed:
 
     This command will install dependencies for the main extension, webview UI, and e2e tests.
 
-3. **Install VSCode Extensions**:
-    - **Required**: [ESBuild Problem Matchers](https://marketplace.visualstudio.com/items?itemName=connor4312.esbuild-problem-matchers) - Helps display build errors correctly.
-
 While not strictly necessary for running the extension, these extensions are recommended for development:
 
 - [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) - Integrates ESLint into VS Code.
 - [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) - Integrates Prettier into VS Code.
-
-The full list of recommended extensions is [here](https://github.com/Oa-Org/oacode/blob/main/.vscode/extensions.json)
 
 ### Project Structure
 
@@ -52,10 +47,9 @@ The project is organized into several key directories:
 - **`src/`** - Core extension code
     - **`core/`** - Core functionality and tools
     - **`services/`** - Service implementations
-- **`webview-ui/`** - Frontend UI code
-- **`e2e/`** - End-to-end tests
+    - **`assets/`** - Static assets like images and icons
+- **`webview/`** - Frontend UI code
 - **`scripts/`** - Utility scripts
-- **`assets/`** - Static assets like images and icons
 
 ## Development Workflow
 
@@ -64,12 +58,12 @@ The project is organized into several key directories:
 To run the extension in development mode:
 
 1. Press `F5` (or select **Run** → **Start Debugging**) in VSCode
-2. This will open a new VSCode window with OpenAnalyst loaded
+2. This will open a new VSCode window with OpenAnalyst loaded.
 
 ### Hot Reloading
 
 - **Webview UI changes**: Changes to the webview UI will appear immediately without restarting
-- **Core extension changes**: Changes to the core extension code will automatically reload the ext host
+- **Core extension changes**: Changes to the core extension code will automatically reload the extension host
 
 In development mode (NODE_ENV="development"), changing the core code will trigger a `workbench.action.reloadWindow` command, so it is no longer necessary to manually start/stop the debugger and tasks.
 
@@ -79,7 +73,6 @@ In development mode (NODE_ENV="development"), changing the core code will trigge
 > 2. Kill any npm tasks running in the background (see screenshot below)
 > 3. Start debugging again
 
-<img width="600" alt="Stopping background tasks" src="https://github.com/user-attachments/assets/466fb76e-664d-4066-a3f2-0df4d57dd9a4" />
 
 ### Building the Extension
 
@@ -174,15 +167,13 @@ These hooks help maintain code quality and consistency. If you encounter issues 
 
 We welcome contributions to OpenAnalyst! Here's how you can help:
 
-1. **Report an issue** using [GitHub Issues](https://github.com/Oa-Org/oacode/issues)
+1. **Report an issue** using [GitHub Issues](https://github.com/OpenAnalystInc/OpenAnalyst)
 2. **Find an issue** and submit a Pull Request with your fix
 3. **Write tests** to improve Code Coverage
-4. **Improve Documentation** at [oacode.ai/docs](https://oacode.ai/docs)
-5. **Suggest a new feature** using [GitHub Discussions](https://github.com/Oa-Org/oacode/discussions/categories/ideas)!
-6. Want to **implement something new**? Awesome! We'd be glad to support you on [Discord](https://discord.gg/Ja6BkfyTzJ)!
+4. Want to **implement something new**? Awesome! We'd be glad to support you on [Discord](https://discord.gg/Nr9UTZub)!
 
 ## Community
 
-Your contributions are welcome! For questions or ideas, please join our Discord server: https://discord.gg/Ja6BkfyTzJ
+Your contributions are welcome! For questions or ideas, please join our Discord server: https://discord.gg/Nr9UTZub
 
 We look forward to your contributions and feedback!

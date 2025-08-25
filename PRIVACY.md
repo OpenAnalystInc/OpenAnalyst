@@ -1,6 +1,6 @@
 # OpenAnalyst Privacy Policy
 
-**Last Updated: March 7th, 2025**
+**Last Updated: August 10th, 2025**
 
 OpenAnalyst respects your privacy and is committed to transparency about how we handle your data. Below is a simple breakdown of where key pieces of data go—and, importantly, where they don’t.
 
@@ -21,7 +21,7 @@ We take reasonable measures to secure your data, but no system is 100% secure. I
 
 ### **Contact Us**
 
-For any privacy-related questions, soon you can reach out to us at support@oacode.ai.
+For any privacy-related questions, reach out to us at any of our socials.
 
 ---
 

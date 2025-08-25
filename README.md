@@ -1,58 +1,56 @@
 <p align="center">
-  <a href="https://marketplace.visualstudio.com/items?itemName=oacode.Oa-Code"><img src="https://img.shields.io/visual-studio-marketplace/v/oacode.Oa-Code.svg?label=VS%20Code%20Marketplace" alt="VS Code Marketplace"></a>
-  <!--<a href="https://marketplace.visualstudio.com/items?itemName=oacode.Oa-Code"><img src="https://img.shields.io/badge/Get%20$20%20of%20free%20tokens-green?logo=claude&logoColor=white" alt="Get $20 of tokens for free"></a>-->
-  <a href="https://x.com/oa_code"><img src="https://img.shields.io/twitter/follow/oa_code?style=flat&logo=x&color=555" alt="X (Twitter)"></a>
-  <a href="https://blog.oacode.ai"><img src="https://img.shields.io/badge/Blog-555?style=flat&logo=substack&logoColor=white" alt="Substack Blog"></a>
-  <a href="https://oacode.ai/discord"><img src="https://img.shields.io/discord/1349288496988160052?style=flat&logo=discord&logoColor=white" alt="Discord"></a>
-  <a href="https://www.reddit.com/r/oacode/"><img src="https://img.shields.io/reddit/subreddit-subscribers/oacode?style=flat&logo=reddit&logoColor=white" alt="Reddit"></a>
+  <a href="https://x.com/OpenAnalystInc"><img src="https://img.shields.io/badge/twitter-follow/OpenAnalystInc?style=flat&logo=x&color=555" alt="X (Twitter)"></a>
+  <a href="https://discord.gg/Nr9UTZub"><img src="https://img.shields.io/badge/Discord-OpenAnalyst-5865F2?style=flat&logo=discord&logoColor=white" alt="Discord"></a>
+  <a href="https://www.reddit.com/r/OpenAnalyst/"><img src="https://img.shields.io/badge/Reddit-OpenAnalyst-FF4500?style=flat&logo=reddit&logoColor=white" alt="Reddit OpenAnalyst"></a>
+  <a href="https://www.linkedin.com/in/openanalyst-inc/"><img src="https://img.shields.io/badge/LinkedIn-openanalyst--inc-0077B5?style=flat&logo=linkedin&logoColor=white" alt="LinkedIn"></a>
+  <a href="https://www.facebook.com/people/OpenAnalyst/61579648771575/"><img src="https://img.shields.io/badge/Facebook-OpenAnalyst-1877F2?style=flat&logo=facebook&logoColor=white" alt="Facebook"></a>
+  <a href="https://huggingface.co/OpenAnalyst"><img src="https://img.shields.io/badge/🤗%20Hugging%20Face-OpenAnalyst-yellow" alt="Hugging Face"></a>
+  <a href="https://www.instagram.com/openanalyst/"><img src="https://img.shields.io/badge/Instagram-openanalyst-E4405F?style=flat&logo=instagram&logoColor=white" alt="Instagram"></a>
+  <a href="https://www.kaggle.com/openanalystinc"><img src="https://img.shields.io/badge/Kaggle-openanalystinc-20BEFF?style=flat&logo=kaggle&logoColor=white" alt="Kaggle"></a>
+  <a href="https://medium.com/@openanalystinc"><img src="https://img.shields.io/badge/Medium-OpenAnalyst-00AB6C?style=flat&logo=medium&logoColor=white" alt="Medium"></a>
+  <a href="https://substack.com/@openanalyst"><img src="https://img.shields.io/badge/Substack-OpenAnalyst-FF6719?style=flat&logo=substack&logoColor=white" alt="Substack"></a>
 </p>
 
 # 🚀 OpenAnalyst
 
-> Open-source VS Code AI agent. Merged features from [Roo Code](https://github.com/RooVetGit/Roo-Code) and [Cline](https://github.com/cline/cline).
+> Open-source VS Code AI agent specialized in **data analytics** and general coding related tasks. Merged features from [KiloCode](https://github.com/Kilo-Org/kilocode), [Roo Code](https://github.com/RooVetGit/Roo-Code), and [Cline](https://github.com/cline/cline).
 
 - ✨ Generate code from natural language
+- 📊 **Data Analytics Mode** - Specialized AI assistance for data analytics tasks
 - ✅ Checks its own work
 - 🧪 Run terminal commands
 - 🌐 Automate the browser
 - 🤖 Latest AI models
-- 🎁 API keys optional
-- 💡 **$20 free credits for Gemini 2.5 Pro, Claude 4 Sonnet & Opus, and GPT-4.1**<br/>Share feedback and earn more credits!
+- 🎁 API keys option
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Oa-Org/oacode/refs/heads/main/oa.gif" width="100%" />
-</p>
-
-- [VS Code Marketplace](https://oacode.ai/vscode-marketplace?utm_source=Readme) (download)
-- [Official OaCode.ai Home page](https://oacode.ai) (learn more)
+- [Official OpenAnalyst.com Home page](https://openanalyst.com) (learn more)
 
 ## Key Features
 
 - **Code Generation:** Generate code using natural language.
+- **Data Analytics Mode:** Specialized AI assistance for data science, statistics, and machine learning tasks.
 - **Task Automation:** Automate repetitive coding tasks.
 - **Automated Refactoring:** Refactor and improve existing code.
 - **MCP Server Marketplace**: Easily find, and use MCP servers to extend the agent capabilities.
-- **Multi Mode**: Plan with Architect, Code with Coder, and Debug with Debugger, and make your own custom modes.
+- **Multi-Mode Operation**: Seamlessly switch between specialized roles like **Data Analyst** (for planning data analysis), **Code** (for writing, modifying, and refactoring code), **Ask** (for getting answers and explanations), and **Debug** (for diagnosing and fixing software issues), with the flexibility to create your own custom modes.
 
-## How to get started with OpenAnalyst
+## Project Lineage and Features
 
-1.  Install the OpenAnalyst extension from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=oacode.Oa-Code).
-2.  Log in with your Google Account to get $20 in free Claude 4 Sonnet & Opus credits.
-3.  Start using the extension. Here's a video to help you get started (just click on the image below and you'll be redirected to YouTube):
+OpenAnalyst is a fork of [KiloCode](https://github.com/KiloCode/KiloCode), which itself is a fork of [Roo Code](https://github.com/RooVetGit/Roo-Code), which originated from [Cline](https://github.com/cline/cline). This lineage has allowed us to combine the best features from all three projects while adding our own innovations.
 
-[![Watch the video](https://img.youtube.com/vi/pqGfYXgrhig/maxresdefault.jpg)](https://youtu.be/pqGfYXgrhig)
+We're committed to merging the best of all worlds. OpenAnalyst combines all features from Cline, Roo Code, and KiloCode, plus adds several of our own enhancements. It represents the evolution of AI coding assistants, and we're continuously working to make it even better!
 
-## Difference between Roo Code and Cline
+OpenAnalyst supports the latest AI models including Claude 4 Sonnet and Opus, Gemini 2.5 Pro, and many others. **Note: Currently, you'll need to provide your own API keys for these services as our authentication system is still in development.**
 
-We're doing our best to combine the best of both worlds. OpenAnalyst combines all features of Cline, Roo, and adds a few of our own additions. It has the best features of both, and we're working on making it even better!
+OpenAnalyst includes the following key features from our predecessors (and enhancements of our own):
 
-No need to fiddle with API keys, OpenAnalyst ships with the latest AI models plugged in, including Claude 4 Sonnet and Opus and Gemini 2.5 Pro.
-
-OpenAnalyst is a direct fork from Roo Code, but also includes the following features from Cline (and more):
-
-- MCP Server Marketplace: Easily find, and use MCP servers to extend the agent capabilities.
-- System notifications: Get notified when the agent is done with a task.
-- Easy model connection: with bigger free tier.
+- **MCP Server Marketplace**: Easily find and use MCP servers to extend the agent capabilities
+- **Smart alerts**: Receive real-time updates on task completion and progress
+- **Seamless AI integration**: Connect to multiple AI services with your preferred credentials
+- **Conversation refinement**: Edit and enhance your chat history for better context
+- **Git assistance**: Automatically generate descriptive commit messages from your code changes
+- **Data Analytics specialization**: Built-in expertise for pandas, numpy, matplotlib, scikit-learn, and statistical analysis
+- **Data visualization guidance**: AI-powered help with charts, graphs, and data presentation
 
 ## Extension Development
 
