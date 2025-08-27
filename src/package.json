@@ -4,7 +4,7 @@
 	"description": "%extension.description%",
 	"publisher": "oacode",
 	"version": "4.79.1",
-	"icon": "assets/icons/oa.png",
+	"icon": "assets/icons/logo-outline-black.png",
 	"galleryBanner": {
 		"color": "#FFFFFF",
 		"theme": "light"
@@ -112,7 +112,7 @@
 					"title": "%views.activitybar.title%",
 					"icon": "assets/icons/oa.png",
 					"darkIcon": "assets/icons/oa-dark.png",
-					"when": "isMac"
+					"when": "isMac || isLinux || isWindows"
 					
 				}
 			]
