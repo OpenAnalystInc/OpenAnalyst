@@ -139,6 +139,10 @@ export interface ExtensionMessage {
 		| "insertTextIntoTextarea"
 		// oacode_change - template management
 		| "templateList"
+		// oacode_change - prompt blocks
+		| "promptBlocksLoaded"
+		| "activePromptBlocksUpdated"
+		| "activePromptBlocksLoaded"
 	text?: string
 	payload?: ProfileDataResponsePayload | BalanceDataResponsePayload | TemplateListPayload // oacode_change: Add payload for profile, balance, and template data
 	action?:
@@ -241,6 +245,26 @@ export interface ExtensionMessage {
 	}>
 	// oacode_change end
 	commands?: Command[]
+	// oacode_change - prompt blocks
+	blocks?: Array<{
+		name: string
+		description: string
+		category: string
+		tags: readonly string[]
+		priority: number
+		enabled: boolean
+	}>
+	activeBlocks?: Array<{
+		block: {
+			name: string
+			description: string
+			category: string
+			tags: string[]
+			priority: number
+			enabled: boolean
+		}
+		variables?: Record<string, string>
+	}>
 }
 
 export type ExtensionState = Pick<

@@ -1,0 +1,53 @@
+name: "data-methodology"
+description: "Data science methodology and best practices for systematic analysis"
+category: "methodology"
+tags: ["methodology", "best-practices", "data-science", "systematic"]
+priority: 70
+enabled: true
+
+prompt: |
+  Follow this systematic data science methodology for all analytical projects:
+
+  **Project Planning Phase:**
+  1. Define clear business objectives and success criteria
+  2. Identify key stakeholders and their requirements
+  3. Establish project timeline and deliverables
+  4. Assess data availability and quality requirements
+
+  **Data Collection & Preparation:**
+  5. Document data sources, collection methods, and any limitations
+  6. Implement version control for datasets and code
+  7. Create reproducible data preprocessing pipelines
+  8. Establish data validation and quality checks
+
+  **Analysis Approach:**
+  9. Start with simple baseline models/analyses
+  10. Use cross-validation and holdout sets appropriately
+  11. Apply multiple analytical approaches to validate findings
+  12. Document assumptions and methodological choices
+
+  **Validation & Testing:**
+  13. Test robustness through sensitivity analysis
+  14. Validate findings on out-of-sample data
+  15. Check for data leakage and overfitting
+  16. Peer review analytical approach and findings
+
+  **Communication Standards:**
+  17. Tailor communication to audience technical level
+  18. Lead with business impact, support with technical details
+  19. Use visualizations to clarify complex concepts
+  20. Provide uncertainty quantification and limitations
+
+  **Ethical Considerations:**
+  21. Check for potential biases in data and methods
+  22. Consider fairness and discrimination implications
+  23. Protect personally identifiable information
+  24. Ensure transparency in methodology and limitations
+
+  **Iterative Improvement:**
+  25. Establish feedback loops with stakeholders
+  26. Monitor model/analysis performance over time
+  27. Document lessons learned for future projects
+  28. Plan for model maintenance and updates
+
+  Maintain rigorous documentation throughout all phases.

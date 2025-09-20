@@ -9,6 +9,14 @@ import delay from "delay"
 import pWaitFor from "p-wait-for"
 import { serializeError } from "serialize-error"
 
+// Compile-time flag provided by bundler (see esbuild define)
+declare const __DEV__: boolean
+
+import { captureApiCall, updateApiCallCapture, updateApiCallCaptureWithRawData, captureSystemPrompt } from "../debug/captureUtils"
+import { getCapturedDataByTimeframe } from "../debug/httpInterceptor"
+import { getActivePromptBlocks } from "../webview/webviewMessageHandler"
+import { PromptBlocksFactory } from "../blocks/PromptBlocksFactory"
+
 import {
 	type TaskLike,
 	type TaskEvents,
@@ -136,6 +144,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 	readonly taskId: string
 	private taskIsFavorited?: boolean // oacode_change
 	readonly instanceId: string
+	private userOriginalRequest: string = "" // Store user's original task for debug capture
 
 	readonly rootTask: Task | undefined
 	readonly parentTask: Task | undefined
@@ -967,6 +976,9 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		this.clineMessages = []
 		this.apiConversationHistory = []
 		await this.providerRef.deref()?.postStateToWebview()
+
+		// Store original user request for debug capture
+		this.userOriginalRequest = task || ""
 
 		await this.say("text", task, images)
 		this.isInitialized = true
@@ -2167,7 +2179,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 				throw new Error("Provider not available")
 			}
 
-			return SYSTEM_PROMPT(
+			let systemPrompt = await SYSTEM_PROMPT(
 				provider.context,
 				this.cwd,
 				// oacode_change: supports images => supports browser
@@ -2191,6 +2203,64 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 					useAgentRules: vscode.workspace.getConfiguration("roo-cline").get<boolean>("useAgentRules") ?? true,
 				},
 			)
+
+			// Enhance system prompt with active prompt blocks (CRITICAL FIX!)
+			const activeBlocksMap = getActivePromptBlocks()
+			const activeBlockNames = Array.from(activeBlocksMap.keys())
+
+			if (activeBlocksMap.size > 0) {
+				try {
+					console.log("[DEBUG] Task: Enhancing system prompt with active blocks:", activeBlockNames)
+					const factory = PromptBlocksFactory.getInstance()
+					const loadUseCase = factory.createLoadPromptBlocks(provider.context.extensionPath)
+					const enhanceUseCase = factory.createEnhanceSystemPrompt()
+
+					// Load active prompt blocks and create configurations
+					const activePromptConfigs = []
+					for (const [blockName, config] of activeBlocksMap.entries()) {
+						const block = await loadUseCase.executeByName(blockName)
+						if (block) {
+							const activePromptConfig = enhanceUseCase.createActivePrompt(
+								block,
+								config.variables,
+								block.priority
+							)
+							activePromptConfigs.push(activePromptConfig)
+						}
+					}
+
+					// Enhance the system prompt with active blocks
+					if (activePromptConfigs.length > 0) {
+						const enhancementResult = enhanceUseCase.execute(systemPrompt, activePromptConfigs)
+						systemPrompt = enhancementResult.enhancedPrompt
+						console.log("[DEBUG] Task: System prompt enhanced successfully. Added", enhancementResult.addedLength, "characters")
+					}
+				} catch (error) {
+					console.error("[DEBUG] Task: Failed to enhance system prompt with prompt blocks:", error)
+				}
+			}
+
+			// Debug capture: Store ENHANCED system prompt in development mode
+			if (__DEV__) {
+				console.log("[DEBUG] System prompt capture: Task.getSystemPrompt() called, __DEV__ =", __DEV__)
+				try {
+					console.log("[DEBUG] System prompt capture: About to call captureSystemPrompt")
+					console.log("[DEBUG] System prompt capture: Active blocks:", activeBlockNames)
+					console.log("[DEBUG] System prompt capture: Prompt length:", systemPrompt.length)
+
+					captureSystemPrompt(systemPrompt, {
+						mode: mode || 'unknown',
+						activeBlocks: activeBlockNames,
+						customInstructions: !!customInstructions,
+						taskId: this.taskId
+					})
+					console.log("[DEBUG] System prompt capture: Successfully captured in Task.getSystemPrompt()")
+				} catch (error) {
+					console.error("[DEBUG] Failed to capture system prompt in Task.getSystemPrompt():", error)
+				}
+			}
+
+			return systemPrompt
 		})()
 	}
 
@@ -2333,6 +2403,86 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 			taskId: this.taskId,
 		}
 
+		// Debug capture: Store API call details in development mode
+		let debugCaptureFilename: string | undefined
+		let apiRequestStartTime: string | undefined
+		if (__DEV__) {
+			try {
+				apiRequestStartTime = new Date().toISOString()
+				const modelInfo = this.api.getModel()
+				const timestamp = new Date().toISOString()
+					.replace(/T/, '_')
+					.replace(/:/g, '-')
+					.replace(/\..+/, '')
+					.slice(0, 19)
+				debugCaptureFilename = `api_call_${timestamp}.md`
+
+				console.log(`[DEBUG] Task: API call starting at ${apiRequestStartTime}`)
+
+				// Get the actual current user request from the conversation history
+				let currentUserRequest = this.userOriginalRequest
+				if (cleanConversationHistory.length > 0) {
+					// Find the last REAL user message (not tool results or automated messages)
+					for (let i = cleanConversationHistory.length - 1; i >= 0; i--) {
+						if (cleanConversationHistory[i].role === 'user') {
+							const userMessage = cleanConversationHistory[i].content
+							let messageText = ''
+
+							if (typeof userMessage === 'string') {
+								messageText = userMessage
+							} else if (Array.isArray(userMessage)) {
+								// Handle array of content blocks
+								// Look for the first text block that contains actual user input
+								for (const block of userMessage) {
+									if (typeof block === 'object' && block.type === 'text' && block.text) {
+										const text = block.text
+										// Skip tool results and automated messages
+										if (text.startsWith('[') && text.includes('] Result:')) {
+											continue // This is a tool result
+										}
+										if (text.startsWith('[ERROR]') || text.includes('(This is an automated message')) {
+											continue // This is an automated message
+										}
+										// Check for task tags which contain actual user input
+										const taskMatch = text.match(/<task>\s*([\s\S]*?)\s*<\/task>/)
+										if (taskMatch) {
+											messageText = taskMatch[1].trim()
+											break
+										}
+										// Otherwise use the full text
+										messageText = text
+										break
+									}
+								}
+							}
+
+							// If we found a real user message, use it
+							if (messageText && !messageText.startsWith('[') && !messageText.includes('] Result:')) {
+								currentUserRequest = messageText
+								break
+							}
+						}
+					}
+				}
+
+				captureApiCall({
+					provider: (this.api as any).options?.apiProvider || 'unknown',
+					model: modelInfo.id,
+					taskId: this.taskId,
+					mode: mode,
+					systemPrompt: systemPrompt,
+					messages: cleanConversationHistory,
+					metadata: metadata,
+					userRequest: currentUserRequest,
+					timing: {
+						requestStart: apiRequestStartTime
+					}
+				})
+			} catch (error) {
+				console.error("[DEBUG] Failed to capture API call:", error)
+			}
+		}
+
 		const stream = this.api.createMessage(systemPrompt, cleanConversationHistory, metadata)
 		const iterator = stream[Symbol.asyncIterator]()
 
@@ -2453,7 +2603,63 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		// it's saying "yield all remaining values from this iterator". This
 		// effectively passes along all subsequent chunks from the original
 		// stream.
-		yield* iterator
+
+		// Debug capture: Collect response chunks for debugging
+		if (__DEV__ && debugCaptureFilename) {
+			let responseText = ""
+			let tokenCount = { input: 0, output: 0 }
+
+			for await (const chunk of iterator) {
+				// Collect response text for debugging
+				if (typeof chunk === 'string') {
+					responseText += chunk
+				} else if (chunk && typeof chunk === 'object' && 'text' in chunk) {
+					responseText += chunk.text || ""
+				}
+
+				// Collect token usage if available
+				if (chunk && typeof chunk === 'object' && 'usage' in chunk) {
+					const usage = (chunk as any).usage
+					if (usage) {
+						tokenCount.input = usage.input_tokens || tokenCount.input
+						tokenCount.output = usage.output_tokens || tokenCount.output
+					}
+				}
+
+				yield chunk
+			}
+
+			// Update the capture file with response and token usage
+			try {
+				updateApiCallCapture(debugCaptureFilename, responseText, tokenCount)
+
+				// Link with HTTP interceptor data
+				if (apiRequestStartTime) {
+					const apiRequestEndTime = new Date().toISOString()
+					console.log(`[DEBUG] Task: API call completed at ${apiRequestEndTime}, searching for intercepted HTTP data`)
+
+					// Get HTTP data captured during this timeframe
+					const interceptedData = getCapturedDataByTimeframe(apiRequestStartTime, apiRequestEndTime)
+
+					if (interceptedData.requests.length > 0 || interceptedData.responses.length > 0) {
+						console.log(`[DEBUG] Task: Found ${interceptedData.requests.length} requests and ${interceptedData.responses.length} responses`)
+
+						// Use the first captured request/response pair (most likely the API call)
+						const rawRequest = interceptedData.requests[0]
+						const rawResponse = interceptedData.responses[0]
+
+						updateApiCallCaptureWithRawData(debugCaptureFilename, rawRequest, rawResponse)
+					} else {
+						console.log("[DEBUG] Task: No intercepted HTTP data found for this timeframe")
+					}
+				}
+			} catch (error) {
+				console.error("[DEBUG] Failed to update API call capture:", error)
+			}
+		} else {
+			// Normal operation - just pass through all chunks
+			yield* iterator
+		}
 	}
 
 	// Checkpoints

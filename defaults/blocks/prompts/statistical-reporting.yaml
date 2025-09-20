@@ -1,0 +1,43 @@
+name: "statistical-reporting"
+description: "Statistical analysis reporting with hypothesis testing and confidence intervals"
+category: "reporting"
+tags: ["statistics", "reporting", "hypothesis", "confidence"]
+priority: 75
+enabled: true
+
+prompt: |
+  When conducting statistical analysis and reporting, follow these rigorous standards:
+
+  **Hypothesis Testing Protocol:**
+  1. State null and alternative hypotheses clearly
+  2. Choose appropriate statistical tests based on data types and assumptions
+  3. Check test assumptions (normality, homogeneity, independence)
+  4. Report test statistics, p-values, and effect sizes
+  5. Interpret results in practical context, not just statistical significance
+
+  **Confidence Intervals & Uncertainty:**
+  6. Always report confidence intervals alongside point estimates
+  7. Use appropriate confidence levels (95% default, justify others)
+  8. Explain the practical meaning of confidence intervals
+  9. Discuss limitations and potential sources of bias
+
+  **Reporting Standards:**
+  10. Include sample sizes for all analyses
+  11. Report exact p-values (not just "p < 0.05")
+  12. Describe effect sizes using standardized measures
+  13. Provide clear tables with descriptive statistics
+  14. Use appropriate decimal precision (typically 2-3 places)
+
+  **Business Context Translation:**
+  15. Translate statistical findings into business implications
+  16. Quantify practical significance vs statistical significance
+  17. Provide actionable recommendations based on analysis
+  18. Acknowledge uncertainty and recommend next steps
+
+  **Reproducibility Requirements:**
+  19. Document all data preprocessing steps
+  20. Specify software versions and packages used
+  21. Include code for key analyses
+  22. Provide clear methodology descriptions
+
+  Always conclude with a summary of key findings and their business relevance.

@@ -289,6 +289,11 @@ export interface WebviewMessage {
 		| "deleteCommand"
 		| "createCommand"
 		| "insertTextIntoTextarea"
+		// Prompt blocks
+		| "loadPromptBlocks"
+		| "addActivePromptBlock"
+		| "removeActivePromptBlock"
+		| "getActivePromptBlocks"
 	text?: string
 	editedMessageContent?: string
 	tab?: "settings" | "history" | "mcp" | "modes" | "chat" | "marketplace" | "account"
@@ -322,6 +327,9 @@ export interface WebviewMessage {
 	templateName?: string
 	content?: string
 	// oacode_change end
+	// Prompt block properties
+	blockName?: string
+	variables?: Record<string, string>
 	serverName?: string
 	toolName?: string
 	alwaysAllow?: boolean

@@ -14,6 +14,7 @@ import {
 	type ClineMessage,
 	TelemetryEventName,
 	ghostServiceSettingsSchema, // oacode_change
+	customModesSettingsSchema,
 } from "@roo-code/types"
 import { CloudService } from "@roo-code/cloud"
 import { TelemetryService } from "@roo-code/telemetry"
@@ -57,8 +58,21 @@ import { getCommand } from "../../utils/commands"
 import { toggleWorkflow, toggleRule, createRuleFile, deleteRuleFile } from "./oarules"
 import { mermaidFixPrompt } from "../prompts/utilities/mermaid" // oacode_change
 import { editMessageHandler, fetchOacodeNotificationsHandler } from "../oacode/webview/webviewMessageHandlerUtils" // oacode_change
+import { PromptBlocksFactory } from "../blocks"
 
 const ALLOWED_VSCODE_SETTINGS = new Set(["terminal.integrated.inheritEnv"])
+
+// Temporary storage for active prompt blocks (per session)
+// TODO: Replace with proper conversation state management
+const activePromptBlocks = new Map<string, Record<string, any>>()
+
+/**
+ * Get current active prompt blocks for system prompt generation
+ * @returns Map of active prompt blocks
+ */
+export function getActivePromptBlocks(): Map<string, Record<string, any>> {
+	return activePromptBlocks
+}
 
 import { MarketplaceManager, MarketplaceItemType } from "../../services/marketplace"
 import { setPendingTodoList } from "../tools/updateTodoListTool"
@@ -298,12 +312,78 @@ export const webviewMessageHandler = async (
 
 			provider.isViewLaunched = true
 			break
-		case "newTask":
+		case "newTask": {
 			// Initializing new instance of Cline will make sure that any
 			// agentically running promises in old instance don't affect our new
 			// task. This essentially creates a fresh slate for the new task.
-			await provider.initClineWithTask(message.text, message.images)
+			
+			let processedText = message.text || ""
+			
+			// Check for prompt block slash commands
+			const slashCommandRegex = /^\/([a-zA-Z0-9_-]+)(\s|$)/
+			const match = processedText.match(slashCommandRegex)
+			
+			if (match) {
+				const commandName = match[1]
+				
+				try {
+					// Check if this is a prompt block command
+					const factory = PromptBlocksFactory.getInstance()
+					const loadUseCase = factory.createLoadPromptBlocks(provider.context.extensionPath)
+					
+					const block = await loadUseCase.executeByName(commandName)
+					
+					if (block) {
+						// This is a prompt block - activate it and remove from text
+						processedText = processedText.replace(slashCommandRegex, "").trim()
+						
+						// Use structured logging for development debugging
+						import('../infrastructure/Logger').then(({ promptBlocksLogger }) => {
+							promptBlocksLogger.debug('Prompt block activated via slash command', {
+								blockName: block.name,
+								category: block.category,
+								originalText: message.text,
+								processedText: processedText
+							})
+						}).catch(() => {
+							// Fallback to console if logger import fails
+							console.log(`[PromptBlocks] Activated block: ${block.name}`)
+						})
+						
+						// TODO: Store in conversation state when available
+						// For now, just enhance the current prompt
+						const enhanceUseCase = factory.createEnhanceSystemPrompt()
+						const activePrompts = [{
+							name: block.name,
+							variables: {} // Could extract from command parameters later
+						}]
+						
+						// Initialize task with the enhanced prompt context
+						await provider.initClineWithTask(processedText, message.images)
+						return
+					}
+				} catch (error) {
+					// Use structured logging for error handling
+					import('../infrastructure/Logger').then(({ promptBlocksLogger }) => {
+						import('../infrastructure/errors').then(({ normalizeError }) => {
+							const typedError = normalizeError(error, 'SLASH_COMMAND_CHECK_FAILED', {
+								commandName,
+								operation: 'checkPromptBlock'
+							})
+							promptBlocksLogger.warn('Failed to check if slash command is prompt block', typedError.toLogObject())
+						})
+					}).catch(() => {
+						// Fallback to console logging
+						console.warn(`Error checking prompt block ${commandName}:`, error)
+					})
+					// Continue with normal processing - this is recoverable
+				}
+			}
+			
+			// Initialize task with processed text  
+			await provider.initClineWithTask(processedText, message.images)
 			break
+		}
 		// oacode_change start
 		case "condense":
 			provider.getCurrentCline()?.handleWebviewAskResponse("yesButtonClicked")
@@ -3236,11 +3316,6 @@ export const webviewMessageHandler = async (
 			if (message.filename && message.content) {
 				try {
 					// Directly use the TemplateManager for cleaner upload handling
-					const path = require("path")
-					const fs = require("fs/promises")
-					const yaml = require("yaml")
-					const { customModesSettingsSchema } = require("@roo-code/types")
-					const { getWorkspacePath } = require("../../utils/path")
 					
 					// Validate filename extension
 					if (!message.filename.endsWith('.yaml') && !message.filename.endsWith('.yml')) {
@@ -3311,6 +3386,213 @@ export const webviewMessageHandler = async (
 					console.error(`Error uploading template:`, error)
 					vscode.window.showErrorMessage(`Failed to upload template: ${error instanceof Error ? error.message : String(error)}`)
 				}
+			}
+			break
+		}
+
+		case "loadPromptBlocks": {
+			try {
+				const factory = PromptBlocksFactory.getInstance()
+				const loadUseCase = factory.createLoadPromptBlocks(provider.context.extensionPath)
+
+				const result = await loadUseCase.execute()
+				const blocks = result.blocks.map(block => ({
+					name: block.name,
+					description: block.description,
+					category: block.category,
+					tags: block.tags,
+					priority: block.priority,
+					enabled: block.enabled
+				}))
+
+				// Debug logging (only in development)
+				if (process.env.NODE_ENV === 'development') {
+					const config = factory.getConfigurationInfo(provider.context.extensionPath)
+					console.log("[PromptBlocks] Loading from paths:", config)
+					console.log("[PromptBlocks] Loaded blocks:", result.blocks.length, "blocks")
+					console.log("[PromptBlocks] Sending to webview:", blocks.map(b => b.name))
+				}
+
+				await provider.postMessageToWebview({
+					type: "promptBlocksLoaded",
+					blocks
+				})
+			} catch (error) {
+				// Use structured logging for error reporting
+				import('../infrastructure/Logger').then(({ promptBlocksLogger }) => {
+					import('../infrastructure/errors').then(({ normalizeError }) => {
+						const typedError = normalizeError(error, 'LOAD_BLOCKS_FAILED', {
+							operation: 'loadPromptBlocks'
+						})
+						promptBlocksLogger.error('Failed to load prompt blocks for webview', typedError.toLogObject())
+					})
+				}).catch(() => {
+					// Fallback to console logging
+					console.error("Failed to load prompt blocks:", error)
+				})
+				
+				await provider.postMessageToWebview({
+					type: "promptBlocksLoaded",
+					blocks: []
+				})
+			}
+			break
+		}
+
+		case "addActivePromptBlock": {
+			try {
+				if (!message.blockName) {
+					throw new Error("Block name is required for addActivePromptBlock")
+				}
+
+				// Add to temporary storage
+				activePromptBlocks.set(message.blockName, {
+					variables: message.variables || {}
+				})
+
+				// Load the actual blocks and send updated active list
+				const factory = PromptBlocksFactory.getInstance()
+				const loadUseCase = factory.createLoadPromptBlocks(provider.context.extensionPath)
+
+				const activeBlocks = []
+				for (const [blockName, config] of activePromptBlocks.entries()) {
+					const block = await loadUseCase.executeByName(blockName)
+					if (block) {
+						activeBlocks.push({
+							block: {
+								name: block.name,
+								description: block.description,
+								category: block.category,
+								tags: [...block.tags],
+								priority: block.priority,
+								enabled: block.enabled
+							},
+							variables: config.variables,
+							priority: block.priority
+						})
+					}
+				}
+
+				await provider.postMessageToWebview({
+					type: "activePromptBlocksUpdated",
+					activeBlocks
+				})
+			} catch (error) {
+				// Use structured logging for error reporting
+				import('../infrastructure/Logger').then(({ promptBlocksLogger }) => {
+					import('../infrastructure/errors').then(({ normalizeError }) => {
+						const typedError = normalizeError(error, 'ADD_PROMPT_BLOCK_FAILED', {
+							operation: 'addActivePromptBlock',
+							blockName: message.blockName
+						})
+						promptBlocksLogger.error('Failed to add active prompt block', typedError.toLogObject())
+					})
+				}).catch(() => {
+					console.error("Failed to add active prompt block:", error)
+				})
+			}
+			break
+		}
+
+		case "removeActivePromptBlock": {
+			try {
+				if (!message.blockName) {
+					throw new Error("Block name is required for removeActivePromptBlock")
+				}
+
+				// Remove from temporary storage
+				activePromptBlocks.delete(message.blockName)
+
+				// Load updated active list
+				const factory = PromptBlocksFactory.getInstance()
+				const loadUseCase = factory.createLoadPromptBlocks(provider.context.extensionPath)
+
+				const activeBlocks = []
+				for (const [blockName, config] of activePromptBlocks.entries()) {
+					const block = await loadUseCase.executeByName(blockName)
+					if (block) {
+						activeBlocks.push({
+							block: {
+								name: block.name,
+								description: block.description,
+								category: block.category,
+								tags: [...block.tags],
+								priority: block.priority,
+								enabled: block.enabled
+							},
+							variables: config.variables,
+							priority: block.priority
+						})
+					}
+				}
+
+				await provider.postMessageToWebview({
+					type: "activePromptBlocksUpdated",
+					activeBlocks
+				})
+			} catch (error) {
+				// Use structured logging for error reporting
+				import('../infrastructure/Logger').then(({ promptBlocksLogger }) => {
+					import('../infrastructure/errors').then(({ normalizeError }) => {
+						const typedError = normalizeError(error, 'REMOVE_PROMPT_BLOCK_FAILED', {
+							operation: 'removeActivePromptBlock',
+							blockName: message.blockName
+						})
+						promptBlocksLogger.error('Failed to remove active prompt block', typedError.toLogObject())
+					})
+				}).catch(() => {
+					console.error("Failed to remove active prompt block:", error)
+				})
+			}
+			break
+		}
+
+		case "getActivePromptBlocks": {
+			try {
+				// Load active blocks from temporary storage
+				const factory = PromptBlocksFactory.getInstance()
+				const loadUseCase = factory.createLoadPromptBlocks(provider.context.extensionPath)
+
+				const activeBlocks = []
+				for (const [blockName, config] of activePromptBlocks.entries()) {
+					const block = await loadUseCase.executeByName(blockName)
+					if (block) {
+						activeBlocks.push({
+							block: {
+								name: block.name,
+								description: block.description,
+								category: block.category,
+								tags: [...block.tags],
+								priority: block.priority,
+								enabled: block.enabled
+							},
+							variables: config.variables,
+							priority: block.priority
+						})
+					}
+				}
+
+				await provider.postMessageToWebview({
+					type: "activePromptBlocksLoaded",
+					activeBlocks
+				})
+			} catch (error) {
+				// Use structured logging for error reporting
+				import('../infrastructure/Logger').then(({ promptBlocksLogger }) => {
+					import('../infrastructure/errors').then(({ normalizeError }) => {
+						const typedError = normalizeError(error, 'GET_PROMPT_BLOCKS_FAILED', {
+							operation: 'getActivePromptBlocks'
+						})
+						promptBlocksLogger.error('Failed to get active prompt blocks', typedError.toLogObject())
+					})
+				}).catch(() => {
+					console.error("Failed to get active prompt blocks:", error)
+				})
+
+				await provider.postMessageToWebview({
+					type: "activePromptBlocksLoaded",
+					activeBlocks: []
+				})
 			}
 			break
 		}

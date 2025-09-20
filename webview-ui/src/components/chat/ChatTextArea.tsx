@@ -10,6 +10,7 @@ import { ExtensionMessage } from "@roo/ExtensionMessage"
 import { vscode } from "@/utils/vscode"
 import { useExtensionState } from "@/context/ExtensionStateContext"
 import { useAppTranslation } from "@/i18n/TranslationContext"
+import { usePromptBlocks } from "@/context/PromptBlocksContext"
 import {
 	ContextMenuOptionType,
 	getContextMenuOptions,
@@ -112,6 +113,8 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 			taskHistory,
 			clineMessages,
 		} = useExtensionState()
+
+		const { addActiveBlock } = usePromptBlocks()
 
 		// Find the ID and display text for the currently selected API configuration
 		const { currentConfigId, displayName } = useMemo(() => {
@@ -421,6 +424,14 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 			(command: SlashCommand) => {
 				setShowSlashCommandsMenu(false)
 
+				// Handle prompt block commands
+				if (command.promptBlock) {
+					// Add prompt block to active blocks
+					addActiveBlock(command.name)
+					setInputValue("") // Clear the input after activating prompt block
+					return
+				}
+
 				// Handle mode switching commands
 				const modeSwitchCommands = getAllModes(customModes).map((mode) => mode.slug)
 				if (modeSwitchCommands.includes(command.name)) {
@@ -448,7 +459,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 					}, 0)
 				}
 			},
-			[setInputValue, setMode, customModes],
+			[setInputValue, setMode, customModes, addActiveBlock],
 		)
 		// oacode_change end
 

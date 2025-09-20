@@ -4,11 +4,14 @@
 import { getAllModes } from "@roo/modes"
 import { getBasename } from "./oacode/path-webview"
 import { ClineRulesToggles } from "@roo/cline-rules"
+import { PromptBlockInfo, promptBlocksToSlashCommands, PromptBlockSlashCommand } from "./prompt-blocks"
 
 export interface SlashCommand {
 	name: string
 	description?: string
-	section?: "default" | "custom"
+	section?: "default" | "custom" | "prompts"
+	category?: string
+	promptBlock?: PromptBlockInfo
 }
 
 // Create a function to get all supported slash commands
@@ -16,6 +19,7 @@ export function getSupportedSlashCommands(
 	customModes?: any[],
 	localWorkflowToggles: ClineRulesToggles = {},
 	globalWorkflowToggles: ClineRulesToggles = {},
+	promptBlocks: PromptBlockInfo[] = [],
 ): SlashCommand[] {
 	// Start with non-mode commands
 	const baseCommands: SlashCommand[] = [
@@ -39,7 +43,11 @@ export function getSupportedSlashCommands(
 
 	// add workflow commands
 	const workflowCommands = getWorkflowCommands(localWorkflowToggles, globalWorkflowToggles)
-	return [...baseCommands, ...modeCommands, ...workflowCommands]
+	
+	// add prompt block commands
+	const promptBlockCommands = promptBlocksToSlashCommands(promptBlocks)
+	
+	return [...baseCommands, ...modeCommands, ...workflowCommands, ...promptBlockCommands]
 }
 
 // Export a default instance for backward compatibility
@@ -103,8 +111,9 @@ export function getMatchingSlashCommands(
 	customModes?: any[],
 	localWorkflowToggles: ClineRulesToggles = {},
 	globalWorkflowToggles: ClineRulesToggles = {},
+	promptBlocks: PromptBlockInfo[] = [],
 ): SlashCommand[] {
-	const commands = getSupportedSlashCommands(customModes, localWorkflowToggles, globalWorkflowToggles)
+	const commands = getSupportedSlashCommands(customModes, localWorkflowToggles, globalWorkflowToggles, promptBlocks)
 
 	if (!query) {
 		return [...commands]
@@ -139,13 +148,14 @@ export function validateSlashCommand(
 	customModes?: any[],
 	localWorkflowToggles: ClineRulesToggles = {},
 	globalWorkflowToggles: ClineRulesToggles = {},
+	promptBlocks: PromptBlockInfo[] = [],
 ): "full" | "partial" | null {
 	if (!command) {
 		return null
 	}
 
 	// case sensitive matching
-	const commands = getSupportedSlashCommands(customModes, localWorkflowToggles, globalWorkflowToggles)
+	const commands = getSupportedSlashCommands(customModes, localWorkflowToggles, globalWorkflowToggles, promptBlocks)
 
 	const exactMatch = commands.some((cmd) => cmd.name === command)
 

@@ -259,6 +259,11 @@
 				"category": "%configuration.title%"
 			},
 			{
+				"command": "oa-code.showProductionStandards",
+				"title": "Show Production Standards",
+				"category": "%configuration.title%"
+			},
+			{
 				"command": "oa-code.ghost.generateSuggestions",
 				"title": "%ghost.commands.generateSuggestions%",
 				"category": "%configuration.title%"

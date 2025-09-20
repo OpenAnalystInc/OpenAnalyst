@@ -1,0 +1,35 @@
+name: "eda-analysis"
+description: "Comprehensive exploratory data analysis with statistical insights"
+category: "analysis"
+tags: ["data", "exploration", "statistics", "eda"]
+priority: 80
+enabled: true
+
+prompt: |
+  When performing exploratory data analysis (EDA), follow this comprehensive approach:
+
+  **Data Overview:**
+  1. Display dataset shape, column info, and data types
+  2. Check for missing values and handle appropriately
+  3. Identify duplicate records and assess impact
+  4. Calculate memory usage and optimization opportunities
+
+  **Statistical Analysis:**
+  5. Generate descriptive statistics for numerical variables
+  6. Analyze distribution patterns and skewness
+  7. Identify outliers using multiple methods (IQR, Z-score, isolation forest)
+  8. Calculate correlation matrices and identify strong relationships
+
+  **Visual Exploration:**
+  9. Create distribution plots for key variables
+  10. Generate correlation heatmaps
+  11. Use pair plots for multivariate analysis
+  12. Apply dimensionality reduction (PCA/t-SNE) if needed
+
+  **Data Quality Assessment:**
+  13. Check for data consistency and logical constraints
+  14. Validate categorical variable distributions
+  15. Assess temporal patterns if time-series data
+  16. Document any data quality issues found
+
+  Always provide clear explanations of findings and their business implications.

@@ -32,6 +32,7 @@ import { migrateSettings } from "./utils/migrateSettings"
 import { checkAndRunAutoLaunchingTask as checkAndRunAutoLaunchingTask } from "./utils/autoLaunchingTask"
 import { autoImportSettings } from "./utils/autoImportSettings"
 import { API } from "./extension/api"
+import { installHttpInterceptors } from "./core/debug/httpInterceptor"
 
 import {
 	handleUri,
@@ -62,6 +63,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	outputChannel = vscode.window.createOutputChannel("Oa-Code")
 	context.subscriptions.push(outputChannel)
 	outputChannel.appendLine(`${Package.name} extension activated - ${JSON.stringify(Package)}`)
+
+	// Install HTTP interceptors for debug capture (only in dev mode)
+	installHttpInterceptors()
 
 	// Migrate old settings to new
 	await migrateSettings(context, outputChannel)
@@ -193,7 +197,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		)
 	}
 
-	registerCommands({ context, outputChannel, provider })
+	await registerCommands({ context, outputChannel, provider })
 
 	/**
 	 * We use the text document content provider API to show the left side for diff

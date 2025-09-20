@@ -49,6 +49,7 @@ import Announcement from "./Announcement"
 import BrowserSessionRow from "./BrowserSessionRow"
 import ChatRow from "./ChatRow"
 import ChatTextArea from "./ChatTextArea"
+import { ActivePrompts } from "./ActivePrompts"
 // import TaskHeader from "./TaskHeader"// oacode_change
 import OaTaskHeader from "../oacode/OaTaskHeader" // oacode_change
 import AutoApproveMenu from "./AutoApproveMenu"
@@ -2172,6 +2173,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 					setMessageQueue((prev) => prev.map((msg, i) => (i === index ? { ...msg, text: newText } : msg)))
 				}}
 			/>
+			<ActivePrompts />
 			<ChatTextArea
 				ref={textAreaRef}
 				inputValue={inputValue}

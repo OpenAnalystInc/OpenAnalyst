@@ -256,6 +256,10 @@ const getCommandsMap = ({ context, outputChannel }: RegisterCommandOptions): Rec
 			contextProxy: visibleProvider.contextProxy,
 		})
 	},
+	showProductionStandards: () => {
+		// Show production standards information
+		vscode.window.showInformationMessage("Production Standards: This extension follows Clean Architecture, TypeScript best practices, and structured logging.")
+	},
 	// oacode_change end
 })
 

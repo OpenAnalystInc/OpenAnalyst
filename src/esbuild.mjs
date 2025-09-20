@@ -28,6 +28,11 @@ async function main() {
 		format: "cjs",
 		sourcesContent: false,
 		platform: "node",
+		define: {
+			// Development flag for conditional debug logging
+			// In production builds, debug logs are eliminated via dead code elimination
+			"__DEV__": production ? "false" : "true",
+		},
 	}
 
 	const srcDir = __dirname

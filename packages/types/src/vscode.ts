@@ -61,6 +61,7 @@ export const commandIds = [
 	"exportSettings", // oacode_change
 	"generateTerminalCommand", // oacode_change
 	"focusPanel",
+	"showProductionStandards", // oacode_change
 ] as const
 
 export type CommandId = (typeof commandIds)[number]
