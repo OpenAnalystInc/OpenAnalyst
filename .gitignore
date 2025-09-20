@@ -20,6 +20,7 @@ CLAUDE.md
 # Test environment
 .test_env
 .vscode-test/
+system_prompt/
 
 # Docs
 docs/_site/
