@@ -289,11 +289,11 @@ export interface WebviewMessage {
 		| "deleteCommand"
 		| "createCommand"
 		| "insertTextIntoTextarea"
-		// Prompt blocks
-		| "loadPromptBlocks"
-		| "addActivePromptBlock"
-		| "removeActivePromptBlock"
-		| "getActivePromptBlocks"
+		// Prompt blocks (enhanced for toolbar support in Phase 2)
+		| "loadPromptBlocks"        // Request all prompt blocks with categorization
+		| "addActivePromptBlock"    // Activate a prompt block (used by slash commands & toolbar)
+		| "removeActivePromptBlock" // Deactivate a prompt block
+		| "getActivePromptBlocks"   // Get currently active prompt blocks
 		// Workflow mode
 		| "workflowModeChanged"
 	text?: string
@@ -329,9 +329,9 @@ export interface WebviewMessage {
 	templateName?: string
 	content?: string
 	// oacode_change end
-	// Prompt block properties
-	blockName?: string
-	variables?: Record<string, string>
+	// Prompt block properties (enhanced in Phase 2 for toolbar support)
+	blockName?: string                    // Name of prompt block to activate/deactivate
+	variables?: Record<string, string>    // Optional variables for prompt block templates
 	serverName?: string
 	toolName?: string
 	alwaysAllow?: boolean

@@ -117,7 +117,16 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 			setWorkflowMode,
 		} = useExtensionState()
 
-		const { addActiveBlock } = usePromptBlocks()
+		// PHASE 5.1 ENHANCED: Import all required methods for unified activation handler
+		const { 
+			addActiveBlock, 
+			availableBlocks,
+			activeBlocks,
+			isBlockActive,
+			getActivationState,
+			getConflictInfo,
+			toggleActiveBlock
+		} = usePromptBlocks()
 
 		// Find the ID and display text for the currently selected API configuration
 		const { currentConfigId, displayName } = useMemo(() => {
@@ -423,19 +432,62 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 		)
 
 		// oacode_change start: pull slash commands from Cline
+		/**
+		 * Handle slash command selection from the dropdown menu
+		 * 
+		 * This is the main entry point for slash command activation.
+		 * Three types of commands are handled:
+		 * 1. Prompt blocks: Added to active state (affects system prompt)
+		 * 2. Mode switching: Changes AI behavior mode
+		 * 3. Regular commands: Inserted into chat input
+		 * 
+		 * IMPORTANT: Prompt blocks use addActiveBlock() - same as toolbar will use
+		 */
 		const handleSlashCommandsSelect = useCallback(
 			(command: SlashCommand) => {
 				setShowSlashCommandsMenu(false)
 
-				// Handle prompt block commands
+				// TYPE 1: Handle prompt block commands (from YAML files)
 				if (command.promptBlock) {
-					// Add prompt block to active blocks
-					addActiveBlock(command.name)
-					setInputValue("") // Clear the input after activating prompt block
+					// PHASE 5.1 NEW: Use unified activation handler for consistent behavior
+					// This ensures slash commands and toolbar use identical activation logic
+					import("@/services/UnifiedPromptActivationHandler").then(({ unifiedPromptActivationHandler }) => {
+						const context = {
+							availableBlocks,
+							activeBlocks,
+							isBlockActive,
+							getActivationState,
+							getConflictInfo,
+							toggleActiveBlock,
+							addActiveBlock
+						}
+
+						unifiedPromptActivationHandler.activatePromptBlock(
+							command.name,
+							context,
+							'slash-command',
+							{ 
+								clearInput: true,
+								showFeedback: true
+							}
+						).then(result => {
+							if (result.success) {
+								console.log(`[ChatTextArea] Successfully activated prompt block via slash command:`, result.userMessage)
+								setInputValue("") // Clear the input after successful activation
+								// PHASE 5.3: User feedback notification is now handled automatically by UnifiedPromptActivationHandler
+							} else {
+								console.error(`[ChatTextArea] Failed to activate prompt block ${command.name}:`, result.error)
+								// PHASE 5.3: Error notification is now handled automatically by UnifiedPromptActivationHandler
+							}
+						}).catch(error => {
+							console.error(`[ChatTextArea] Unified activation handler failed:`, error)
+						})
+					})
+					
 					return
 				}
 
-				// Handle mode switching commands
+				// TYPE 2: Handle mode switching commands (data-analyst, code, ask, debug)
 				const modeSwitchCommands = getAllModes(customModes).map((mode) => mode.slug)
 				if (modeSwitchCommands.includes(command.name)) {
 					// Switch to the selected mode
@@ -445,7 +497,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 					return
 				}
 
-				// Handle other slash commands (like newtask)
+				// TYPE 3: Handle other slash commands (like newtask, reportbug)
 				if (textAreaRef.current) {
 					const { newValue, commandIndex } = insertSlashCommand(textAreaRef.current.value, command.name)
 					const newCursorPosition = newValue.indexOf(" ", commandIndex + 1 + command.name.length) + 1

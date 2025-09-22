@@ -3390,70 +3390,153 @@ export const webviewMessageHandler = async (
 			break
 		}
 
+		/**
+		 * Enhanced loadPromptBlocks handler for toolbar support
+		 * 
+		 * IMPORTANT: This preserves 100% compatibility with existing slash commands
+		 * while adding categorization support for the new toolbar interface.
+		 * 
+		 * New features:
+		 * - Categorizes prompts as "default" vs "custom" based on source
+		 * - Provides source information for each prompt block
+		 * - Maintains existing "promptBlocksLoaded" message format
+		 */
 		case "loadPromptBlocks": {
 			try {
 				const factory = PromptBlocksFactory.getInstance()
 				const loadUseCase = factory.createLoadPromptBlocks(provider.context.extensionPath)
-
+				
+				// Get repository to access source information
+				const repository = factory.createRepository(provider.context.extensionPath)
+				
+				// Load all blocks with their source information
 				const result = await loadUseCase.execute()
-				const blocks = result.blocks.map(block => ({
-					name: block.name,
-					description: block.description,
-					category: block.category,
-					tags: block.tags,
-					priority: block.priority,
-					enabled: block.enabled
-				}))
+				const blocksWithSource = []
+				
+				// For each block, determine its source (default vs custom)
+				for (const block of result.blocks) {
+					// Load block with source information
+					const blockResult = await repository.loadByName(block.name)
+					const source = blockResult.success ? blockResult.source : "workspace"
+					
+					// Categorize based on source: "defaults" = default, others = custom
+					const category = source === "defaults" ? "default" : "custom"
+					
+					blocksWithSource.push({
+						name: block.name,
+						description: block.description,
+						category: block.category, // This is the prompt category (analysis, visualization, etc.)
+						tags: block.tags,
+						priority: block.priority,
+						enabled: block.enabled,
+						source: source, // Source path info (workspace/global/defaults)
+						sourceCategory: category // Categorization for toolbar (default/custom)
+					})
+				}
+
+				// Separate blocks by source category for toolbar
+				const defaultBlocks = blocksWithSource.filter(b => b.sourceCategory === "default")
+				const customBlocks = blocksWithSource.filter(b => b.sourceCategory === "custom")
 
 				// Debug logging (only in development)
 				if (process.env.NODE_ENV === 'development') {
 					const config = factory.getConfigurationInfo(provider.context.extensionPath)
 					console.log("[PromptBlocks] Loading from paths:", config)
 					console.log("[PromptBlocks] Loaded blocks:", result.blocks.length, "blocks")
-					console.log("[PromptBlocks] Sending to webview:", blocks.map(b => b.name))
+					console.log("[PromptBlocks] Default blocks:", defaultBlocks.length)
+					console.log("[PromptBlocks] Custom blocks:", customBlocks.length)
+					console.log("[PromptBlocks] Sending to webview:", blocksWithSource.map(b => `${b.name} (${b.sourceCategory})`))
 				}
 
+				// Send categorized response for new toolbar functionality
 				await provider.postMessageToWebview({
 					type: "promptBlocksLoaded",
-					blocks
+					blocks: blocksWithSource, // Full compatibility with existing system
+					defaultBlocks, // New: For toolbar default tab
+					customBlocks, // New: For toolbar custom tab
+					totalCount: result.blocks.length,
+					defaultCount: defaultBlocks.length,
+					customCount: customBlocks.length
 				})
 			} catch (error) {
+				/**
+				 * Enhanced error handling for prompt block loading
+				 * 
+				 * Handles various failure scenarios:
+				 * 1. YAML parsing errors
+				 * 2. File system access issues
+				 * 3. Repository initialization failures
+				 * 4. Individual block loading failures
+				 * 
+				 * Always sends a response to prevent webview from hanging
+				 */
+				
 				// Use structured logging for error reporting
 				import('../infrastructure/Logger').then(({ promptBlocksLogger }) => {
 					import('../infrastructure/errors').then(({ normalizeError }) => {
 						const typedError = normalizeError(error, 'LOAD_BLOCKS_FAILED', {
-							operation: 'loadPromptBlocks'
+							operation: 'loadPromptBlocks',
+							errorType: error?.constructor?.name || 'Unknown',
+							errorMessage: error instanceof Error ? error.message : String(error)
 						})
 						promptBlocksLogger.error('Failed to load prompt blocks for webview', typedError.toLogObject())
 					})
 				}).catch(() => {
-					// Fallback to console logging
-					console.error("Failed to load prompt blocks:", error)
+					// Fallback to console logging if structured logging fails
+					console.error("[PromptBlocks] Failed to load prompt blocks:", error)
+					console.error("[PromptBlocks] Error details:", {
+						name: error?.constructor?.name,
+						message: error instanceof Error ? error.message : String(error),
+						stack: error instanceof Error ? error.stack : undefined
+					})
 				})
 				
+				// Always send a response to prevent UI hanging
+				// Send empty arrays but indicate error occurred
 				await provider.postMessageToWebview({
 					type: "promptBlocksLoaded",
-					blocks: []
+					blocks: [], // Maintain compatibility with existing slash commands
+					defaultBlocks: [], // Empty for toolbar
+					customBlocks: [], // Empty for toolbar
+					totalCount: 0,
+					defaultCount: 0,
+					customCount: 0,
+					error: error instanceof Error ? error.message : String(error),
+					loadFailed: true // Flag to indicate loading failure
 				})
 			}
 			break
 		}
 
+		/**
+		 * Handle prompt block activation from webview
+		 * 
+		 * This message is sent when a prompt block is activated via:
+		 * 1. Slash commands (e.g., /chart-visualization)
+		 * 2. Toolbar prompt selection (future implementation)
+		 * 
+		 * Flow:
+		 * 1. Store block in active state
+		 * 2. Load block details from YAML files
+		 * 3. Send updated active blocks back to webview
+		 * 4. System prompt gets enhanced automatically on next AI call
+		 */
 		case "addActivePromptBlock": {
 			try {
 				if (!message.blockName) {
 					throw new Error("Block name is required for addActivePromptBlock")
 				}
 
-				// Add to temporary storage
+				// Add to temporary storage (maintains active blocks across extension session)
 				activePromptBlocks.set(message.blockName, {
 					variables: message.variables || {}
 				})
 
-				// Load the actual blocks and send updated active list
+				// Load the actual blocks from YAML files and send updated active list
 				const factory = PromptBlocksFactory.getInstance()
 				const loadUseCase = factory.createLoadPromptBlocks(provider.context.extensionPath)
 
+				// Build active blocks list with full block data
 				const activeBlocks = []
 				for (const [blockName, config] of activePromptBlocks.entries()) {
 					const block = await loadUseCase.executeByName(blockName)
@@ -3473,6 +3556,7 @@ export const webviewMessageHandler = async (
 					}
 				}
 
+				// Send updated active blocks back to webview for UI updates
 				await provider.postMessageToWebview({
 					type: "activePromptBlocksUpdated",
 					activeBlocks

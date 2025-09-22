@@ -1,64 +1,67 @@
 /**
- * PromptsPopover
- * This component displays the Prompts dropdown with categorized prompt templates,
- * search functionality, favorites, and quick access to commonly used prompts.
+ * PromptsPopover - REDESIGNED IN PHASE 3
  * 
- * Features:
- * - Categorized prompt templates
- * - Search across prompts, descriptions, and tags
- * - Favorite prompts section
- * - Most used prompts section
- * - Template variable preview
- * - Quick insert functionality
+ * This component now displays YAML prompt blocks from the extension backend
+ * instead of mock data. It maintains the same interface as before to ensure
+ * compatibility with existing toolbar integration.
+ * 
+ * NEW Features (Phase 3):
+ * - Displays real YAML prompts from defaults/blocks/prompts/
+ * - Default/Custom tabs for source-based categorization
+ * - Category grouping within each tab (analysis, visualization, etc.)
+ * - Integration with PromptBlocksContext for state management
+ * - Active prompt indicators
+ * - Loading and empty states
+ * 
+ * PRESERVED Features:
+ * - Same PromptsPopover interface for toolbar compatibility
+ * - Search functionality across prompts
+ * - Responsive design and accessibility
  */
 
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { 
   Search,
-  Star,
-  TrendingUp,
-  Plus,
   Settings,
-  ExternalLink,
+  Plus,
   X,
   Filter,
   RotateCcw,
-  MessageSquare
+  MessageSquare,
+  Loader2,
+  FolderOpen
 } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui'
 import { Button } from '@/components/ui'
 import { Input } from '@/components/ui'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
 
-import { PromptTemplate as PromptTemplateType, PromptCategory } from '../types'
-import { 
-  mockPromptsData, 
-  getPromptsByCategory, 
-  getFavoritePrompts, 
-  getMostUsedPrompts,
-  searchPrompts,
-  getPromptStats,
-  simulatePromptUsage
-} from './mockPromptsData'
-import { PromptCategory as PromptCategoryComponent } from './PromptCategory'
-import { PromptTemplate } from './PromptTemplate'
+// NEW: Import YAML prompt block types and context
+import { PromptBlockInfo } from '@/utils/prompt-blocks'
+import { usePromptBlocks } from '@/context/PromptBlocksContext'
+import { promptActivationService } from '@/services/PromptActivationService'
+import { PromptBlockCard } from './PromptBlockCard'
 
 /**
- * Props for the PromptsPopover component
+ * Props for the PromptsPopover component - UPDATED IN PHASE 3
+ * 
+ * Changed from mock PromptTemplateType to real PromptBlockInfo
  */
 interface PromptsPopoverProps {
   trigger: (props: { active: boolean }) => React.ReactNode
-  onPromptSelect?: (prompt: PromptTemplateType) => void
+  onPromptSelect?: (prompt: PromptBlockInfo) => void  // CHANGED: Now uses PromptBlockInfo
   onCreatePrompt?: () => void
   onManagePrompts?: () => void
   className?: string
 }
 
 /**
- * Available prompt categories
+ * Available YAML prompt categories from domain model
+ * These match the categories in PromptCategory.ts: analysis, visualization, reporting, methodology
  */
-const CATEGORIES: PromptCategory[] = ['code', 'debug', 'review', 'test', 'docs', 'refactor', 'explain']
+const YAML_PROMPT_CATEGORIES = ['analysis', 'visualization', 'reporting', 'methodology'] as const
+type YamlPromptCategory = typeof YAML_PROMPT_CATEGORIES[number]
 
 /**
  * Main PromptsPopover component
@@ -76,96 +79,105 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({
   
   const [open, setOpen] = useState(false)
   const [searchValue, setSearchValue] = useState('')
-  const [categoryFilter, setCategoryFilter] = useState<PromptCategory | 'all'>('all')
-  const [activeTab, setActiveTab] = useState<'all' | 'favorites' | 'recent'>('all')
+  const [categoryFilter, setCategoryFilter] = useState<YamlPromptCategory | 'all'>('all')
+  const [activeTab, setActiveTab] = useState<'default' | 'custom'>('default')
+  const [isLoading, setIsLoading] = useState(false)
+
+  // PHASE 4.4 ENHANCED: Access enhanced YAML prompt blocks from context
+  const { 
+    availableBlocks, 
+    activeBlocks, 
+    defaultBlocks, 
+    customBlocks,
+    isLoading: contextLoading
+  } = usePromptBlocks()
 
   // ============================
   // Computed Values
   // ============================
 
+  // PHASE 4.4 ENHANCEMENT: Use categorized blocks directly from context (no need for useMemo)
+  // The context now provides defaultBlocks and customBlocks directly
+
+  /**
+   * Get current tab blocks based on active tab
+   */
+  const currentTabBlocks = useMemo(() => {
+    return activeTab === 'default' ? defaultBlocks : customBlocks
+  }, [activeTab, defaultBlocks, customBlocks])
+
   /**
    * Filter prompts based on search and category
    */
-  const filteredPrompts = useMemo(() => {
-    let prompts = mockPromptsData
+  const filteredBlocks = useMemo(() => {
+    let blocks = currentTabBlocks
 
     // Apply search filter
     if (searchValue) {
-      prompts = searchPrompts(searchValue)
+      blocks = blocks.filter(block => 
+        block.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+        block.description?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        block.category.toLowerCase().includes(searchValue.toLowerCase())
+      )
     }
 
     // Apply category filter
     if (categoryFilter !== 'all') {
-      prompts = prompts.filter(prompt => prompt.category === categoryFilter)
+      blocks = blocks.filter(block => block.category === categoryFilter)
     }
 
-    return prompts
-  }, [searchValue, categoryFilter])
+    return blocks
+  }, [currentTabBlocks, searchValue, categoryFilter])
 
   /**
-   * Get favorite prompts
+   * Group blocks by category for organized display
    */
-  const favoritePrompts = useMemo(() => getFavoritePrompts(), [])
-
-  /**
-   * Get most used prompts
-   */
-  const mostUsedPrompts = useMemo(() => getMostUsedPrompts(8), [])
-
-  /**
-   * Get prompt statistics
-   */
-  const promptStats = useMemo(() => getPromptStats(), [])
-
-  /**
-   * Group prompts by category
-   */
-  const promptsByCategory = useMemo(() => {
-    const grouped: Record<PromptCategory, PromptTemplateType[]> = {} as any
+  const blocksByCategory = useMemo(() => {
+    const grouped: Record<YamlPromptCategory, PromptBlockInfo[]> = {} as any
     
-    CATEGORIES.forEach(category => {
-      grouped[category] = filteredPrompts.filter(prompt => prompt.category === category)
+    YAML_PROMPT_CATEGORIES.forEach(category => {
+      grouped[category] = filteredBlocks.filter(block => block.category === category)
     })
     
     return grouped
-  }, [filteredPrompts])
+  }, [filteredBlocks])
 
   // ============================
   // Event Handlers
   // ============================
 
   /**
-   * Handle prompt selection with usage tracking
+   * Handle prompt block selection - integrates with activation service
    */
-  const handlePromptSelect = async (prompt: PromptTemplateType) => {
+  const handleBlockSelect = async (block: PromptBlockInfo) => {
     try {
-      await simulatePromptUsage(prompt.id)
-      onPromptSelect?.(prompt)
+      setIsLoading(true)
+      onPromptSelect?.(block)
       setOpen(false)
     } catch (error) {
-      console.error('Failed to track prompt usage:', error)
-      onPromptSelect?.(prompt)
+      console.error('Failed to select prompt block:', error)
+      // Still close the popover even if tracking fails
+      onPromptSelect?.(block)
       setOpen(false)
+    } finally {
+      setIsLoading(false)
     }
   }
 
   /**
-   * Handle favorite toggle
+   * Handle favorite toggle - TODO: Implement user preferences storage
    */
-  const handleToggleFavorite = (promptId: string, isFavorite: boolean) => {
-    const prompt = mockPromptsData.find(p => p.id === promptId)
-    if (prompt) {
-      prompt.isFavorite = isFavorite
-      console.log(`Prompt ${promptId} ${isFavorite ? 'added to' : 'removed from'} favorites`)
-    }
+  const handleToggleFavorite = (blockName: string, isFavorite: boolean) => {
+    console.log(`Block ${blockName} ${isFavorite ? 'added to' : 'removed from'} favorites`)
+    // TODO: Implement favorite storage in user preferences
   }
 
   /**
-   * Handle prompt preview
+   * Handle prompt block preview
    */
-  const handlePromptPreview = (prompt: PromptTemplateType) => {
-    console.log('Preview prompt:', prompt.name)
-    // Could open a larger preview modal here
+  const handleBlockPreview = (block: PromptBlockInfo) => {
+    console.log('Preview block:', block.name)
+    // TODO: Implement preview modal showing full block content and variables
   }
 
   /**
@@ -188,7 +200,6 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({
   const handleResetFilters = () => {
     setSearchValue('')
     setCategoryFilter('all')
-    setActiveTab('all')
   }
 
   // ============================
@@ -196,81 +207,75 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({
   // ============================
 
   /**
-   * Render All Prompts tab content
+   * Render blocks grouped by category
    */
-  const renderAllPrompts = () => (
-    <div className="space-y-3">
-      {CATEGORIES.map(category => {
-        const categoryPrompts = promptsByCategory[category]
-        if (categoryPrompts.length === 0) return null
-        
-        return (
-          <PromptCategoryComponent
-            key={category}
-            category={category}
-            prompts={categoryPrompts}
-            onSelectPrompt={handlePromptSelect}
-            onToggleFavorite={handleToggleFavorite}
-            onPreviewPrompt={handlePromptPreview}
-            defaultExpanded={CATEGORIES.indexOf(category) < 2} // Expand first 2 categories
-            compact={false}
-          />
-        )
-      })}
-    </div>
-  )
-
-  /**
-   * Render Favorites tab content
-   */
-  const renderFavorites = () => (
-    <div className="space-y-2">
-      {favoritePrompts.length === 0 ? (
-        <div className="text-center py-8 text-vscode-descriptionForeground">
-          <Star className="w-8 h-8 mx-auto mb-2 opacity-50" />
-          <div className="text-sm">No favorite prompts yet</div>
-          <div className="text-xs mt-1">Click the heart icon on any prompt to add it to favorites</div>
+  const renderBlocksByCategory = () => {
+    if (contextLoading || isLoading) {
+      return (
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="w-6 h-6 animate-spin text-vscode-descriptionForeground" />
+          <span className="ml-2 text-sm text-vscode-descriptionForeground">Loading prompts...</span>
         </div>
-      ) : (
-        favoritePrompts.map((prompt) => (
-          <PromptTemplate
-            key={prompt.id}
-            prompt={prompt}
-            onSelect={handlePromptSelect}
-            onToggleFavorite={handleToggleFavorite}
-            onPreview={handlePromptPreview}
-            compact={false}
-          />
-        ))
-      )}
-    </div>
-  )
+      )
+    }
 
-  /**
-   * Render Recent/Most Used tab content
-   */
-  const renderRecent = () => (
-    <div className="space-y-2">
-      {mostUsedPrompts.length === 0 ? (
+    if (filteredBlocks.length === 0) {
+      return (
         <div className="text-center py-8 text-vscode-descriptionForeground">
-          <TrendingUp className="w-8 h-8 mx-auto mb-2 opacity-50" />
-          <div className="text-sm">No usage data yet</div>
-          <div className="text-xs mt-1">Start using prompts to see your most used ones here</div>
+          <FolderOpen className="w-8 h-8 mx-auto mb-2 opacity-50" />
+          <div className="text-sm">
+            {searchValue || categoryFilter !== 'all' 
+              ? 'No prompts match your filters' 
+              : `No ${activeTab} prompts available`}
+          </div>
+          <div className="text-xs mt-1">
+            {searchValue || categoryFilter !== 'all'
+              ? 'Try adjusting your search or category filter'
+              : activeTab === 'custom' 
+                ? 'Create custom prompts to see them here'
+                : 'Default prompts will appear here when available'}
+          </div>
         </div>
-      ) : (
-        mostUsedPrompts.map((prompt) => (
-          <PromptTemplate
-            key={prompt.id}
-            prompt={prompt}
-            onSelect={handlePromptSelect}
-            onToggleFavorite={handleToggleFavorite}
-            onPreview={handlePromptPreview}
-            compact={true}
-          />
-        ))
-      )}
-    </div>
-  )
+      )
+    }
+
+    // Group by category for better organization
+    const hasMultipleCategories = Object.values(blocksByCategory).filter(blocks => blocks.length > 0).length > 1
+    
+    return (
+      <div className="space-y-4">
+        {YAML_PROMPT_CATEGORIES.map(category => {
+          const categoryBlocks = blocksByCategory[category]
+          if (categoryBlocks.length === 0) return null
+          
+          return (
+            <div key={category}>
+              {/* Category Header (only show if multiple categories) */}
+              {hasMultipleCategories && (
+                <h4 className="text-xs font-medium text-vscode-descriptionForeground uppercase tracking-wide mb-2">
+                  {category} ({categoryBlocks.length})
+                </h4>
+              )}
+              
+              {/* Category Blocks */}
+              <div className="space-y-2">
+                {categoryBlocks.map((block) => (
+                  <PromptBlockCard
+                    key={block.name}
+                    promptBlock={block}
+                    onSelect={handleBlockSelect}
+                    onPreview={handleBlockPreview}
+                    onToggleFavorite={handleToggleFavorite}
+                    compact={false}
+                  />
+                ))}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
 
   // ============================
   // Render
@@ -310,7 +315,7 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({
               onClick={handleClose}
               className="text-vscode-descriptionForeground hover:text-vscode-foreground"
             >
-              <ExternalLink className="w-4 h-4" />
+              <X className="w-4 h-4" />
             </button>
           </div>
           <p className="text-xs text-vscode-descriptionForeground mt-1">
@@ -344,11 +349,11 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({
             <Filter className="w-4 h-4 text-vscode-descriptionForeground flex-shrink-0" />
             <select
               value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value as PromptCategory | 'all')}
+              onChange={(e) => setCategoryFilter(e.target.value as YamlPromptCategory | 'all')}
               className="flex-1 min-w-0 h-7 px-2 text-sm bg-vscode-input-background text-vscode-input-foreground border border-vscode-input-border rounded truncate"
             >
               <option value="all">All Categories</option>
-              {CATEGORIES.map(category => (
+              {YAML_PROMPT_CATEGORIES.map(category => (
                 <option key={category} value={category}>
                   {category.charAt(0).toUpperCase() + category.slice(1)}
                 </option>
@@ -367,34 +372,27 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({
           </div>
         </div>
 
-        {/* Tabs */}
+        {/* Tabs - Default vs Custom */}
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)} className="flex-1 flex flex-col min-h-0">
           <TabsList className="flex mx-3 mt-3 mb-2">
-            <TabsTrigger value="all" className="flex-1">
-              <span className="truncate">All ({filteredPrompts.length})</span>
+            <TabsTrigger value="default" className="flex-1">
+              <FolderOpen className="w-3 h-3 mr-1 flex-shrink-0" />
+              <span className="truncate">Default ({defaultBlocks.length})</span>
             </TabsTrigger>
-            <TabsTrigger value="favorites" className="flex-1">
-              <Star className="w-3 h-3 mr-1 flex-shrink-0" />
-              <span className="truncate">Favorites ({favoritePrompts.length})</span>
-            </TabsTrigger>
-            <TabsTrigger value="recent" className="flex-1">
-              <TrendingUp className="w-3 h-3 mr-1 flex-shrink-0" />
-              <span className="truncate">Popular</span>
+            <TabsTrigger value="custom" className="flex-1">
+              <Settings className="w-3 h-3 mr-1 flex-shrink-0" />
+              <span className="truncate">Custom ({customBlocks.length})</span>
             </TabsTrigger>
           </TabsList>
           
           {/* Tab Content */}
           <div className="flex-1 overflow-y-auto px-4 pb-4">
-            <TabsContent value="all" className="mt-3">
-              {renderAllPrompts()}
+            <TabsContent value="default" className="mt-3">
+              {renderBlocksByCategory()}
             </TabsContent>
             
-            <TabsContent value="favorites" className="mt-3">
-              {renderFavorites()}
-            </TabsContent>
-            
-            <TabsContent value="recent" className="mt-3">
-              {renderRecent()}
+            <TabsContent value="custom" className="mt-3">
+              {renderBlocksByCategory()}
             </TabsContent>
           </div>
         </Tabs>
@@ -427,10 +425,10 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({
           {/* Statistics */}
           <div className="flex items-center justify-between text-xs text-vscode-descriptionForeground">
             <span>
-              {filteredPrompts.length} of {promptStats.total} prompts
+              {filteredBlocks.length} of {availableBlocks.length} prompts
             </span>
             <span>
-              {promptStats.favorites} favorites
+              {activeBlocks.length} active
             </span>
           </div>
         </div>
