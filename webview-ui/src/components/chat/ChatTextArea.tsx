@@ -43,6 +43,7 @@ import { IndexingStatusBadge } from "./IndexingStatusBadge"
 import { cn } from "@/lib/utils"
 import { usePromptHistory } from "./hooks/usePromptHistory"
 import { EditModeControls } from "./EditModeControls"
+import { ChatToolbar } from "./toolbar/ChatToolbar"
 
 // oacode_change start: pull slash commands from Cline
 import SlashCommandMenu from "@/components/chat/SlashCommandMenu"
@@ -1089,12 +1090,12 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 				...pinnedConfigs,
 				...(hasPinnedAndUnpinned
 					? [
-							{
-								value: "sep-pinned",
-								label: t("chat:separator"),
-								type: DropdownOptionType.SEPARATOR,
-							},
-						]
+						{
+							value: "sep-pinned",
+							label: t("chat:separator"),
+							type: DropdownOptionType.SEPARATOR,
+						},
+					]
 					: []),
 				...unpinnedConfigs,
 				{
@@ -1205,7 +1206,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 					</div>
 					
 					{/* oacode_change - template selector */}
-					<div className="shrink-0">
+					<div className="shrink min-w-0 max-w-[200px]">
 						<TemplateSelector />
 					</div>
 
@@ -1448,7 +1449,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 								"active:bg-[rgba(255,255,255,0.1)]",
 								!showContextMenu && "cursor-pointer",
 								showContextMenu &&
-									"opacity-40 cursor-not-allowed grayscale-[30%] hover:bg-transparent hover:border-[rgba(255,255,255,0.08)] active:bg-transparent",
+								"opacity-40 cursor-not-allowed grayscale-[30%] hover:bg-transparent hover:border-[rgba(255,255,255,0.08)] active:bg-transparent",
 							)}>
 							<Paperclip className={cn("w-4", "h-4", { hidden: containerWidth < 235 })} />
 						</button>
@@ -1470,7 +1471,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 									"active:bg-[rgba(255,255,255,0.1)]",
 									!sendingDisabled && "cursor-pointer",
 									sendingDisabled &&
-										"opacity-40 cursor-not-allowed grayscale-[30%] hover:bg-transparent hover:border-[rgba(255,255,255,0.08)] active:bg-transparent",
+									"opacity-40 cursor-not-allowed grayscale-[30%] hover:bg-transparent hover:border-[rgba(255,255,255,0.08)] active:bg-transparent",
 								)}>
 								{/* oacode_change: rtl */}
 								<SendHorizontal className="w-4 h-4 rtl:-scale-x-100" />
@@ -1582,6 +1583,42 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 									dynamicSearchResults={fileSearchResults}
 								/>
 							</div>
+						)}
+
+						{/* Toolbar */}
+						{!isEditMode && (
+							<ChatToolbar
+								disabled={sendingDisabled}
+								// onModelChange={(modelConfig) => {
+								// 	console.log('Model changed:', modelConfig)
+								// 	// Could integrate with existing model selection logic
+								// 	// setSelectedModel(modelConfig)
+								// }}
+								onRuleToggle={(ruleId, enabled) => {
+									console.log('Rule toggled:', ruleId, enabled)
+									// Could integrate with existing rules context
+									// updateRule(ruleId, { enabled })
+								}}
+								onPromptSelect={(prompt) => {
+									console.log('Prompt selected:', prompt)
+									// Insert prompt template into text area
+									if (textAreaRef.current) {
+										const currentValue = inputValue.trim()
+										const newValue = currentValue
+											? `${currentValue}\n\n${prompt.template}`
+											: prompt.template
+										setInputValue(newValue)
+										textAreaRef.current.focus()
+										// Position cursor at end
+										setTimeout(() => {
+											if (textAreaRef.current) {
+												textAreaRef.current.setSelectionRange(newValue.length, newValue.length)
+											}
+										}, 0)
+									}
+								}}
+								className="mb-2"
+							/>
 						)}
 
 						{renderTextAreaSection()}

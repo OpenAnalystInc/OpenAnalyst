@@ -484,3 +484,71 @@ input[cmdk-input]:focus {
 	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 	transition-duration: 150ms;
 }
+
+/* ============================
+ * Toolbar Styles
+ * ============================ */
+
+/* Ensure toolbar popovers are above other elements */
+[data-radix-popper-content-wrapper] {
+	z-index: 1100 !important;
+}
+
+/* Toolbar specific z-index management */
+.chat-toolbar {
+	position: relative;
+	z-index: 10;
+}
+
+/* Popover content styling */
+.chat-toolbar [role="dialog"] {
+	z-index: 1100;
+}
+
+/* Ensure dropdowns and menus don't interfere with toolbar */
+.chat-text-area .chat-toolbar {
+	margin-bottom: 8px;
+	border-radius: 6px;
+	background: var(--vscode-editor-background);
+}
+
+/* Responsive toolbar button spacing */
+@media (max-width: 640px) {
+	.chat-toolbar .toolbar-button {
+		padding: 6px 8px;
+		min-width: 36px;
+	}
+	
+	.chat-toolbar .toolbar-button .lucide {
+		width: 14px;
+		height: 14px;
+	}
+}
+
+/* Focus management for accessibility */
+.chat-toolbar .toolbar-button:focus-visible {
+	outline: 2px solid var(--vscode-focusBorder);
+	outline-offset: 2px;
+}
+
+/* Badge positioning */
+.chat-toolbar .toolbar-button .badge {
+	position: absolute;
+	top: -4px;
+	right: -4px;
+	pointer-events: none;
+	z-index: 1;
+}
+
+/* Smooth animations for toolbar interactions */
+.chat-toolbar .toolbar-button {
+	transition: all 0.15s ease-in-out;
+}
+
+.chat-toolbar .toolbar-button:hover {
+	transform: translateY(-1px);
+}
+
+.chat-toolbar .toolbar-button:active {
+	transform: translateY(0);
+}

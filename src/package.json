@@ -423,11 +423,6 @@
 					"when": "view == oa-code.SidebarProvider"
 				},
 				{
-					"command": "oa-code.mcpButtonClicked",
-					"group": "navigation@2",
-					"when": "view == oa-code.SidebarProvider"
-				},
-				{
 					"command": "oa-code.historyButtonClicked",
 					"group": "navigation@3",
 					"when": "view == oa-code.SidebarProvider"
@@ -457,11 +452,6 @@
 				{
 					"command": "oa-code.plusButtonClicked",
 					"group": "navigation@1",
-					"when": "activeWebviewPanelId == oa-code.TabPanelProvider"
-				},
-				{
-					"command": "oa-code.mcpButtonClicked",
-					"group": "navigation@2",
 					"when": "activeWebviewPanelId == oa-code.TabPanelProvider"
 				},
 				{

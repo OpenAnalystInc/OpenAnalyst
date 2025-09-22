@@ -109,6 +109,7 @@ const getCommandsMap = ({ context, outputChannel }: RegisterCommandOptions): Rec
 			return
 		}
 
+		// Telemetry tracking
 		TelemetryService.instance.captureTitleButtonClicked("mcp")
 
 		visibleProvider.postMessageToWebview({ type: "action", action: "mcpButtonClicked" })
