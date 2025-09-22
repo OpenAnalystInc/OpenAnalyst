@@ -159,6 +159,7 @@ export interface ExtensionMessage {
 		| "switchTab"
 		| "focusChatInput" // oacode_change
 		| "authenticationComplete" // oacode_change
+		| "workflowModeChanged" // Workflow mode changed notification
 	invoke?: "newChat" | "sendMessage" | "primaryButtonClick" | "secondaryButtonClick" | "setChatBoxMessage"
 	state?: ExtensionState
 	images?: string[]
@@ -246,6 +247,7 @@ export interface ExtensionMessage {
 	// oacode_change end
 	commands?: Command[]
 	// oacode_change - prompt blocks
+	workflowMode?: string // Current workflow mode for workflowModeChanged messages
 	blocks?: Array<{
 		name: string
 		description: string
@@ -407,6 +409,7 @@ export type ExtensionState = Pick<
 	marketplaceInstalledMetadata?: { project: Record<string, any>; global: Record<string, any> }
 	profileThresholds: Record<string, number>
 	hasOpenedModeSelector: boolean
+	workflowMode?: string // Current workflow mode (plan/chat/agent)
 }
 
 export interface ClineSayTool {

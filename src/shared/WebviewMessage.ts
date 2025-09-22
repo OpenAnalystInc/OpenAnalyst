@@ -294,6 +294,8 @@ export interface WebviewMessage {
 		| "addActivePromptBlock"
 		| "removeActivePromptBlock"
 		| "getActivePromptBlocks"
+		// Workflow mode
+		| "workflowModeChanged"
 	text?: string
 	editedMessageContent?: string
 	tab?: "settings" | "history" | "mcp" | "modes" | "chat" | "marketplace" | "account"
@@ -379,6 +381,7 @@ export interface WebviewMessage {
 		codebaseIndexGeminiApiKey?: string
 		codebaseIndexMistralApiKey?: string
 	}
+	workflowMode?: string // For workflowModeChanged messages
 }
 
 // oacode_change begin

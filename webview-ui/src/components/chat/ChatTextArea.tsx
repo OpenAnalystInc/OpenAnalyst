@@ -113,6 +113,8 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 			globalWorkflows, // oacode_change
 			taskHistory,
 			clineMessages,
+			workflowMode,
+			setWorkflowMode,
 		} = useExtensionState()
 
 		const { addActiveBlock } = usePromptBlocks()
@@ -1617,6 +1619,8 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 										}, 0)
 									}
 								}}
+								workflowMode={workflowMode || 'chat'}
+								onWorkflowModeChange={setWorkflowMode}
 								className="mb-2"
 							/>
 						)}

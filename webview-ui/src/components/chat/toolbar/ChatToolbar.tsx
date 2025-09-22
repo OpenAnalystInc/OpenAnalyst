@@ -24,6 +24,7 @@ import { PromptsButton } from './prompts/PromptsButton'
 import { ToolsButton } from './tools/ToolsButton'
 // PHASE 2: Import relocated MCP button component
 import { McpButton } from './mcp/McpButton'
+import { WorkflowButton } from './workflow/WorkflowButton'
 
 /**
  * Main toolbar component containing all icon buttons
@@ -34,6 +35,8 @@ export const ChatToolbar: React.FC<ChatToolbarProps> = ({
   onModelChange,
   onRuleToggle,
   onPromptSelect,
+  workflowMode,
+  onWorkflowModeChange,
 }) => {
   // ============================
   // State Management
@@ -101,8 +104,8 @@ export const ChatToolbar: React.FC<ChatToolbarProps> = ({
   // ============================
 
   const toolbarStyles = cn(
-    // Base layout
-    'flex items-center gap-1 px-2 py-1',
+    // Base layout - changed to justify between for proper spacing
+    'flex items-center justify-between gap-1 px-2 py-1',
     
     // Visual styling
     'bg-vscode-editor-background',
@@ -128,68 +131,78 @@ export const ChatToolbar: React.FC<ChatToolbarProps> = ({
       ref={toolbarRef}
       className={toolbarStyles} 
       role="toolbar" 
-      aria-label="Toolbar with models, rules, prompts, tools, and MCP servers"
+      aria-label="Toolbar with models, rules, prompts, tools, MCP servers, and workflow modes"
       onKeyDown={handleKeyDown}
       tabIndex={-1}
     >
-      {/* Models Button */}
-      {/* <ModelsButton
-        disabled={disabled}
-        onModelSelect={onModelChange}
-        onModelSetup={(modelId, category) => {
-          console.log('Setting up model:', modelId, 'in category:', category)
-          // Handle model setup logic here
-        }}
-      /> */}
+      {/* Left side buttons group */}
+      <div className="flex items-center gap-1">
+        {/* Models Button */}
+        {/* <ModelsButton
+          disabled={disabled}
+          onModelSelect={onModelChange}
+          onModelSetup={(modelId, category) => {
+            console.log('Setting up model:', modelId, 'in category:', category)
+            // Handle model setup logic here
+          }}
+        /> */}
 
-      {/* Rules Button */}
-      <RulesButton
+        {/* Rules Button */}
+        <RulesButton
+          disabled={disabled}
+          onRuleToggle={onRuleToggle}
+          onCreateRule={() => {
+            console.log('Create rule requested')
+            // Handle create rule logic here
+          }}
+          onManageRules={() => {
+            console.log('Manage rules requested')  
+            // Handle manage rules logic here
+          }}
+        />
+
+        {/* Prompts Button */}
+        <PromptsButton
+          disabled={disabled}
+          onPromptSelect={onPromptSelect}
+          onCreatePrompt={() => {
+            console.log('Create prompt requested')
+            // Handle create prompt logic here
+          }}
+          onManagePrompts={() => {
+            console.log('Manage prompts requested')
+            // Handle manage prompts logic here
+          }}
+        />
+
+        {/* Tools Button */}
+        {/* <ToolsButton
+          onToolExecute={(toolId, parameters) => {
+            console.log('Tool executed:', toolId, parameters)
+            // Note: onToolSelect expects ToolOption, but we only have toolId here
+            // This will be handled when implementing the actual tool execution logic
+          }}
+          onToolConfigure={(tool) => {
+            console.log('Configure tool:', tool.name)
+            // Handle tool configuration logic here
+          }}
+          onManageTools={() => {
+            console.log('Manage tools clicked')
+            // Handle manage tools logic here
+          }}
+          // Note: ToolsButton manages its own active state internally
+        /> */}
+
+        {/* Click → mcpButtonClicked action → MCP tab → McpView component */}
+        <McpButton disabled={disabled} />
+      </div>
+
+      {/* Right side - Workflow Mode Button */}
+      <WorkflowButton
+        currentMode={(workflowMode || 'chat') as any}
+        onModeChange={onWorkflowModeChange || (() => {})}
         disabled={disabled}
-        onRuleToggle={onRuleToggle}
-        onCreateRule={() => {
-          console.log('Create rule requested')
-          // Handle create rule logic here
-        }}
-        onManageRules={() => {
-          console.log('Manage rules requested')  
-          // Handle manage rules logic here
-        }}
       />
-
-      {/* Prompts Button */}
-      <PromptsButton
-        disabled={disabled}
-        onPromptSelect={onPromptSelect}
-        onCreatePrompt={() => {
-          console.log('Create prompt requested')
-          // Handle create prompt logic here
-        }}
-        onManagePrompts={() => {
-          console.log('Manage prompts requested')
-          // Handle manage prompts logic here
-        }}
-      />
-
-      {/* Tools Button */}
-      {/* <ToolsButton
-        onToolExecute={(toolId, parameters) => {
-          console.log('Tool executed:', toolId, parameters)
-          // Note: onToolSelect expects ToolOption, but we only have toolId here
-          // This will be handled when implementing the actual tool execution logic
-        }}
-        onToolConfigure={(tool) => {
-          console.log('Configure tool:', tool.name)
-          // Handle tool configuration logic here
-        }}
-        onManageTools={() => {
-          console.log('Manage tools clicked')
-          // Handle manage tools logic here
-        }}
-        // Note: ToolsButton manages its own active state internally
-      /> */}
-
-      {/* Click → mcpButtonClicked action → MCP tab → McpView component */}
-      <McpButton disabled={disabled} />
 
       {/* TODO: Add individual popover components here */}
       {/* Models, Rules, and Prompts popovers are now handled by their respective button components */}
