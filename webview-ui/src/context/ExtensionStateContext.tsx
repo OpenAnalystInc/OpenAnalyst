@@ -346,10 +346,6 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 					if ((newState as any).includeTaskHistoryInEnhance !== undefined) {
 						setIncludeTaskHistoryInEnhance((newState as any).includeTaskHistoryInEnhance)
 					}
-					// Update workflowMode if present in state message
-					if ((newState as any).workflowMode !== undefined) {
-						setState((prevState) => ({ ...prevState, workflowMode: (newState as any).workflowMode }))
-					}
 					// Handle marketplace data if present in state message
 					if (newState.marketplaceItems !== undefined) {
 						setMarketplaceItems(newState.marketplaceItems)
@@ -361,7 +357,10 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 					if ((newState as any).dynamicModes !== undefined) {
 						const { setDynamicModes } = require("@roo/modes")
 						setDynamicModes((newState as any).dynamicModes)
-						console.log("[ExtensionStateContext] Updated dynamic modes from extension", (newState as any).dynamicModes)
+						console.log(
+							"[ExtensionStateContext] Updated dynamic modes from extension",
+							(newState as any).dynamicModes,
+						)
 					}
 					break
 				}

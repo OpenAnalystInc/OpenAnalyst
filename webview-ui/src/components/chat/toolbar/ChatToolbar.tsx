@@ -1,11 +1,11 @@
 /**
  * ChatToolbar - Main toolbar container with icon buttons
- * 
+ *
  * This is the main toolbar component that renders above the chat input,
  * containing Models, Rules, Prompts, Tools, and MCP buttons.
- * 
+ *
  * Layout: [🔧 Models] [📝 Rules] [💬 Prompts] [⚙️ Tools] [🔗 MCP]
- * 
+ *
  * Features:
  * - Consistent spacing and alignment
  * - Responsive design
@@ -14,131 +14,127 @@
  * - Mock data integration for development
  */
 
-import React, { useCallback, useRef } from 'react'
-import { cn } from '@/lib/utils'
+import React, { useCallback, useRef } from "react"
+import { cn } from "@/lib/utils"
 
-import { ChatToolbarProps } from './types'
-import { ModelsButton } from './models/ModelsButton'
-import { RulesButton } from './rules/RulesButton'
-import { PromptsButton } from './prompts/PromptsButton'
-import { ToolsButton } from './tools/ToolsButton'
-// PHASE 2: Import relocated MCP button component
-import { McpButton } from './mcp/McpButton'
-import { WorkflowButton } from './workflow/WorkflowButton'
+import { ChatToolbarProps } from "./types"
+import { ModelsButton } from "./models/ModelsButton"
+import { RulesButton } from "./rules/RulesButton"
+import { PromptsButton } from "./prompts/PromptsButton"
+import { ToolsButton } from "./tools/ToolsButton"
+import { McpButton } from "./mcp/McpButton"
+import { WorkflowButton } from "./workflow/WorkflowButton"
 
 /**
  * Main toolbar component containing all icon buttons
  */
 export const ChatToolbar: React.FC<ChatToolbarProps> = ({
-  className,
-  disabled = false,
-  onModelChange,
-  onRuleToggle,
-  onPromptSelect,
-  workflowMode,
-  onWorkflowModeChange,
+	className,
+	disabled = false,
+	onModelChange,
+	onRuleToggle,
+	onPromptSelect,
+	workflowMode,
+	onWorkflowModeChange,
 }) => {
-  // ============================
-  // State Management
-  // ============================
-  
-  // All button components now manage their own popover state internally
-  const toolbarRef = useRef<HTMLDivElement>(null)
+	// ============================
+	// State Management
+	// ============================
 
-  // ============================
-  // Event Handlers  
-  // ============================
+	// All button components now manage their own popover state internally
+	const toolbarRef = useRef<HTMLDivElement>(null)
 
-  /**
-   * Handle keyboard navigation within toolbar
-   */
-  const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
-    if (!toolbarRef.current) return
+	// ============================
+	// Event Handlers
+	// ============================
 
-    // Get all focusable elements within toolbar
-    const focusableElements = toolbarRef.current.querySelectorAll(
-      'button:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled])'
-    )
-    
-    if (focusableElements.length === 0) return
+	/**
+	 * Handle keyboard navigation within toolbar
+	 */
+	const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
+		if (!toolbarRef.current) return
 
-    const currentIndex = Array.from(focusableElements).indexOf(document.activeElement as Element)
-    
-    switch (event.key) {
-      case 'ArrowLeft':
-      case 'ArrowUp':
-        event.preventDefault()
-        const prevIndex = currentIndex <= 0 ? focusableElements.length - 1 : currentIndex - 1
-        ;(focusableElements[prevIndex] as HTMLElement).focus()
-        break
-        
-      case 'ArrowRight':
-      case 'ArrowDown':
-        event.preventDefault()
-        const nextIndex = currentIndex >= focusableElements.length - 1 ? 0 : currentIndex + 1
-        ;(focusableElements[nextIndex] as HTMLElement).focus()
-        break
-        
-      case 'Home':
-        event.preventDefault()
-        ;(focusableElements[0] as HTMLElement).focus()
-        break
-        
-      case 'End':
-        event.preventDefault()
-        ;(focusableElements[focusableElements.length - 1] as HTMLElement).focus()
-        break
-        
-      case 'Escape':
-        // Allow escape to bubble up to close popovers
-        break
-    }
-  }, [])
+		// Get all focusable elements within toolbar
+		const focusableElements = toolbarRef.current.querySelectorAll(
+			'button:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled])',
+		)
 
-  // All buttons now handle their own popover state internally
+		if (focusableElements.length === 0) return
 
+		const currentIndex = Array.from(focusableElements).indexOf(document.activeElement as Element)
 
+		switch (event.key) {
+			case "ArrowLeft":
+			case "ArrowUp":
+				event.preventDefault()
+				const prevIndex = currentIndex <= 0 ? focusableElements.length - 1 : currentIndex - 1
+				;(focusableElements[prevIndex] as HTMLElement).focus()
+				break
 
-  // ============================
-  // Styles
-  // ============================
+			case "ArrowRight":
+			case "ArrowDown":
+				event.preventDefault()
+				const nextIndex = currentIndex >= focusableElements.length - 1 ? 0 : currentIndex + 1
+				;(focusableElements[nextIndex] as HTMLElement).focus()
+				break
 
-  const toolbarStyles = cn(
-    // Base layout - changed to justify between for proper spacing
-    'flex items-center justify-between gap-1 px-2 py-1',
-    
-    // Visual styling
-    'bg-vscode-editor-background',
-    'border-b border-vscode-panel-border',
-    
-    // Responsive behavior
-    'min-h-10',
-    
-    // Accessibility and interactions
-    'chat-toolbar',
-    'focus-within:outline-none',
-    
-    // Custom className
-    className
-  )
+			case "Home":
+				event.preventDefault()
+				;(focusableElements[0] as HTMLElement).focus()
+				break
 
-  // ============================
-  // Render
-  // ============================
+			case "End":
+				event.preventDefault()
+				;(focusableElements[focusableElements.length - 1] as HTMLElement).focus()
+				break
 
-  return (
-    <div 
-      ref={toolbarRef}
-      className={toolbarStyles} 
-      role="toolbar" 
-      aria-label="Toolbar with models, rules, prompts, tools, MCP servers, and workflow modes"
-      onKeyDown={handleKeyDown}
-      tabIndex={-1}
-    >
-      {/* Left side buttons group */}
-      <div className="flex items-center gap-1">
-        {/* Models Button */}
-        {/* <ModelsButton
+			case "Escape":
+				// Allow escape to bubble up to close popovers
+				break
+		}
+	}, [])
+
+	// All buttons now handle their own popover state internally
+
+	// ============================
+	// Styles
+	// ============================
+
+	const toolbarStyles = cn(
+		// Base layout - changed to justify between for proper spacing
+		"flex items-center justify-between gap-1 px-2 py-1",
+
+		// Visual styling
+		"bg-vscode-editor-background",
+		"border-b border-vscode-panel-border",
+
+		// Responsive behavior
+		"min-h-10",
+
+		// Accessibility and interactions
+		"chat-toolbar",
+		"focus-within:outline-none",
+
+		// Custom className
+		className,
+	)
+
+	// ============================
+	// Render
+	// ============================
+
+	return (
+		<div
+			ref={toolbarRef}
+			className={toolbarStyles}
+			role="toolbar"
+			aria-label="Toolbar with models, rules, prompts, tools, MCP servers, and workflow modes"
+			onKeyDown={handleKeyDown}
+			tabIndex={-1}>
+			{/* Left side buttons group */}
+			<div className="flex items-center gap-1">
+				{/* Models Button */}
+				{/* <ModelsButton
           disabled={disabled}
           onModelSelect={onModelChange}
           onModelSetup={(modelId, category) => {
@@ -147,36 +143,36 @@ export const ChatToolbar: React.FC<ChatToolbarProps> = ({
           }}
         /> */}
 
-        {/* Rules Button */}
-        <RulesButton
-          disabled={disabled}
-          onRuleToggle={onRuleToggle}
-          onCreateRule={() => {
-            console.log('Create rule requested')
-            // Handle create rule logic here
-          }}
-          onManageRules={() => {
-            console.log('Manage rules requested')  
-            // Handle manage rules logic here
-          }}
-        />
+				{/* Rules Button */}
+				<RulesButton
+					disabled={disabled}
+					onRuleToggle={onRuleToggle}
+					onCreateRule={() => {
+						console.log("Create rule requested")
+						// Handle create rule logic here
+					}}
+					onManageRules={() => {
+						console.log("Manage rules requested")
+						// Handle manage rules logic here
+					}}
+				/>
 
-        {/* Prompts Button */}
-        <PromptsButton
-          disabled={disabled}
-          onPromptSelect={onPromptSelect}
-          onCreatePrompt={() => {
-            console.log('Create prompt requested')
-            // Handle create prompt logic here
-          }}
-          onManagePrompts={() => {
-            console.log('Manage prompts requested')
-            // Handle manage prompts logic here
-          }}
-        />
+				{/* Prompts Button */}
+				<PromptsButton
+					disabled={disabled}
+					onPromptSelect={onPromptSelect}
+					onCreatePrompt={() => {
+						console.log("Create prompt requested")
+						// Handle create prompt logic here
+					}}
+					onManagePrompts={() => {
+						console.log("Manage prompts requested")
+						// Handle manage prompts logic here
+					}}
+				/>
 
-        {/* Tools Button */}
-        {/* <ToolsButton
+				{/* Tools Button */}
+				{/* <ToolsButton
           onToolExecute={(toolId, parameters) => {
             console.log('Tool executed:', toolId, parameters)
             // Note: onToolSelect expects ToolOption, but we only have toolId here
@@ -193,21 +189,21 @@ export const ChatToolbar: React.FC<ChatToolbarProps> = ({
           // Note: ToolsButton manages its own active state internally
         /> */}
 
-        {/* Click → mcpButtonClicked action → MCP tab → McpView component */}
-        <McpButton disabled={disabled} />
-      </div>
+				{/* Click → mcpButtonClicked action → MCP tab → McpView component */}
+				<McpButton disabled={disabled} />
+			</div>
 
-      {/* Right side - Workflow Mode Button */}
-      <WorkflowButton
-        currentMode={(workflowMode || 'chat') as any}
-        onModeChange={onWorkflowModeChange || (() => {})}
-        disabled={disabled}
-      />
+			{/* Right side - Workflow Mode Button */}
+			<WorkflowButton
+				currentMode={(workflowMode || "chat") as any}
+				onModeChange={onWorkflowModeChange || (() => {})}
+				disabled={disabled}
+			/>
 
-      {/* TODO: Add individual popover components here */}
-      {/* Models, Rules, and Prompts popovers are now handled by their respective button components */}
-      
-      {/* Tools and MCP popovers are now handled by their respective button components */}
-    </div>
-  )
+			{/* TODO: Add individual popover components here */}
+			{/* Models, Rules, and Prompts popovers are now handled by their respective button components */}
+
+			{/* Tools and MCP popovers are now handled by their respective button components */}
+		</div>
+	)
 }
