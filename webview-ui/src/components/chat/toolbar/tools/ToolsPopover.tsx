@@ -52,7 +52,6 @@ import { ToolItem } from './ToolItem'
  * Props for the ToolsPopover component
  */
 interface ToolsPopoverProps {
-  trigger: (props: { active: boolean }) => React.ReactNode
   onToolExecute?: (toolId: string, parameters: Record<string, any>) => void
   onToolConfigure?: (tool: ToolOption) => void
   onManageTools?: () => void
@@ -78,7 +77,6 @@ const STATUS_FILTERS: { value: ToolStatus | 'all', label: string, icon?: any }[]
  * Main ToolsPopover component
  */
 export const ToolsPopover: React.FC<ToolsPopoverProps> = ({
-  trigger,
   onToolExecute,
   onToolConfigure,
   onManageTools,
@@ -316,6 +314,7 @@ export const ToolsPopover: React.FC<ToolsPopoverProps> = ({
         >
           <Wrench className="w-4 h-4" />
         </button>
+        
       </PopoverTrigger>
       
       <PopoverContent 

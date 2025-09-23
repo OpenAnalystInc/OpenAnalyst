@@ -15,7 +15,6 @@
 
 import React, { useMemo } from 'react'
 import { Wrench } from 'lucide-react'
-import { ToolbarButton } from '../ToolbarButton'
 import { ToolsPopover } from './ToolsPopover'
 import { getToolStats, getEnabledTools } from './mockToolsData'
 import { ToolOption } from '../types'
@@ -87,15 +86,6 @@ export const ToolsButton: React.FC<ToolsButtonProps> = ({
 
   return (
     <ToolsPopover
-      trigger={({ active: isOpen }) => (
-        <ToolbarButton
-          icon={<Wrench className="w-4 h-4" />}
-          badge={enabledTools.length > 0 ? enabledTools.length : undefined}
-          active={isOpen}
-          tooltip={`Access development tools (${toolStats.enabled} enabled, ${toolStats.available} available)`}
-          className={className}
-        />
-      )}
       onToolExecute={handleToolExecute}
       onToolConfigure={handleToolConfigure}
       onManageTools={handleManageTools}

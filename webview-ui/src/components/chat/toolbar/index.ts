@@ -8,9 +8,6 @@
 // Main toolbar component
 export { ChatToolbar } from './ChatToolbar'
 
-// Shared components
-export { ToolbarButton } from './ToolbarButton'
-
 // Models components
 export { ModelsButton } from './models/ModelsButton'
 export { ModelsPopover } from './models/ModelsPopover'
@@ -23,8 +20,6 @@ export { RuleItem } from './rules/RuleItem'
 // Prompts components
 export { PromptsButton } from './prompts/PromptsButton'
 export { PromptsPopover } from './prompts/PromptsPopover'
-export { PromptTemplate as PromptTemplateComponent } from './prompts/PromptTemplate'
-export { PromptCategory as PromptCategoryComponent } from './prompts/PromptCategory'
 
 // Tools components
 export { ToolsButton } from './tools/ToolsButton'

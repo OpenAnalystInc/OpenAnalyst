@@ -13,7 +13,6 @@
  * - Loading states for activation process
  */
 
-import React, { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { 
   MessageSquare,
@@ -22,13 +21,9 @@ import {
   Settings,
   CheckCircle2,
   Loader2,
-  Eye,
-  Star
 } from 'lucide-react'
-import { Button } from '@/components/ui'
 import { PromptBlockInfo } from '@/utils/prompt-blocks'
 import { usePromptBlocks } from '@/context/PromptBlocksContext'
-import { promptActivationService } from '@/services/PromptActivationService'
 
 /**
  * Props for the PromptBlockCard component
@@ -115,8 +110,6 @@ const getCategoryColors = (category: string) => {
 export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
   promptBlock,
   onSelect,
-  onPreview,
-  onToggleFavorite,
   compact = false,
   className
 }) => {
@@ -124,8 +117,7 @@ export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
   // State Management
   // ============================
   
-  const [isFavorite, setIsFavorite] = useState(false) // TODO: Get from user preferences
-  // PHASE 5.1 ENHANCED: Import all required methods for unified activation handler
+  // Import all required methods for unified activation handler
   const { 
     activeBlocks, 
     availableBlocks,
@@ -181,7 +173,7 @@ export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
         'toolbar',
         { 
           showFeedback: true,
-          variables: promptBlock.variables
+          variables: promptBlock.variables || {}
         }
       )
 
@@ -203,24 +195,6 @@ export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
       console.error(`[PromptBlockCard] Unified activation handler failed:`, error)
       // PHASE 5.3: Critical error - this shouldn't happen but if it does, the handler shows notifications
     }
-  }
-
-  /**
-   * Handle preview request
-   */
-  const handlePreview = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    onPreview?.(promptBlock)
-  }
-
-  /**
-   * Handle favorite toggle
-   */
-  const handleToggleFavorite = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    const newFavoriteState = !isFavorite
-    setIsFavorite(newFavoriteState)
-    onToggleFavorite?.(promptBlock.name, newFavoriteState)
   }
 
   // ============================
@@ -250,7 +224,7 @@ export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
     >
       {/* Active Indicator */}
       {isActive && (
-        <div className="absolute -top-1 -right-1">
+        <div className="absolute top-4 right-3">
           <CheckCircle2 className={cn('w-4 h-4', categoryColors.icon)} />
         </div>
       )}
@@ -258,7 +232,7 @@ export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
       <div className="flex items-start gap-3">
         {/* Category Icon */}
         <div className={cn(
-          'flex-shrink-0 p-1.5 rounded',
+          'flex-shrink-0 p-2 rounded',
           categoryColors.bg,
           'ring-1',
           categoryColors.border
@@ -269,7 +243,7 @@ export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
         {/* Content */}
         <div className="flex-1 min-w-0">
           {/* Header */}
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center justify-between gap-2 -mt-2.5">
             <h4 className={cn(
               'font-medium text-sm truncate',
               'text-vscode-foreground',
@@ -277,61 +251,19 @@ export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
             )}>
               {promptBlock.name}
             </h4>
-            
-            {/* Action Icons */}
-            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-6 w-6 p-0"
-                onClick={handlePreview}
-                title="Preview prompt"
-              >
-                <Eye className="w-3 h-3" />
-              </Button>
-              
-              <Button
-                variant="ghost"
-                size="sm"
-                className={cn(
-                  'h-6 w-6 p-0',
-                  isFavorite && 'text-yellow-500'
-                )}
-                onClick={handleToggleFavorite}
-                title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
-              >
-                <Star className={cn('w-3 h-3', isFavorite && 'fill-current')} />
-              </Button>
-            </div>
           </div>
 
           {/* Category Badge */}
-          <div className="flex items-center gap-2 mt-1">
-            <span className={cn(
-              'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium',
-              categoryColors.bg,
-              categoryColors.text,
-              'ring-1',
-              categoryColors.border
-            )}>
-              {promptBlock.category}
-            </span>
+          <div className="flex items-center gap-2 mt-1">            
             
-            {/* PHASE 4.4 ENHANCED: Show detailed activation state */}
-            {isActive && (
-              <span className="text-xs text-vscode-descriptionForeground">
-                Active
-              </span>
-            )}
-            
-            {/* PHASE 4.4 NEW: Show processing state */}
+            {/* Processing state */}
             {isProcessing && (
               <span className="text-xs text-orange-400">
                 {activationState === 'activating' ? 'Activating...' : 'Deactivating...'}
               </span>
             )}
             
-            {/* PHASE 4.4 NEW: Show conflict info */}
+            {/* Conflict info */}
             {conflictInfo && !isActive && (
               <span className="text-xs text-yellow-400" title={`Will replace ${conflictInfo.existingBlock.block.name}`}>
                 Will replace
@@ -341,7 +273,7 @@ export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
 
           {/* Description */}
           {!compact && promptBlock.description && (
-            <p className="text-xs text-vscode-descriptionForeground mt-2 line-clamp-2">
+            <p className="text-xs text-vscode-descriptionForeground -mt-1 line-clamp-2">
               {promptBlock.description}
             </p>
           )}
@@ -354,7 +286,7 @@ export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
           )}
         </div>
 
-        {/* PHASE 4.4 ENHANCED: Loading Indicator with better state tracking */}
+        {/* Loading Indicator */}
         {isProcessing && (
           <div className="flex-shrink-0">
             <Loader2 className="w-4 h-4 animate-spin text-vscode-descriptionForeground" />

@@ -31,7 +31,6 @@ import { mockModelsData, getCategorySetupStatus, simulateModelSetup } from './mo
  * Props for the ModelsPopover component
  */
 interface ModelsPopoverProps {
-  trigger: (props: { active: boolean }) => React.ReactNode
   onModelSelect?: (model: ModelConfig) => void
   onModelSetup?: (modelId: string, category: ModelCategory) => void
   className?: string
@@ -146,7 +145,6 @@ const ModelCategorySection: React.FC<ModelCategorySectionProps> = ({
  * Main ModelsPopover component
  */
 export const ModelsPopover: React.FC<ModelsPopoverProps> = ({
-  trigger,
   onModelSelect,
   onModelSetup,
   className
@@ -197,12 +195,16 @@ export const ModelsPopover: React.FC<ModelsPopoverProps> = ({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button 
-          className="flex items-center justify-center w-8 h-8 border border-gray-600 bg-gray-700 text-white rounded hover:bg-gray-600"
-          style={{ position: 'relative' }}
-          title="Models - Configure chat, autocomplete, edit and apply models"
-        >
-          <Settings className="w-4 h-4" />
-        </button>
+         className={`flex items-center justify-center w-8 h-8 text-white rounded transition-all duration-200 ease-in-out ${
+          open 
+            ? 'bg-[rgba(255,255,255,0.20)] border-[rgba(255,255,255,0.2)] shadow-sm' 
+            : 'bg-transparent border-transparent hover:bg-[rgba(255,255,255,0.15)] hover:border-[rgba(255,255,255,0.1)] hover:shadow-sm'
+        }`}
+         style={{ position: 'relative' }}
+         title="Models - Configure chat, autocomplete, edit and apply models"
+       >
+         <Settings className="w-4 h-4" />
+       </button>
       </PopoverTrigger>
       
       <PopoverContent 

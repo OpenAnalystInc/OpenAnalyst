@@ -12,8 +12,6 @@
  */
 
 import React from 'react'
-import { Settings } from 'lucide-react'
-import { ToolbarButton } from '../ToolbarButton'
 import { ModelsPopover } from './ModelsPopover'
 import { ModelConfig, ModelCategory } from '../types'
 
@@ -62,16 +60,6 @@ export const ModelsButton: React.FC<ModelsButtonProps> = ({
 
   return (
     <ModelsPopover
-      trigger={({ active: isOpen }) => (
-        <ToolbarButton
-          icon={<Settings className="w-4 h-4" />}
-          tooltip="Models - Configure chat, autocomplete, edit and apply models"
-          active={isOpen}
-          disabled={disabled}
-          variant={isOpen ? 'active' : 'default'}
-          className={className}
-        />
-      )}
       onModelSelect={handleModelSelect}
       onModelSetup={handleModelSetup}
     />

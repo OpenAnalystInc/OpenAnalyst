@@ -13,7 +13,6 @@
 import React, { useCallback, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { SelectDropdown, DropdownOptionType } from '@/components/ui'
-import { ToolbarButton } from '../ToolbarButton'
 import { vscode } from '@/utils/vscode'
 import { 
   WorkflowButtonProps, 

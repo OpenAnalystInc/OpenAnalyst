@@ -160,15 +160,6 @@ export const ChatToolbar: React.FC<ChatToolbarProps> = ({
 				{/* Prompts Button */}
 				<PromptsButton
 					disabled={disabled}
-					onPromptSelect={onPromptSelect}
-					onCreatePrompt={() => {
-						console.log("Create prompt requested")
-						// Handle create prompt logic here
-					}}
-					onManagePrompts={() => {
-						console.log("Manage prompts requested")
-						// Handle manage prompts logic here
-					}}
 				/>
 
 				{/* Tools Button */}

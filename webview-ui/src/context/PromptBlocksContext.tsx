@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react"
 import { PromptBlockInfo, ActivePromptBlockInfo, loadAvailablePromptBlocks, getActivePromptBlocks } from "@/utils/prompt-blocks"
-import { promptActivationService } from "@/services/PromptActivationService"
+import { promptActivationService, CategoryConflictInfo } from "@/services/PromptActivationService"
 
 /**
  * Context interface for managing prompt blocks in the application
@@ -50,7 +50,7 @@ interface PromptBlocksContextType {
 	activateBlocksInCategory: (category: string, blockName: string, variables?: Record<string, string>) => Promise<void>
 	deactivateCategory: (category: string) => Promise<void>
 	replaceActiveBlock: (currentBlockName: string, newBlockName: string, variables?: Record<string, string>) => Promise<void>
-	getConflictInfo: (blockName: string) => import('@/services/PromptActivationService').CategoryConflictInfo | null
+	getConflictInfo: (blockName: string) => CategoryConflictInfo | null
 	canActivateBlock: (blockName: string) => boolean
 }
 

@@ -36,7 +36,6 @@ import { RuleItem } from './RuleItem'
  * Props for the RulesPopover component
  */
 interface RulesPopoverProps {
-  trigger: (props: { active: boolean }) => React.ReactNode
   onRuleToggle?: (ruleId: string, enabled: boolean) => void
   onCreateRule?: () => void
   onManageRules?: () => void
@@ -59,7 +58,6 @@ const SOURCE_FILTERS: { value: RuleSource | 'all', label: string }[] = [
  * Main RulesPopover component
  */
 export const RulesPopover: React.FC<RulesPopoverProps> = ({
-  trigger,
   onRuleToggle,
   onCreateRule,
   onManageRules,
@@ -171,18 +169,17 @@ export const RulesPopover: React.FC<RulesPopoverProps> = ({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button 
-          className="flex items-center justify-center w-8 h-8 border border-gray-600 bg-gray-700 text-white rounded hover:bg-gray-600"
-          style={{ position: 'relative' }}
-          title="Rules - Manage coding guidelines and best practices"
-        >
-          <FileText className="w-4 h-4" />
-          {activeRulesCount > 0 && (
-            <span className="absolute -top-1 -right-1 min-w-4 h-4 flex items-center justify-center text-xs font-medium leading-none bg-blue-500 text-white rounded-full px-1">
-              {activeRulesCount}
-            </span>
-          )}
-        </button>
+      <button 
+         className={`flex items-center justify-center w-8 h-8 text-white rounded transition-all duration-200 ease-in-out ${
+          open 
+            ? 'bg-[rgba(255,255,255,0.20)] border-[rgba(255,255,255,0.2)] shadow-sm' 
+            : 'bg-transparent border-transparent hover:bg-[rgba(255,255,255,0.15)] hover:border-[rgba(255,255,255,0.1)] hover:shadow-sm'
+        }`}
+         style={{ position: 'relative' }}
+         title="Rules - Manage coding guidelines and best practices"
+       >
+         <FileText className="w-4 h-4" />
+       </button>
       </PopoverTrigger>
       
       <PopoverContent 

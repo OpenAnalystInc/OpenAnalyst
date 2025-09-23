@@ -12,20 +12,16 @@
  */
 
 import React from 'react'
-import { MessageSquare } from 'lucide-react'
-import { ToolbarButton } from '../ToolbarButton'
 import { PromptsPopover } from './PromptsPopover'
-import { getPromptStats } from './mockPromptsData'
-import { PromptTemplate } from '../types'
+import { PromptBlockInfo } from '@/utils/prompt-blocks'
+import { usePromptBlocks } from '@/context/PromptBlocksContext'
 
 /**
  * Props for the PromptsButton component
  */
 interface PromptsButtonProps {
   disabled?: boolean
-  onPromptSelect?: (prompt: PromptTemplate) => void
-  onCreatePrompt?: () => void
-  onManagePrompts?: () => void
+  onPromptSelect?: (prompt: PromptBlockInfo) => void
   className?: string
 }
 
@@ -33,20 +29,8 @@ interface PromptsButtonProps {
  * Prompts button component with integrated popover functionality
  */
 export const PromptsButton: React.FC<PromptsButtonProps> = ({
-  disabled = false,
   onPromptSelect,
-  onCreatePrompt,
-  onManagePrompts,
-  className
 }) => {
-  // ============================
-  // Computed Values
-  // ============================
-
-  /**
-   * Get prompt statistics for badge display
-   */
-  const promptStats = getPromptStats()
 
   // ============================
   // Event Handlers
@@ -55,25 +39,9 @@ export const PromptsButton: React.FC<PromptsButtonProps> = ({
   /**
    * Handle prompt selection from popover
    */
-  const handlePromptSelect = (prompt: PromptTemplate) => {
+  const handlePromptSelect = (prompt: PromptBlockInfo) => {
     console.log('Prompt selected:', prompt.name)
     onPromptSelect?.(prompt)
-  }
-
-  /**
-   * Handle create prompt action
-   */
-  const handleCreatePrompt = () => {
-    console.log('Create prompt requested')
-    onCreatePrompt?.()
-  }
-
-  /**
-   * Handle manage prompts action
-   */
-  const handleManagePrompts = () => {
-    console.log('Manage prompts requested')
-    onManagePrompts?.()
   }
 
   // ============================
@@ -82,20 +50,7 @@ export const PromptsButton: React.FC<PromptsButtonProps> = ({
 
   return (
     <PromptsPopover
-      trigger={({ active: isOpen }) => (
-        <ToolbarButton
-          icon={<MessageSquare className="w-4 h-4" />}
-          tooltip="Prompts - Quick access to prompt templates"
-          active={isOpen}
-          disabled={disabled}
-          badge={promptStats.total > 0 ? promptStats.total : undefined}
-          variant={isOpen ? 'active' : 'default'}
-          className={className}
-        />
-      )}
       onPromptSelect={handlePromptSelect}
-      onCreatePrompt={handleCreatePrompt}
-      onManagePrompts={handleManagePrompts}
     />
   )
 }

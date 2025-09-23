@@ -13,7 +13,6 @@
 
 import React from 'react'
 import { FileText } from 'lucide-react'
-import { ToolbarButton } from '../ToolbarButton'
 import { RulesPopover } from './RulesPopover'
 import { getActiveRules } from './mockRulesData'
 
@@ -81,17 +80,6 @@ export const RulesButton: React.FC<RulesButtonProps> = ({
 
   return (
     <RulesPopover
-      trigger={({ active: isOpen }) => (
-        <ToolbarButton
-          icon={<FileText className="w-4 h-4" />}
-          tooltip="Rules - Manage coding guidelines and best practices"
-          active={isOpen}
-          disabled={disabled}
-          badge={activeRulesCount > 0 ? activeRulesCount : undefined}
-          variant={isOpen ? 'active' : 'default'}
-          className={className}
-        />
-      )}
       onRuleToggle={handleRuleToggle}
       onCreateRule={handleCreateRule}
       onManageRules={handleManageRules}

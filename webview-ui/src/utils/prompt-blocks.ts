@@ -10,6 +10,7 @@ export interface PromptBlockInfo {
 	tags: string[]
 	priority: number
 	enabled: boolean
+	variables?: Record<string, string>
 }
 
 export interface ActivePromptBlockInfo {
