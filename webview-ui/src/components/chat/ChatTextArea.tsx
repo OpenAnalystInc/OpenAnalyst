@@ -536,6 +536,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 								customModes,
 								localWorkflows,
 								globalWorkflows,
+								availableBlocks, // NEW: Include prompt blocks for slash commands
 							) // oacode_change
 
 							if (commands.length === 0) {
@@ -555,6 +556,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 							customModes,
 							localWorkflows,
 							globalWorkflows,
+							availableBlocks, // NEW: Include prompt blocks for slash commands
 						) // oacode_change
 						if (commands.length > 0) {
 							handleSlashCommandsSelect(commands[selectedSlashCommandsIndex])

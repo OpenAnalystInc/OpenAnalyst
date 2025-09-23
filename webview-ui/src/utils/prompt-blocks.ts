@@ -11,6 +11,9 @@ export interface PromptBlockInfo {
 	priority: number
 	enabled: boolean
 	variables?: Record<string, string>
+	// NEW: Source information for categorization (added to match backend)
+	source?: "workspace" | "global" | "defaults" // Source path information
+	sourceCategory?: "default" | "custom" // UI categorization (default vs custom prompts)
 }
 
 export interface ActivePromptBlockInfo {
@@ -107,13 +110,14 @@ export async function getActivePromptBlocks(): Promise<ActivePromptBlockInfo[]> 
 }
 
 /**
- * Convert prompt blocks to slash commands
+ * Convert prompt blocks to slash commands with proper source categorization
  */
 export function promptBlocksToSlashCommands(blocks: PromptBlockInfo[]): PromptBlockSlashCommand[] {
 	return blocks.map(block => ({
 		name: block.name,
 		description: block.description,
-		section: "prompts" as const,
+		// NEW: Use sourceCategory to properly categorize slash commands
+		section: block.sourceCategory === "custom" ? "custom" : "prompts",
 		category: block.category,
 		promptBlock: block
 	}))

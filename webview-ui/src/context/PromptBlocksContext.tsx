@@ -70,14 +70,9 @@ export const PromptBlocksProvider: React.FC<PromptBlocksProviderProps> = ({ chil
 	const [defaultBlocks, setDefaultBlocks] = useState<PromptBlockInfo[]>([])
 	const [customBlocks, setCustomBlocks] = useState<PromptBlockInfo[]>([])
 
-	// PHASE 4.1 NEW: Update categorized blocks when available blocks change
+	// PHASE 4.1 ENHANCED: Clean up activation states when blocks change
+	// NOTE: Categorization is now handled by backend-provided defaultBlocks/customBlocks
 	useEffect(() => {
-		// PHASE 4.5 ENHANCED: Categorize blocks based on source (defaults vs custom)
-		// TODO: This will be enhanced when backend provides source information
-		// For now, all blocks are considered default since they come from YAML files
-		setDefaultBlocks(availableBlocks)
-		setCustomBlocks([]) // Will be populated when custom prompt support is added
-		
 		// PHASE 4.5 NEW: Clean up activation states for blocks that no longer exist
 		setActivationStates(prev => {
 			const existingBlockNames = new Set(availableBlocks.map(b => b.name))
@@ -138,8 +133,14 @@ export const PromptBlocksProvider: React.FC<PromptBlocksProviderProps> = ({ chil
 				case "promptBlocksUpdated":
 					if (__DEV__) {
 						console.log("[PromptBlocksContext] Received blocks from extension:", message.blocks?.length || 0, "blocks")
+						console.log("[PromptBlocksContext] Default blocks:", message.defaultBlocks?.length || 0)
+						console.log("[PromptBlocksContext] Custom blocks:", message.customBlocks?.length || 0)
 					}
 					setAvailableBlocks(message.blocks || [])
+					
+					// NEW: Use backend-provided categorization instead of manual categorization
+					setDefaultBlocks(message.defaultBlocks || [])
+					setCustomBlocks(message.customBlocks || [])
 					
 					// PHASE 4.1 NEW: Reset activation states when blocks are reloaded
 					setActivationStates({})
