@@ -62,7 +62,15 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({ onPromptSelect, 
 	const [isLoading, setIsLoading] = useState(false)
 
 	// PHASE 4.4 ENHANCED: Access enhanced YAML prompt blocks from context
-	const { availableBlocks, activeBlocks, defaultBlocks, customBlocks, loadingBlocks: contextLoading } = usePromptBlocks()
+	const { availableBlocks, activeBlocks, defaultBlocks, customBlocks, loadingBlocks: contextLoading, refreshAvailableBlocks } = usePromptBlocks()
+
+	// STATE FIX: Refresh data when popover opens to ensure UI shows current file state
+	React.useEffect(() => {
+		if (open) {
+			// Only refresh when opening (not when closing) to maintain state synchronization
+			refreshAvailableBlocks()
+		}
+	}, [open]) // Removed refreshAvailableBlocks from deps to prevent infinite refresh
 
 	// ============================
 	// Computed Values

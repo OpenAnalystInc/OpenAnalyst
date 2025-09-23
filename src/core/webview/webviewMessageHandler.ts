@@ -3404,20 +3404,22 @@ export const webviewMessageHandler = async (
 		case "loadPromptBlocks": {
 			try {
 				const factory = PromptBlocksFactory.getInstance()
-				const loadUseCase = factory.createLoadPromptBlocks(provider.context.extensionPath)
 				
-				// Get repository to access source information
+				// Get repository to access source information directly
 				const repository = factory.createRepository(provider.context.extensionPath)
 				
-				// Load all blocks with their source information
-				const result = await loadUseCase.execute()
+				// FIX: Load all blocks with source information in one call
+				// This prevents the cache inconsistency and race conditions that caused
+				// blocks to be incorrectly categorized as "custom"
+				const blocksWithSourceInfo = await repository.loadAllWithSource()
 				const blocksWithSource = []
 				
-				// For each block, determine its source (default vs custom)
-				for (const block of result.blocks) {
-					// Load block with source information
-					const blockResult = await repository.loadByName(block.name)
-					const source = blockResult.success ? blockResult.source : "workspace"
+				// Process blocks with preserved source information
+				for (const { block, source } of blocksWithSourceInfo) {
+					// Only include enabled blocks (filter like LoadPromptBlocks use case)
+					if (!block.isEnabled()) {
+						continue
+					}
 					
 					// Categorize based on source: "defaults" = default, others = custom
 					const category = source === "defaults" ? "default" : "custom"
@@ -3442,7 +3444,7 @@ export const webviewMessageHandler = async (
 				if (process.env.NODE_ENV === 'development') {
 					const config = factory.getConfigurationInfo(provider.context.extensionPath)
 					console.log("[PromptBlocks] Loading from paths:", config)
-					console.log("[PromptBlocks] Loaded blocks:", result.blocks.length, "blocks")
+					console.log("[PromptBlocks] Loaded blocks:", blocksWithSource.length, "blocks")
 					console.log("[PromptBlocks] Default blocks:", defaultBlocks.length)
 					console.log("[PromptBlocks] Custom blocks:", customBlocks.length)
 					console.log("[PromptBlocks] Sending to webview:", blocksWithSource.map(b => `${b.name} (${b.sourceCategory})`))
@@ -3454,7 +3456,7 @@ export const webviewMessageHandler = async (
 					blocks: blocksWithSource, // Full compatibility with existing system
 					defaultBlocks, // New: For toolbar default tab
 					customBlocks, // New: For toolbar custom tab
-					totalCount: result.blocks.length,
+					totalCount: blocksWithSource.length,
 					defaultCount: defaultBlocks.length,
 					customCount: customBlocks.length
 				})

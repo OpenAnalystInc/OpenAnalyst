@@ -158,9 +158,9 @@ export const PromptBlocksProvider: React.FC<PromptBlocksProviderProps> = ({ chil
 						const newStates = { ...prev }
 						// Clear states for blocks that finished activation/deactivation
 						Object.keys(newStates).forEach(blockName => {
-							if (newStates[blockName] === 'activating' && updatedActiveBlocks.some(ab => ab.block.name === blockName)) {
+							if (newStates[blockName] === 'activating' && updatedActiveBlocks.some((ab: ActivePromptBlockInfo) => ab.block.name === blockName)) {
 								newStates[blockName] = 'idle'
-							} else if (newStates[blockName] === 'deactivating' && !updatedActiveBlocks.some(ab => ab.block.name === blockName)) {
+							} else if (newStates[blockName] === 'deactivating' && !updatedActiveBlocks.some((ab: ActivePromptBlockInfo) => ab.block.name === blockName)) {
 								newStates[blockName] = 'idle'
 							}
 						})

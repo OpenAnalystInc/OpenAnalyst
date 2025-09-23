@@ -54,6 +54,40 @@ export class FileSystemPromptBlockRepository implements IPromptBlockRepository {
 	}
 
 	/**
+	 * Load all available prompt blocks with source information
+	 * NEW: Preserves source information for proper categorization
+	 */
+	async loadAllWithSource(): Promise<Array<{ block: PromptBlock; source: "workspace" | "defaults" | "global" }>> {
+		const blocksWithSource: Array<{ block: PromptBlock; source: "workspace" | "defaults" | "global" }> = []
+		const blockNames = new Set<string>() // Track names to handle priority override
+		const searchPaths = this.getSearchPaths()
+
+		// Load from all sources, with later sources overriding earlier ones
+		for (const { path: searchPath, source } of searchPaths.reverse()) {
+			try {
+				const sourceBlocks = await this.loadBlocksFromDirectory(searchPath, source)
+
+				for (const block of sourceBlocks) {
+					// If block name already exists, remove the earlier version (priority override)
+					if (blockNames.has(block.name)) {
+						const existingIndex = blocksWithSource.findIndex(b => b.block.name === block.name)
+						if (existingIndex !== -1) {
+							blocksWithSource.splice(existingIndex, 1)
+						}
+					}
+
+					blockNames.add(block.name)
+					blocksWithSource.push({ block, source })
+				}
+			} catch (error) {
+				console.warn(`Failed to load blocks from ${searchPath}:`, error)
+			}
+		}
+
+		return blocksWithSource
+	}
+
+	/**
 	 * Load a specific prompt block by name
 	 */
 	async loadByName(name: string): Promise<BlockLoadResult> {
