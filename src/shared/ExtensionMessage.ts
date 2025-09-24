@@ -260,6 +260,29 @@ export interface ExtensionMessage {
 		priority: number
 		enabled: boolean
 	}>
+	// PHASE 4.2 NEW: Categorized prompt blocks for toolbar integration
+	defaultBlocks?: Array<{
+		name: string
+		description: string
+		category: string
+		tags: readonly string[]
+		priority: number
+		enabled: boolean
+	}>
+	customBlocks?: Array<{
+		name: string
+		description: string
+		category: string
+		tags: readonly string[]
+		priority: number
+		enabled: boolean
+	}>
+	// Additional metadata for UI feedback
+	totalCount?: number
+	defaultCount?: number
+	customCount?: number
+	// Error handling for prompt block loading (reuses existing error property)
+	loadFailed?: boolean
 	activeBlocks?: Array<{
 		block: {
 			name: string
@@ -417,7 +440,7 @@ export type ExtensionState = Pick<
 	hasOpenedModeSelector: boolean
 
 	// Plan Mode state
-	workflowMode?: 'plan' | 'chat' | 'agent'
+	workflowMode?: "plan" | "chat" | "agent"
 	approvedPlan?: {
 		content: string
 		approvedAt: number

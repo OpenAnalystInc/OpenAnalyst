@@ -10,12 +10,12 @@ import { getWorkspacePath } from "../../utils/path"
 
 /**
  * File system-based repository for prompt blocks
- * 
+ *
  * Implements priority-based block resolution:
  * 1. Workspace blocks (.oacode/prompts/)
- * 2. Global blocks (~/.oacode/prompts/) 
+ * 2. Global blocks (~/.oacode/prompts/)
  * 3. Default blocks (extension defaults/blocks/prompts/)
- * 
+ *
  * Follows Clean Architecture with external dependency isolation.
  */
 export class FileSystemPromptBlockRepository implements IPromptBlockRepository {
@@ -27,7 +27,7 @@ export class FileSystemPromptBlockRepository implements IPromptBlockRepository {
 	constructor(
 		private readonly workspacePath?: string,
 		private readonly globalPath?: string,
-		private readonly defaultsPath?: string
+		private readonly defaultsPath?: string,
 	) {}
 
 	/**
@@ -41,7 +41,7 @@ export class FileSystemPromptBlockRepository implements IPromptBlockRepository {
 		for (const { path: searchPath, source } of searchPaths.reverse()) {
 			try {
 				const sourceBlocks = await this.loadBlocksFromDirectory(searchPath, source)
-				
+
 				for (const block of sourceBlocks) {
 					blocks.set(block.name, block)
 				}
@@ -54,6 +54,40 @@ export class FileSystemPromptBlockRepository implements IPromptBlockRepository {
 	}
 
 	/**
+	 * Load all available prompt blocks with source information
+	 * NEW: Preserves source information for proper categorization
+	 */
+	async loadAllWithSource(): Promise<Array<{ block: PromptBlock; source: "workspace" | "defaults" | "global" }>> {
+		const blocksWithSource: Array<{ block: PromptBlock; source: "workspace" | "defaults" | "global" }> = []
+		const blockNames = new Set<string>() // Track names to handle priority override
+		const searchPaths = this.getSearchPaths()
+
+		// Load from all sources, with later sources overriding earlier ones
+		for (const { path: searchPath, source } of searchPaths.reverse()) {
+			try {
+				const sourceBlocks = await this.loadBlocksFromDirectory(searchPath, source)
+
+				for (const block of sourceBlocks) {
+					// If block name already exists, remove the earlier version (priority override)
+					if (blockNames.has(block.name)) {
+						const existingIndex = blocksWithSource.findIndex((b) => b.block.name === block.name)
+						if (existingIndex !== -1) {
+							blocksWithSource.splice(existingIndex, 1)
+						}
+					}
+
+					blockNames.add(block.name)
+					blocksWithSource.push({ block, source })
+				}
+			} catch (error) {
+				console.warn(`Failed to load blocks from ${searchPath}:`, error)
+			}
+		}
+
+		return blocksWithSource
+	}
+
+	/**
 	 * Load a specific prompt block by name
 	 */
 	async loadByName(name: string): Promise<BlockLoadResult> {
@@ -62,7 +96,7 @@ export class FileSystemPromptBlockRepository implements IPromptBlockRepository {
 			return {
 				success: false,
 				error: "Invalid block name format",
-				source: "workspace"
+				source: "workspace",
 			}
 		}
 
@@ -74,7 +108,7 @@ export class FileSystemPromptBlockRepository implements IPromptBlockRepository {
 				success: true,
 				block: cached.block,
 				source: cached.source as any,
-				filePath: cached.source
+				filePath: cached.source,
 			}
 		}
 
@@ -83,7 +117,7 @@ export class FileSystemPromptBlockRepository implements IPromptBlockRepository {
 		for (const { path: searchPath, source } of searchPaths) {
 			try {
 				const filePath = path.join(searchPath, `${name}.yaml`)
-				
+
 				if (!(await fileExistsAtPath(filePath))) {
 					// Try .yml extension as fallback
 					const ymlPath = path.join(searchPath, `${name}.yml`)
@@ -111,7 +145,7 @@ export class FileSystemPromptBlockRepository implements IPromptBlockRepository {
 		return {
 			success: false,
 			error: `Block '${name}' not found`,
-			source: "workspace"
+			source: "workspace",
 		}
 	}
 
@@ -120,7 +154,7 @@ export class FileSystemPromptBlockRepository implements IPromptBlockRepository {
 	 */
 	async loadByCategory(category: PromptCategory): Promise<PromptBlock[]> {
 		const allBlocks = await this.loadAll()
-		return allBlocks.filter(block => block.category === category)
+		return allBlocks.filter((block) => block.category === category)
 	}
 
 	/**
@@ -146,7 +180,7 @@ export class FileSystemPromptBlockRepository implements IPromptBlockRepository {
 
 				const files = await fs.readdir(searchPath)
 				for (const file of files) {
-					if (file.endsWith('.yaml') || file.endsWith('.yml')) {
+					if (file.endsWith(".yaml") || file.endsWith(".yml")) {
 						const name = path.basename(file, path.extname(file))
 						names.add(name)
 					}
@@ -182,10 +216,8 @@ export class FileSystemPromptBlockRepository implements IPromptBlockRepository {
 		}
 
 		// Create file system watcher for all paths
-		const patterns = watchPaths.map(p => path.join(p, "*.{yaml,yml}"))
-		this.fileWatcher = vscode.workspace.createFileSystemWatcher(
-			`{${patterns.join(',')}}`
-		)
+		const patterns = watchPaths.map((p) => path.join(p, "*.{yaml,yml}"))
+		this.fileWatcher = vscode.workspace.createFileSystemWatcher(`{${patterns.join(",")}}`)
 
 		// Clear cache on any file change
 		const clearCacheHandler = () => {
@@ -215,7 +247,7 @@ export class FileSystemPromptBlockRepository implements IPromptBlockRepository {
 		if (this.workspacePath) {
 			paths.push({
 				path: path.join(this.workspacePath, "prompts"),
-				source: "workspace"
+				source: "workspace",
 			})
 		}
 
@@ -224,10 +256,10 @@ export class FileSystemPromptBlockRepository implements IPromptBlockRepository {
 		for (const folder of workspaceFolders) {
 			const workspacePromptsPath = path.join(folder.uri.fsPath, ".oacode", "prompts")
 			// Only add if not already included
-			if (!paths.some(p => p.path === workspacePromptsPath)) {
+			if (!paths.some((p) => p.path === workspacePromptsPath)) {
 				paths.push({
 					path: workspacePromptsPath,
-					source: "workspace"
+					source: "workspace",
 				})
 			}
 		}
@@ -236,7 +268,7 @@ export class FileSystemPromptBlockRepository implements IPromptBlockRepository {
 		if (this.globalPath) {
 			paths.push({
 				path: path.join(this.globalPath, "prompts"),
-				source: "global"
+				source: "global",
 			})
 		}
 
@@ -244,7 +276,7 @@ export class FileSystemPromptBlockRepository implements IPromptBlockRepository {
 		if (this.defaultsPath) {
 			paths.push({
 				path: path.join(this.defaultsPath, "prompts"),
-				source: "defaults"
+				source: "defaults",
 			})
 		}
 
@@ -254,25 +286,20 @@ export class FileSystemPromptBlockRepository implements IPromptBlockRepository {
 	/**
 	 * Load blocks from a specific directory
 	 */
-	private async loadBlocksFromDirectory(
-		directoryPath: string,
-		source: string
-	): Promise<PromptBlock[]> {
+	private async loadBlocksFromDirectory(directoryPath: string, source: string): Promise<PromptBlock[]> {
 		if (!(await isDirectory(directoryPath))) {
 			return []
 		}
 
 		const blocks: PromptBlock[] = []
-		
+
 		try {
 			const files = await fs.readdir(directoryPath)
-			const yamlFiles = files.filter(file => 
-				file.endsWith('.yaml') || file.endsWith('.yml')
-			)
+			const yamlFiles = files.filter((file) => file.endsWith(".yaml") || file.endsWith(".yml"))
 
 			for (const filename of yamlFiles) {
 				const filePath = path.join(directoryPath, filename)
-				
+
 				try {
 					const result = await this.loadBlockFromFile(filePath, source)
 					if (result.success && result.block) {
@@ -292,12 +319,9 @@ export class FileSystemPromptBlockRepository implements IPromptBlockRepository {
 	/**
 	 * Load a single block from file
 	 */
-	private async loadBlockFromFile(
-		filePath: string,
-		source: string
-	): Promise<BlockLoadResult> {
+	private async loadBlockFromFile(filePath: string, source: string): Promise<BlockLoadResult> {
 		try {
-			const content = await fs.readFile(filePath, 'utf-8')
+			const content = await fs.readFile(filePath, "utf-8")
 			const data = await this.parser.parseFromContent(content, filePath)
 			const block = PromptBlock.create(data)
 
@@ -305,16 +329,16 @@ export class FileSystemPromptBlockRepository implements IPromptBlockRepository {
 				success: true,
 				block,
 				source: source as any,
-				filePath
+				filePath,
 			}
 		} catch (error) {
 			const errorMessage = error instanceof Error ? error.message : String(error)
-			
+
 			return {
 				success: false,
 				error: errorMessage,
 				source: source as any,
-				filePath
+				filePath,
 			}
 		}
 	}
@@ -324,11 +348,11 @@ export class FileSystemPromptBlockRepository implements IPromptBlockRepository {
 	 */
 	private getCachedBlock(cacheKey: string): { block: PromptBlock; source: string } | null {
 		const cached = this.cache.get(cacheKey)
-		
+
 		if (cached && Date.now() - cached.timestamp < this.cacheTimeout) {
 			return {
 				block: cached.block,
-				source: cached.source
+				source: cached.source,
 			}
 		}
 
@@ -341,7 +365,7 @@ export class FileSystemPromptBlockRepository implements IPromptBlockRepository {
 		this.cache.set(cacheKey, {
 			block,
 			timestamp: Date.now(),
-			source
+			source,
 		})
 	}
 }

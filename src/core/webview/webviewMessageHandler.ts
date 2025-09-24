@@ -323,75 +323,84 @@ export const webviewMessageHandler = async (
 			console.log("[DEBUG] PlanMode: newTask message workflowMode:", message.workflowMode)
 
 			// Use workflowMode from message if provided (to avoid race conditions)
-			if (message.workflowMode && ['plan', 'chat', 'agent'].includes(message.workflowMode)) {
+			if (message.workflowMode && ["plan", "chat", "agent"].includes(message.workflowMode)) {
 				console.log("[DEBUG] PlanMode: Updating workflowMode from newTask message:", message.workflowMode)
-				await updateGlobalState("workflowMode", message.workflowMode as 'plan' | 'chat' | 'agent')
+				await updateGlobalState("workflowMode", message.workflowMode as "plan" | "chat" | "agent")
 			}
 
 			let processedText = message.text || ""
-			
+
 			// Check for prompt block slash commands
 			const slashCommandRegex = /^\/([a-zA-Z0-9_-]+)(\s|$)/
 			const match = processedText.match(slashCommandRegex)
-			
+
 			if (match) {
 				const commandName = match[1]
-				
+
 				try {
 					// Check if this is a prompt block command
 					const factory = PromptBlocksFactory.getInstance()
 					const loadUseCase = factory.createLoadPromptBlocks(provider.context.extensionPath)
-					
+
 					const block = await loadUseCase.executeByName(commandName)
-					
+
 					if (block) {
 						// This is a prompt block - activate it and remove from text
 						processedText = processedText.replace(slashCommandRegex, "").trim()
-						
+
 						// Use structured logging for development debugging
-						import('../infrastructure/Logger').then(({ promptBlocksLogger }) => {
-							promptBlocksLogger.debug('Prompt block activated via slash command', {
-								blockName: block.name,
-								category: block.category,
-								originalText: message.text,
-								processedText: processedText
+						import("../infrastructure/Logger")
+							.then(({ promptBlocksLogger }) => {
+								promptBlocksLogger.debug("Prompt block activated via slash command", {
+									blockName: block.name,
+									category: block.category,
+									originalText: message.text,
+									processedText: processedText,
+								})
 							})
-						}).catch(() => {
-							// Fallback to console if logger import fails
-							console.log(`[PromptBlocks] Activated block: ${block.name}`)
-						})
-						
+							.catch(() => {
+								// Fallback to console if logger import fails
+								console.log(`[PromptBlocks] Activated block: ${block.name}`)
+							})
+
 						// TODO: Store in conversation state when available
 						// For now, just enhance the current prompt
 						const enhanceUseCase = factory.createEnhanceSystemPrompt()
-						const activePrompts = [{
-							name: block.name,
-							variables: {} // Could extract from command parameters later
-						}]
-						
+						const activePrompts = [
+							{
+								name: block.name,
+								variables: {}, // Could extract from command parameters later
+							},
+						]
+
 						// Initialize task with the enhanced prompt context
 						await provider.initClineWithTask(processedText, message.images)
 						return
 					}
 				} catch (error) {
 					// Use structured logging for error handling
-					import('../infrastructure/Logger').then(({ promptBlocksLogger }) => {
-						import('../infrastructure/errors').then(({ normalizeError }) => {
-							const typedError = normalizeError(error, 'SLASH_COMMAND_CHECK_FAILED', {
-								commandName,
-								operation: 'checkPromptBlock'
+					import("../infrastructure/Logger")
+						.then(({ promptBlocksLogger }) => {
+							import("../infrastructure/errors").then(({ normalizeError }) => {
+								const typedError = normalizeError(error, "SLASH_COMMAND_CHECK_FAILED", {
+									commandName,
+									operation: "checkPromptBlock",
+								})
+								promptBlocksLogger.warn(
+									"Failed to check if slash command is prompt block",
+									typedError.toLogObject(),
+								)
 							})
-							promptBlocksLogger.warn('Failed to check if slash command is prompt block', typedError.toLogObject())
 						})
-					}).catch(() => {
-						// Fallback to console logging
-						console.warn(`Error checking prompt block ${commandName}:`, error)
-					})
+						.catch(() => {
+							// Fallback to console logging
+							console.warn(`Error checking prompt block ${commandName}:`, error)
+						})
 					// Continue with normal processing - this is recoverable
 				}
 			}
-			
-			// Initialize task with processed text  
+
+			// Initialize task with processed text
 			await provider.initClineWithTask(processedText, message.images)
 			break
 		}
@@ -2196,7 +2205,9 @@ export const webviewMessageHandler = async (
 				}
 
 				// Import JWT token utilities
-				const { extractUserFromToken, isTokenExpired, getTokenExpiration } = await import('../../utils/oacode-token')
+				const { extractUserFromToken, isTokenExpired, getTokenExpiration } = await import(
+					"../../utils/oacode-token"
+				)
 
 				// Extract user info from JWT token as fallback
 				const tokenUserInfo = extractUserFromToken(oacodeToken)
@@ -2208,10 +2219,10 @@ export const webviewMessageHandler = async (
 					provider.log("OaCode token has expired.")
 					provider.postMessageToWebview({
 						type: "profileDataResponse",
-						payload: { 
-							success: false, 
+						payload: {
+							success: false,
 							error: "Authentication token has expired. Please sign in again.",
-							tokenExpired: true 
+							tokenExpired: true,
 						},
 					})
 					break
@@ -2219,62 +2230,63 @@ export const webviewMessageHandler = async (
 
 				// Try to fetch fresh profile data from backend
 				try {
-					const baseUrl = 'https://app.openanalyst.com'
+					const baseUrl = "https://app.openanalyst.com"
 					const response = await axios.get(`${baseUrl}/api/auth/extension/profile`, {
 						headers: {
 							Authorization: `Bearer ${oacodeToken}`,
 							"Content-Type": "application/json",
 						},
-						timeout: 5000 // 5 second timeout
+						timeout: 5000, // 5 second timeout
 					})
 
 					// Merge backend data with token data
 					provider.postMessageToWebview({
 						type: "profileDataResponse",
-						payload: { 
-							success: true, 
-							data: { 
+						payload: {
+							success: true,
+							data: {
 								oacodeToken,
 								user: {
 									// Prefer backend data, fallback to token data
 									...tokenUserInfo,
 									...response.data.user,
-									name: response.data.user?.name || `${tokenUserInfo?.email?.split('@')[0]}` || 'User',
+									name:
+										response.data.user?.name || `${tokenUserInfo?.email?.split("@")[0]}` || "User",
 									email: response.data.user?.email || tokenUserInfo?.email,
-									image: response.data.user?.image || null
+									image: response.data.user?.image || null,
 								},
-								...response.data
-							}
+								...response.data,
+							},
 						},
 					})
-
 				} catch (backendError: any) {
 					// Backend failed, use token data as fallback
 					provider.log(`Backend profile fetch failed: ${backendError.message}. Using token data.`)
-					
+
 					if (tokenUserInfo) {
 						provider.postMessageToWebview({
 							type: "profileDataResponse",
-							payload: { 
-								success: true, 
-								data: { 
+							payload: {
+								success: true,
+								data: {
 									oacodeToken,
 									user: {
-										name: tokenUserInfo.firstName 
-											? `${tokenUserInfo.firstName}${tokenUserInfo.lastName ? ' ' + tokenUserInfo.lastName : ''}`
-											: tokenUserInfo.email?.split('@')[0] || 'User',
+										name: tokenUserInfo.firstName
+											? `${tokenUserInfo.firstName}${tokenUserInfo.lastName ? " " + tokenUserInfo.lastName : ""}`
+											: tokenUserInfo.email?.split("@")[0] || "User",
 										email: tokenUserInfo.email,
-										image: null // No image available from token
+										image: null, // No image available from token
 									},
-									source: 'token', // Indicate this came from token parsing
-									expiresAt: tokenExpiration?.toISOString()
-								}
+									source: "token", // Indicate this came from token parsing
+									expiresAt: tokenExpiration?.toISOString(),
+								},
 							},
 						})
 					} else {
 						// Both backend and token parsing failed
-						const errorMessage = backendError.response?.data?.message || 
-							backendError.message || 
+						const errorMessage =
+							backendError.response?.data?.message ||
+							backendError.message ||
 							"Failed to fetch profile data from backend."
 						provider.log(`Profile fetch error: ${errorMessage}`)
 						provider.postMessageToWebview({
@@ -2283,7 +2295,6 @@ export const webviewMessageHandler = async (
 						})
 					}
 				}
-
 			} catch (error: any) {
 				const errorMessage =
 					error.response?.data?.message ||
@@ -2310,8 +2321,8 @@ export const webviewMessageHandler = async (
 					break
 				}
 
-				// Import JWT token utilities  
-				const { extractUserFromToken, isTokenExpired } = await import('../../utils/oacode-token')
+				// Import JWT token utilities
+				const { extractUserFromToken, isTokenExpired } = await import("../../utils/oacode-token")
 
 				// Extract balance from JWT token as fallback
 				const tokenUserInfo = extractUserFromToken(oacodeToken)
@@ -2322,10 +2333,10 @@ export const webviewMessageHandler = async (
 					provider.log("OaCode token has expired for balance request.")
 					provider.postMessageToWebview({
 						type: "balanceDataResponse",
-						payload: { 
-							success: false, 
+						payload: {
+							success: false,
 							error: "Authentication token has expired. Please sign in again.",
-							tokenExpired: true 
+							tokenExpired: true,
 						},
 					})
 					break
@@ -2333,39 +2344,39 @@ export const webviewMessageHandler = async (
 
 				// Try to fetch fresh balance data from backend
 				try {
-					const baseUrl = 'https://app.openanalyst.com'
+					const baseUrl = "https://app.openanalyst.com"
 					const response = await axios.get(`${baseUrl}/api/auth/extension/profile`, {
 						headers: {
 							Authorization: `Bearer ${oacodeToken}`,
 							"Content-Type": "application/json",
 						},
-						timeout: 5000 // 5 second timeout
+						timeout: 5000, // 5 second timeout
 					})
 
 					provider.postMessageToWebview({
 						type: "balanceDataResponse",
 						payload: { success: true, data: response.data },
 					})
-
 				} catch (backendError: any) {
 					// Backend failed, use token balance as fallback
 					provider.log(`Backend balance fetch failed: ${backendError.message}. Using token balance.`)
-					
+
 					if (tokenUserInfo?.balance !== undefined) {
 						provider.postMessageToWebview({
 							type: "balanceDataResponse",
-							payload: { 
-								success: true, 
-								data: { 
+							payload: {
+								success: true,
+								data: {
 									balance: tokenUserInfo.balance,
-									source: 'token' // Indicate this came from token
-								}
+									source: "token", // Indicate this came from token
+								},
 							},
 						})
 					} else {
 						// Both backend and token parsing failed
-						const errorMessage = backendError.response?.data?.message || 
-							backendError.message || 
+						const errorMessage =
+							backendError.response?.data?.message ||
+							backendError.message ||
 							"Failed to fetch balance data from backend."
 						provider.log(`Balance fetch error: ${errorMessage}`)
 						provider.postMessageToWebview({
@@ -2374,7 +2385,6 @@ export const webviewMessageHandler = async (
 						})
 					}
 				}
-
 			} catch (error: any) {
 				const errorMessage =
 					error.response?.data?.message || error.message || "Failed to fetch balance data from backend."
@@ -3242,16 +3252,18 @@ export const webviewMessageHandler = async (
 			try {
 				const templates = await provider.templateManager.getAvailableTemplates()
 				const activeTemplate = provider.templateManager.getActiveTemplateName()
-				
+
 				await provider.postMessageToWebview({
 					type: "templateList",
 					payload: {
 						templates,
-						activeTemplate
-					}
+						activeTemplate,
+					},
 				})
 			} catch (error) {
-				provider.log(`Error getting template list: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`)
+				provider.log(
+					`Error getting template list: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`,
+				)
 			}
 			break
 		}
@@ -3263,17 +3275,21 @@ export const webviewMessageHandler = async (
 					// Refresh template list
 					const templates = await provider.templateManager.getAvailableTemplates()
 					const activeTemplate = provider.templateManager.getActiveTemplateName()
-					
+
 					await provider.postMessageToWebview({
 						type: "templateList",
 						payload: {
 							templates,
-							activeTemplate
-						}
+							activeTemplate,
+						},
 					})
 				} catch (error) {
-					provider.log(`Error activating template: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`)
-					vscode.window.showErrorMessage(`Failed to activate template: ${error instanceof Error ? error.message : String(error)}`)
+					provider.log(
+						`Error activating template: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`,
+					)
+					vscode.window.showErrorMessage(
+						`Failed to activate template: ${error instanceof Error ? error.message : String(error)}`,
+					)
 				}
 			}
 			break
@@ -3285,17 +3301,21 @@ export const webviewMessageHandler = async (
 				// Refresh template list
 				const templates = await provider.templateManager.getAvailableTemplates()
 				const activeTemplate = provider.templateManager.getActiveTemplateName()
-				
+
 				await provider.postMessageToWebview({
 					type: "templateList",
 					payload: {
 						templates,
-						activeTemplate
-					}
+						activeTemplate,
+					},
 				})
 			} catch (error) {
-				provider.log(`Error deactivating template: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`)
-				vscode.window.showErrorMessage(`Failed to deactivate template: ${error instanceof Error ? error.message : String(error)}`)
+				provider.log(
+					`Error deactivating template: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`,
+				)
+				vscode.window.showErrorMessage(
+					`Failed to deactivate template: ${error instanceof Error ? error.message : String(error)}`,
+				)
 			}
 			break
 		}
@@ -3307,17 +3327,21 @@ export const webviewMessageHandler = async (
 					// Refresh template list
 					const templates = await provider.templateManager.getAvailableTemplates()
 					const activeTemplate = provider.templateManager.getActiveTemplateName()
-					
+
 					await provider.postMessageToWebview({
 						type: "templateList",
 						payload: {
 							templates,
-							activeTemplate
-						}
+							activeTemplate,
+						},
 					})
 				} catch (error) {
-					provider.log(`Error deleting template: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`)
-					vscode.window.showErrorMessage(`Failed to delete template: ${error instanceof Error ? error.message : String(error)}`)
+					provider.log(
+						`Error deleting template: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`,
+					)
+					vscode.window.showErrorMessage(
+						`Failed to delete template: ${error instanceof Error ? error.message : String(error)}`,
+					)
 				}
 			}
 			break
@@ -3327,9 +3351,9 @@ export const webviewMessageHandler = async (
 			if (message.filename && message.content) {
 				try {
 					// Directly use the TemplateManager for cleaner upload handling
-					
+
 					// Validate filename extension
-					if (!message.filename.endsWith('.yaml') && !message.filename.endsWith('.yml')) {
+					if (!message.filename.endsWith(".yaml") && !message.filename.endsWith(".yml")) {
 						vscode.window.showErrorMessage(`Template files must have .yaml or .yml extension`)
 						return
 					}
@@ -3337,7 +3361,9 @@ export const webviewMessageHandler = async (
 					// Get workspace path
 					const workspacePath = getWorkspacePath()
 					if (!workspacePath) {
-						vscode.window.showErrorMessage(`No workspace found. Please open a workspace to upload templates.`)
+						vscode.window.showErrorMessage(
+							`No workspace found. Please open a workspace to upload templates.`,
+						)
 						return
 					}
 
@@ -3346,7 +3372,9 @@ export const webviewMessageHandler = async (
 					try {
 						parsedContent = yaml.parse(message.content)
 					} catch (yamlError: any) {
-						vscode.window.showErrorMessage(`Invalid YAML format: ${yamlError.message || 'Failed to parse YAML'}`)
+						vscode.window.showErrorMessage(
+							`Invalid YAML format: ${yamlError.message || "Failed to parse YAML"}`,
+						)
 						return
 					}
 
@@ -3378,93 +3406,187 @@ export const webviewMessageHandler = async (
 
 					// Show success message
 					vscode.window.showInformationMessage(
-						`Template "${message.filename}" uploaded and activated successfully! Contains ${modeCount} mode(s): ${modeNames}`
+						`Template "${message.filename}" uploaded and activated successfully! Contains ${modeCount} mode(s): ${modeNames}`,
 					)
 
 					// Refresh template list
 					const templates = await provider.templateManager.getAvailableTemplates()
 					const activeTemplate = provider.templateManager.getActiveTemplateName()
-					
+
 					await provider.postMessageToWebview({
 						type: "templateList",
 						payload: {
 							templates,
-							activeTemplate
-						}
+							activeTemplate,
+						},
 					})
-
 				} catch (error) {
 					console.error(`Error uploading template:`, error)
-					vscode.window.showErrorMessage(`Failed to upload template: ${error instanceof Error ? error.message : String(error)}`)
+					vscode.window.showErrorMessage(
+						`Failed to upload template: ${error instanceof Error ? error.message : String(error)}`,
+					)
 				}
 			}
 			break
 		}
 
+		/**
+		 * Enhanced loadPromptBlocks handler for toolbar support
+		 *
+		 * IMPORTANT: This preserves 100% compatibility with existing slash commands
+		 * while adding categorization support for the new toolbar interface.
+		 *
+		 * New features:
+		 * - Categorizes prompts as "default" vs "custom" based on source
+		 * - Provides source information for each prompt block
+		 * - Maintains existing "promptBlocksLoaded" message format
+		 */
 		case "loadPromptBlocks": {
 			try {
 				const factory = PromptBlocksFactory.getInstance()
-				const loadUseCase = factory.createLoadPromptBlocks(provider.context.extensionPath)
 
-				const result = await loadUseCase.execute()
-				const blocks = result.blocks.map(block => ({
-					name: block.name,
-					description: block.description,
-					category: block.category,
-					tags: block.tags,
-					priority: block.priority,
-					enabled: block.enabled
-				}))
+				// Get repository to access source information directly
+				const repository = factory.createRepository(provider.context.extensionPath)
 
-				// Debug logging (only in development)
-				if (process.env.NODE_ENV === 'development') {
-					const config = factory.getConfigurationInfo(provider.context.extensionPath)
-					console.log("[PromptBlocks] Loading from paths:", config)
-					console.log("[PromptBlocks] Loaded blocks:", result.blocks.length, "blocks")
-					console.log("[PromptBlocks] Sending to webview:", blocks.map(b => b.name))
+				// FIX: Load all blocks with source information in one call
+				// This prevents the cache inconsistency and race conditions that caused
+				// blocks to be incorrectly categorized as "custom"
+				const blocksWithSourceInfo = await repository.loadAllWithSource()
+				const blocksWithSource = []
+
+				// Process blocks with preserved source information
+				for (const { block, source } of blocksWithSourceInfo) {
+					// Only include enabled blocks (filter like LoadPromptBlocks use case)
+					if (!block.isEnabled()) {
+						continue
+					}
+
+					// Categorize based on source: "defaults" = default, others = custom
+					const category = source === "defaults" ? "default" : "custom"
+
+					blocksWithSource.push({
+						name: block.name,
+						description: block.description,
+						category: block.category, // This is the prompt category (analysis, visualization, etc.)
+						tags: block.tags,
+						priority: block.priority,
+						enabled: block.enabled,
+						source: source, // Source path info (workspace/global/defaults)
+						sourceCategory: category, // Categorization for toolbar (default/custom)
+					})
 				}
 
+				// Separate blocks by source category for toolbar
+				const defaultBlocks = blocksWithSource.filter((b) => b.sourceCategory === "default")
+				const customBlocks = blocksWithSource.filter((b) => b.sourceCategory === "custom")
+
+				// Debug logging (only in development)
+				if (process.env.NODE_ENV === "development") {
+					const config = factory.getConfigurationInfo(provider.context.extensionPath)
+					console.log("[PromptBlocks] Loading from paths:", config)
+					console.log("[PromptBlocks] Loaded blocks:", blocksWithSource.length, "blocks")
+					console.log("[PromptBlocks] Default blocks:", defaultBlocks.length)
+					console.log("[PromptBlocks] Custom blocks:", customBlocks.length)
+					console.log(
+						"[PromptBlocks] Sending to webview:",
+						blocksWithSource.map((b) => `${b.name} (${b.sourceCategory})`),
+					)
+				}
+
+				// Send categorized response for new toolbar functionality
 				await provider.postMessageToWebview({
 					type: "promptBlocksLoaded",
-					blocks
+					blocks: blocksWithSource, // Full compatibility with existing system
+					defaultBlocks, // New: For toolbar default tab
+					customBlocks, // New: For toolbar custom tab
+					totalCount: blocksWithSource.length,
+					defaultCount: defaultBlocks.length,
+					customCount: customBlocks.length,
 				})
 			} catch (error) {
+				/**
+				 * Enhanced error handling for prompt block loading
+				 *
+				 * Handles various failure scenarios:
+				 * 1. YAML parsing errors
+				 * 2. File system access issues
+				 * 3. Repository initialization failures
+				 * 4. Individual block loading failures
+				 *
+				 * Always sends a response to prevent webview from hanging
+				 */
+
 				// Use structured logging for error reporting
-				import('../infrastructure/Logger').then(({ promptBlocksLogger }) => {
-					import('../infrastructure/errors').then(({ normalizeError }) => {
-						const typedError = normalizeError(error, 'LOAD_BLOCKS_FAILED', {
-							operation: 'loadPromptBlocks'
+				import("../infrastructure/Logger")
+					.then(({ promptBlocksLogger }) => {
+						import("../infrastructure/errors").then(({ normalizeError }) => {
+							const typedError = normalizeError(error, "LOAD_BLOCKS_FAILED", {
+								operation: "loadPromptBlocks",
+								errorType: error?.constructor?.name || "Unknown",
+								errorMessage: error instanceof Error ? error.message : String(error),
+							})
+							promptBlocksLogger.error(
+								"Failed to load prompt blocks for webview",
+								typedError.toLogObject(),
+							)
 						})
-						promptBlocksLogger.error('Failed to load prompt blocks for webview', typedError.toLogObject())
 					})
-				}).catch(() => {
-					// Fallback to console logging
-					console.error("Failed to load prompt blocks:", error)
-				})
-				
+					.catch(() => {
+						// Fallback to console logging if structured logging fails
+						console.error("[PromptBlocks] Failed to load prompt blocks:", error)
+						console.error("[PromptBlocks] Error details:", {
+							name: error?.constructor?.name,
+							message: error instanceof Error ? error.message : String(error),
+							stack: error instanceof Error ? error.stack : undefined,
+						})
+					})
+
+				// Always send a response to prevent UI hanging
+				// Send empty arrays but indicate error occurred
 				await provider.postMessageToWebview({
 					type: "promptBlocksLoaded",
-					blocks: []
+					blocks: [], // Maintain compatibility with existing slash commands
+					defaultBlocks: [], // Empty for toolbar
+					customBlocks: [], // Empty for toolbar
+					totalCount: 0,
+					defaultCount: 0,
+					customCount: 0,
+					error: error instanceof Error ? error.message : String(error),
+					loadFailed: true, // Flag to indicate loading failure
 				})
 			}
 			break
 		}
 
+		/**
+		 * Handle prompt block activation from webview
+		 *
+		 * This message is sent when a prompt block is activated via:
+		 * 1. Slash commands (e.g., /chart-visualization)
+		 * 2. Toolbar prompt selection (future implementation)
+		 *
+		 * Flow:
+		 * 1. Store block in active state
+		 * 2. Load block details from YAML files
+		 * 3. Send updated active blocks back to webview
+		 * 4. System prompt gets enhanced automatically on next AI call
+		 */
 		case "addActivePromptBlock": {
 			try {
 				if (!message.blockName) {
 					throw new Error("Block name is required for addActivePromptBlock")
 				}
 
-				// Add to temporary storage
+				// Add to temporary storage (maintains active blocks across extension session)
 				activePromptBlocks.set(message.blockName, {
-					variables: message.variables || {}
+					variables: message.variables || {},
 				})
 
-				// Load the actual blocks and send updated active list
+				// Load the actual blocks from YAML files and send updated active list
 				const factory = PromptBlocksFactory.getInstance()
 				const loadUseCase = factory.createLoadPromptBlocks(provider.context.extensionPath)
 
+				// Build active blocks list with full block data
 				const activeBlocks = []
 				for (const [blockName, config] of activePromptBlocks.entries()) {
 					const block = await loadUseCase.executeByName(blockName)
@@ -3476,31 +3598,34 @@ export const webviewMessageHandler = async (
 								category: block.category,
 								tags: [...block.tags],
 								priority: block.priority,
-								enabled: block.enabled
+								enabled: block.enabled,
 							},
 							variables: config.variables,
-							priority: block.priority
+							priority: block.priority,
 						})
 					}
 				}
 
+				// Send updated active blocks back to webview for UI updates
 				await provider.postMessageToWebview({
 					type: "activePromptBlocksUpdated",
-					activeBlocks
+					activeBlocks,
 				})
 			} catch (error) {
 				// Use structured logging for error reporting
-				import('../infrastructure/Logger').then(({ promptBlocksLogger }) => {
-					import('../infrastructure/errors').then(({ normalizeError }) => {
-						const typedError = normalizeError(error, 'ADD_PROMPT_BLOCK_FAILED', {
-							operation: 'addActivePromptBlock',
-							blockName: message.blockName
+				import("../infrastructure/Logger")
+					.then(({ promptBlocksLogger }) => {
+						import("../infrastructure/errors").then(({ normalizeError }) => {
+							const typedError = normalizeError(error, "ADD_PROMPT_BLOCK_FAILED", {
+								operation: "addActivePromptBlock",
+								blockName: message.blockName,
+							})
+							promptBlocksLogger.error("Failed to add active prompt block", typedError.toLogObject())
 						})
-						promptBlocksLogger.error('Failed to add active prompt block', typedError.toLogObject())
 					})
-				}).catch(() => {
-					console.error("Failed to add active prompt block:", error)
-				})
+					.catch(() => {
+						console.error("Failed to add active prompt block:", error)
+					})
 			}
 			break
 		}
@@ -3529,31 +3654,33 @@ export const webviewMessageHandler = async (
 								category: block.category,
 								tags: [...block.tags],
 								priority: block.priority,
-								enabled: block.enabled
+								enabled: block.enabled,
 							},
 							variables: config.variables,
-							priority: block.priority
+							priority: block.priority,
 						})
 					}
 				}
 
 				await provider.postMessageToWebview({
 					type: "activePromptBlocksUpdated",
-					activeBlocks
+					activeBlocks,
 				})
 			} catch (error) {
 				// Use structured logging for error reporting
-				import('../infrastructure/Logger').then(({ promptBlocksLogger }) => {
-					import('../infrastructure/errors').then(({ normalizeError }) => {
-						const typedError = normalizeError(error, 'REMOVE_PROMPT_BLOCK_FAILED', {
-							operation: 'removeActivePromptBlock',
-							blockName: message.blockName
+				import("../infrastructure/Logger")
+					.then(({ promptBlocksLogger }) => {
+						import("../infrastructure/errors").then(({ normalizeError }) => {
+							const typedError = normalizeError(error, "REMOVE_PROMPT_BLOCK_FAILED", {
+								operation: "removeActivePromptBlock",
+								blockName: message.blockName,
+							})
+							promptBlocksLogger.error("Failed to remove active prompt block", typedError.toLogObject())
 						})
-						promptBlocksLogger.error('Failed to remove active prompt block', typedError.toLogObject())
 					})
-				}).catch(() => {
-					console.error("Failed to remove active prompt block:", error)
-				})
+					.catch(() => {
+						console.error("Failed to remove active prompt block:", error)
+					})
 			}
 			break
 		}
@@ -3575,34 +3702,36 @@ export const webviewMessageHandler = async (
 								category: block.category,
 								tags: [...block.tags],
 								priority: block.priority,
-								enabled: block.enabled
+								enabled: block.enabled,
 							},
 							variables: config.variables,
-							priority: block.priority
+							priority: block.priority,
 						})
 					}
 				}
 
 				await provider.postMessageToWebview({
 					type: "activePromptBlocksLoaded",
-					activeBlocks
+					activeBlocks,
 				})
 			} catch (error) {
 				// Use structured logging for error reporting
-				import('../infrastructure/Logger').then(({ promptBlocksLogger }) => {
-					import('../infrastructure/errors').then(({ normalizeError }) => {
-						const typedError = normalizeError(error, 'GET_PROMPT_BLOCKS_FAILED', {
-							operation: 'getActivePromptBlocks'
+				import("../infrastructure/Logger")
+					.then(({ promptBlocksLogger }) => {
+						import("../infrastructure/errors").then(({ normalizeError }) => {
+							const typedError = normalizeError(error, "GET_PROMPT_BLOCKS_FAILED", {
+								operation: "getActivePromptBlocks",
+							})
+							promptBlocksLogger.error("Failed to get active prompt blocks", typedError.toLogObject())
 						})
-						promptBlocksLogger.error('Failed to get active prompt blocks', typedError.toLogObject())
 					})
-				}).catch(() => {
-					console.error("Failed to get active prompt blocks:", error)
-				})
+					.catch(() => {
+						console.error("Failed to get active prompt blocks:", error)
+					})
 
 				await provider.postMessageToWebview({
 					type: "activePromptBlocksLoaded",
-					activeBlocks: []
+					activeBlocks: [],
 				})
 			}
 			break
@@ -3612,8 +3741,8 @@ export const webviewMessageHandler = async (
 		case "workflowModeChanged": {
 			const { workflowMode } = message
 			console.log("[DEBUG] PlanMode: workflowModeChanged received:", workflowMode)
-			if (workflowMode && ['plan', 'chat', 'agent'].includes(workflowMode)) {
-				await updateGlobalState("workflowMode", workflowMode as 'plan' | 'chat' | 'agent')
+			if (workflowMode && ["plan", "chat", "agent"].includes(workflowMode)) {
+				await updateGlobalState("workflowMode", workflowMode as "plan" | "chat" | "agent")
 				console.log("[DEBUG] PlanMode: workflowMode saved to globalState:", workflowMode)
 				await provider.postStateToWebview()
 			}
@@ -3629,14 +3758,16 @@ export const webviewMessageHandler = async (
 						type: "showSystemNotification",
 						notificationOptions: {
 							message: "No plan content provided",
-						}
+						},
 					})
 					break
 				}
 
 				// Import and use the ApprovePlan use case
 				const { VSCodePlanRepository } = await import("../../adapters/planmode/VSCodePlanRepository")
-				const { FileSystemPlanBlockStorage } = await import("../../adapters/planmode/FileSystemPlanBlockStorage")
+				const { FileSystemPlanBlockStorage } = await import(
+					"../../adapters/planmode/FileSystemPlanBlockStorage"
+				)
 				const { ApprovePlan } = await import("../planmode/usecases/ApprovePlan")
 
 				const planRepository = new VSCodePlanRepository(provider.context)
@@ -3645,7 +3776,7 @@ export const webviewMessageHandler = async (
 
 				const result = await approvePlan.execute({
 					planContent,
-					estimatedHours
+					estimatedHours,
 				})
 
 				if (result.success) {
@@ -3656,7 +3787,7 @@ export const webviewMessageHandler = async (
 						currentPhase: result.approvedPlan.currentPhase,
 						completedPhases: [...result.approvedPlan.completedPhases],
 						estimatedHours: result.approvedPlan.estimatedHours,
-						planBlockId: result.approvedPlan.planBlockId
+						planBlockId: result.approvedPlan.planBlockId,
 					})
 
 					// Transition to execution mode
@@ -3667,7 +3798,7 @@ export const webviewMessageHandler = async (
 						type: "showSystemNotification",
 						notificationOptions: {
 							message: "Plan approved and execution started",
-						}
+						},
 					})
 
 					// Start a new task to execute the approved plan
@@ -3679,8 +3810,8 @@ export const webviewMessageHandler = async (
 				await provider.postMessageToWebview({
 					type: "showSystemNotification",
 					notificationOptions: {
-						message: `Failed to approve plan: ${error instanceof Error ? error.message : 'Unknown error'}`,
-					}
+						message: `Failed to approve plan: ${error instanceof Error ? error.message : "Unknown error"}`,
+					},
 				})
 			}
 			break
@@ -3699,7 +3830,7 @@ export const webviewMessageHandler = async (
 
 				const result = await rejectPlan.execute({
 					reason,
-					planContent
+					planContent,
 				})
 
 				if (result.success) {
@@ -3712,7 +3843,7 @@ export const webviewMessageHandler = async (
 						type: "showSystemNotification",
 						notificationOptions: {
 							message: "Plan rejected. Please create a new plan.",
-						}
+						},
 					})
 				}
 			} catch (error) {
@@ -3720,8 +3851,8 @@ export const webviewMessageHandler = async (
 				await provider.postMessageToWebview({
 					type: "showSystemNotification",
 					notificationOptions: {
-						message: `Failed to reject plan: ${error instanceof Error ? error.message : 'Unknown error'}`,
-					}
+						message: `Failed to reject plan: ${error instanceof Error ? error.message : "Unknown error"}`,
+					},
 				})
 			}
 			break
@@ -3742,7 +3873,7 @@ export const webviewMessageHandler = async (
 					feedback,
 					specificChanges,
 					originalPlanContent,
-					preserveStructure
+					preserveStructure,
 				})
 
 				if (result.success) {
@@ -3758,7 +3889,7 @@ export const webviewMessageHandler = async (
 PLAN MODIFICATION REQUEST
 
 User feedback requiring changes:
-${result.modificationGuidance?.join('\n') || feedback || 'General modifications requested'}
+${result.modificationGuidance?.join("\n") || feedback || "General modifications requested"}
 
 <required-actions>
 1. Analyze the feedback thoroughly
@@ -3809,7 +3940,7 @@ You are still in PLAN MODE - no execution is allowed.
 						type: "showSystemNotification",
 						notificationOptions: {
 							message: "Plan modification requested. Creating updated plan...",
-						}
+						},
 					})
 				}
 			} catch (error) {
@@ -3817,8 +3948,8 @@ You are still in PLAN MODE - no execution is allowed.
 				await provider.postMessageToWebview({
 					type: "showSystemNotification",
 					notificationOptions: {
-						message: `Failed to modify plan: ${error instanceof Error ? error.message : 'Unknown error'}`,
-					}
+						message: `Failed to modify plan: ${error instanceof Error ? error.message : "Unknown error"}`,
+					},
 				})
 			}
 			break
@@ -3828,7 +3959,7 @@ You are still in PLAN MODE - no execution is allowed.
 			try {
 				const { currentPhase, completedPhases } = message
 
-				if (typeof currentPhase !== 'number' || !Array.isArray(completedPhases)) {
+				if (typeof currentPhase !== "number" || !Array.isArray(completedPhases)) {
 					break
 				}
 
@@ -3844,7 +3975,7 @@ You are still in PLAN MODE - no execution is allowed.
 					await updateGlobalState("approvedPlan", {
 						...currentApprovedPlan,
 						currentPhase,
-						completedPhases
+						completedPhases,
 					})
 					await provider.postStateToWebview()
 				}

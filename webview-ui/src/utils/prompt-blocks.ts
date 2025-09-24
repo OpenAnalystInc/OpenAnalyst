@@ -10,6 +10,10 @@ export interface PromptBlockInfo {
 	tags: string[]
 	priority: number
 	enabled: boolean
+	variables?: Record<string, string>
+	// NEW: Source information for categorization (added to match backend)
+	source?: "workspace" | "global" | "defaults" // Source path information
+	sourceCategory?: "default" | "custom" // UI categorization (default vs custom prompts)
 }
 
 export interface ActivePromptBlockInfo {
@@ -43,10 +47,10 @@ export async function loadAvailablePromptBlocks(): Promise<PromptBlockInfo[]> {
 		}
 
 		window.addEventListener("message", listener)
-		
+
 		// Request prompt blocks from extension
 		vscode.postMessage({
-			type: "loadPromptBlocks"
+			type: "loadPromptBlocks",
 		})
 
 		// Timeout fallback
@@ -64,7 +68,7 @@ export function addActivePromptBlock(blockName: string, variables?: Record<strin
 	vscode.postMessage({
 		type: "addActivePromptBlock",
 		blockName,
-		variables
+		variables,
 	})
 }
 
@@ -74,7 +78,7 @@ export function addActivePromptBlock(blockName: string, variables?: Record<strin
 export function removeActivePromptBlock(blockName: string): void {
 	vscode.postMessage({
 		type: "removeActivePromptBlock",
-		blockName
+		blockName,
 	})
 }
 
@@ -92,9 +96,9 @@ export async function getActivePromptBlocks(): Promise<ActivePromptBlockInfo[]> 
 		}
 
 		window.addEventListener("message", listener)
-		
+
 		vscode.postMessage({
-			type: "getActivePromptBlocks"
+			type: "getActivePromptBlocks",
 		})
 
 		// Timeout fallback
@@ -106,15 +110,16 @@ export async function getActivePromptBlocks(): Promise<ActivePromptBlockInfo[]> 
 }
 
 /**
- * Convert prompt blocks to slash commands
+ * Convert prompt blocks to slash commands with proper source categorization
  */
 export function promptBlocksToSlashCommands(blocks: PromptBlockInfo[]): PromptBlockSlashCommand[] {
-	return blocks.map(block => ({
+	return blocks.map((block) => ({
 		name: block.name,
 		description: block.description,
-		section: "prompts" as const,
+		// NEW: Use sourceCategory to properly categorize slash commands
+		section: block.sourceCategory === "custom" ? "custom" : "prompts",
 		category: block.category,
-		promptBlock: block
+		promptBlock: block,
 	}))
 }
 
@@ -123,11 +128,16 @@ export function promptBlocksToSlashCommands(blocks: PromptBlockInfo[]): PromptBl
  */
 export function getCategoryDisplayName(category: string): string {
 	switch (category) {
-		case "analysis": return "📊 Analysis"
-		case "visualization": return "📈 Visualization"  
-		case "reporting": return "📋 Reporting"
-		case "methodology": return "🔬 Methodology"
-		default: return category
+		case "analysis":
+			return "📊 Analysis"
+		case "visualization":
+			return "📈 Visualization"
+		case "reporting":
+			return "📋 Reporting"
+		case "methodology":
+			return "🔬 Methodology"
+		default:
+			return category
 	}
 }
 
@@ -135,12 +145,15 @@ export function getCategoryDisplayName(category: string): string {
  * Group slash commands by section for better organization
  */
 export function groupSlashCommands(commands: PromptBlockSlashCommand[]): Record<string, PromptBlockSlashCommand[]> {
-	return commands.reduce((groups, command) => {
-		const section = command.section || "default"
-		if (!groups[section]) {
-			groups[section] = []
-		}
-		groups[section].push(command)
-		return groups
-	}, {} as Record<string, PromptBlockSlashCommand[]>)
+	return commands.reduce(
+		(groups, command) => {
+			const section = command.section || "default"
+			if (!groups[section]) {
+				groups[section] = []
+			}
+			groups[section].push(command)
+			return groups
+		},
+		{} as Record<string, PromptBlockSlashCommand[]>,
+	)
 }
