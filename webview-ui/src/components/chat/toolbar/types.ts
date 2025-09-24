@@ -19,8 +19,8 @@ export interface ChatToolbarProps {
   onRuleToggle?: (ruleId: string, enabled: boolean) => void
   onPromptSelect?: (prompt: PromptTemplate) => void
   onToolSelect?: (tool: ToolOption) => void
-  workflowMode?: string
-  onWorkflowModeChange?: (mode: string) => void
+  workflowMode?: 'plan' | 'chat' | 'agent'
+  onWorkflowModeChange?: (mode: 'plan' | 'chat' | 'agent') => void
 }
 
 // ============================

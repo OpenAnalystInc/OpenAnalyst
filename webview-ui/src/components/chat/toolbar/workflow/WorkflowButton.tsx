@@ -53,9 +53,9 @@ export const WorkflowButton: React.FC<WorkflowButtonProps> = ({
     onModeChange(newMode)
     
     // Notify extension
-    vscode.postMessage({ 
-      type: 'workflowModeChanged', 
-      workflowMode: newMode 
+    vscode.postMessage({
+      type: 'workflowModeChanged',
+      workflowMode: newMode
     })
     
     // Close dropdown
@@ -77,8 +77,8 @@ export const WorkflowButton: React.FC<WorkflowButtonProps> = ({
   const dropdownOptions = [
     {
       value: 'shortcut',
-      label: 'Ctrl+Shift+W to cycle modes',
-      disabled: true,
+      label: '',
+      disabled: false,
       type: DropdownOptionType.SHORTCUT,
     },
     ...Object.values(WORKFLOW_MODES).map(mode => ({

@@ -76,6 +76,8 @@ export const toolParamNames = [
 	"filename",
 	"overwrite",
 	"template_name",
+	// Plan Mode parameters
+	"plan",
 ] as const
 
 export type ToolParamName = (typeof toolParamNames)[number]
@@ -187,6 +189,11 @@ export interface EditFileToolUse extends ToolUse {
 }
 // oacode_change end
 
+export interface ExitPlanModeToolUse extends ToolUse {
+	name: "exit_plan_mode"
+	params: Required<Pick<Record<ToolParamName, string>, "plan">>
+}
+
 // Define tool group configuration
 export type ToolGroupConfig = {
 	tools: readonly string[]
@@ -220,6 +227,7 @@ export const TOOL_DISPLAY_NAMES: Record<ToolName, string> = {
 	upload_template: "upload template", // oacode_change: Template system
 	list_templates: "list templates", // oacode_change: Template system
 	activate_template: "activate template", // oacode_change: Template system
+	exit_plan_mode: "present plan for approval", // Plan Mode system
 	deactivate_template: "deactivate template", // oacode_change: Template system
 	delete_template: "delete template", // oacode_change: Template system
 } as const
@@ -279,6 +287,8 @@ export const ALWAYS_AVAILABLE_TOOLS: ToolName[] = [
 	"list_templates",
 	"activate_template",
 	"deactivate_template",
+	// Plan Mode tools
+	"exit_plan_mode", // MUST be available for AI to present plans
 	"delete_template",
 ] as const
 

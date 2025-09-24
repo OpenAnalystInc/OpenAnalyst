@@ -115,7 +115,7 @@ export class TemplateManager {
 
 					const validationResult = customModesSettingsSchema.safeParse(data)
 					if (validationResult.success) {
-						const modes = validationResult.data.customModes.map(mode => ({
+						const modes = validationResult.data.Agents.map(mode => ({
 							slug: mode.slug,
 							name: mode.name || mode.slug
 						}))
@@ -123,7 +123,7 @@ export class TemplateManager {
 						templates.push({
 							name: path.basename(file.name, path.extname(file.name)),
 							filename: file.name,
-							modeCount: validationResult.data.customModes.length,
+							modeCount: validationResult.data.Agents.length,
 							modes
 						})
 					}
@@ -259,7 +259,7 @@ export class TemplateManager {
 
 			const validationResult = customModesSettingsSchema.safeParse(data)
 			if (validationResult.success) {
-				return validationResult.data.customModes
+				return validationResult.data.Agents
 			}
 		} catch (error) {
 			console.error(`[TemplateManager] Failed to load active template modes:`, error)

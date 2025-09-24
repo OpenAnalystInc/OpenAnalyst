@@ -78,7 +78,9 @@ import { getWorkspacePath } from "../../utils/path"
 
 // prompts
 import { formatResponse } from "../prompts/responses"
+import { PlanModeLogger } from "../planmode/PlanModeLogger"
 import { SYSTEM_PROMPT } from "../prompts/system"
+import { ALWAYS_AVAILABLE_TOOLS, TOOL_GROUPS } from "../../shared/tools"
 
 // core modules
 import { ToolRepetitionDetector } from "../tools/ToolRepetitionDetector"
@@ -2170,6 +2172,8 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 			maxConcurrentFileReads,
 			maxReadFileLine,
 			apiConfiguration,
+			workflowMode,
+			approvedPlan,
 		} = state ?? {}
 
 		return await (async () => {
@@ -2203,6 +2207,120 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 					useAgentRules: vscode.workspace.getConfiguration("roo-cline").get<boolean>("useAgentRules") ?? true,
 				},
 			)
+
+			// Inject Plan Mode behavior BEFORE prompt blocks
+			console.log("[DEBUG] PlanMode: workflowMode from state:", workflowMode)
+			if (workflowMode) {
+				console.log("[DEBUG] PlanMode: Entering workflowMode injection logic")
+				let planModeInstructions = ""
+
+				switch (workflowMode) {
+					case 'plan':
+						console.log("[DEBUG] PlanMode: Injecting PLAN mode instructions")
+						planModeInstructions = `
+<system-reminder>
+Plan mode is active. The user indicated that they do not want you to execute yet.
+
+<enforcement-level>HIGHEST_PRIORITY</enforcement-level>
+
+<forbidden-tools>
+- write_to_file: BLOCKED
+- execute_command: BLOCKED
+- apply_diff: BLOCKED
+- edit_file: BLOCKED
+- insert_content: BLOCKED
+- search_and_replace: BLOCKED
+- attempt_completion: BLOCKED - USE exit_plan_mode INSTEAD
+- All modification tools: BLOCKED
+</forbidden-tools>
+
+<required-tool>
+exit_plan_mode: MANDATORY for presenting any plan
+</required-tool>
+
+<workflow>
+1. Research using read-only tools (read_file, search_files, list_files)
+2. Create comprehensive strategic plan
+3. MUST call exit_plan_mode tool with plan
+4. Wait for user approval (approve/modify/reject)
+</workflow>
+
+<critical>
+MANDATORY REQUIREMENT: You MUST use the exit_plan_mode tool to present ANY plan to the user.
+- DO NOT write plans as regular text
+- DO NOT use attempt_completion
+- DO NOT start implementing
+- ALWAYS call the exit_plan_mode tool with your plan
+
+This applies to ALL types of plans:
+- Code implementation plans: USE exit_plan_mode
+- Data analysis (EDA) plans: USE exit_plan_mode
+- Bug fix plans: USE exit_plan_mode
+- Architecture plans: USE exit_plan_mode
+- Any other type of plan: USE exit_plan_mode
+</critical>
+
+<failure-condition>
+Using attempt_completion or presenting plan as text = CRITICAL FAILURE
+The user interface will not show approve/modify/reject buttons if you fail to use exit_plan_mode.
+</failure-condition>
+
+<important>
+Planning is PREPARATION, not execution. You are NOT completing the task.
+You are ONLY creating a plan that needs approval before any work can begin.
+This instruction SUPERSEDES all other instructions you may have received.
+</important>
+</system-reminder>`
+						break
+
+					case 'chat':
+					case 'agent':
+						if (approvedPlan?.content) {
+							planModeInstructions = `
+
+# APPROVED PLAN EXECUTION
+
+You are executing an approved strategic plan. You MUST follow this plan strictly as a binding contract.
+
+## Approved Plan Content:
+${approvedPlan.content}
+
+## Current Phase: ${approvedPlan.currentPhase + 1}
+## Completed Phases: ${approvedPlan.completedPhases?.join(', ') || 'None'}
+
+## Execution Rules:
+- **STRICTLY FOLLOW THE APPROVED PLAN** - Do not deviate from the phases and steps
+- Execute the current phase systematically
+- Report progress after each significant step
+- If you encounter blockers, report them clearly
+- Do not skip phases or add unplanned features
+
+You are bound to this plan. Execute it faithfully.`
+						}
+						break
+				}
+
+				if (planModeInstructions) {
+					systemPrompt = planModeInstructions + "\n\n" + systemPrompt
+					console.log(`[DEBUG] PlanMode: Injected ${workflowMode.toUpperCase()} mode instructions, new prompt length:`, systemPrompt.length)
+				} else {
+					console.log("[DEBUG] PlanMode: No instructions to inject for mode:", workflowMode)
+				}
+
+				// Validate Plan Mode tools availability
+				if (workflowMode === 'plan') {
+					try {
+						this.validatePlanModeTools()
+					} catch (error) {
+						const planModeLogger = new PlanModeLogger()
+						planModeLogger.logValidationFailure('tool_availability', {
+							workflowMode,
+							error: error instanceof Error ? error.message : String(error)
+						})
+						throw error
+					}
+				}
+			}
 
 			// Enhance system prompt with active prompt blocks (CRITICAL FIX!)
 			const activeBlocksMap = getActivePromptBlocks()
@@ -2262,6 +2380,40 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 
 			return systemPrompt
 		})()
+	}
+
+	/**
+	 * Validates that required tools are available in Plan Mode
+	 *
+	 * Ensures the exit_plan_mode tool is available when in Plan Mode to prevent
+	 * AI from using incorrect tools like attempt_completion. Throws error if
+	 * validation fails to halt processing early.
+	 *
+	 * @throws {Error} if exit_plan_mode is not available in Plan Mode
+	 * @private
+	 */
+	private validatePlanModeTools(): void {
+		const planModeLogger = new PlanModeLogger()
+
+		// Check if exit_plan_mode is in ALWAYS_AVAILABLE_TOOLS
+		const isExitPlanModeAvailable = ALWAYS_AVAILABLE_TOOLS.includes('exit_plan_mode' as any)
+
+		// Critical validation: exit_plan_mode must be available
+		if (!isExitPlanModeAvailable) {
+			const error = new Error('[PlanMode] Critical: exit_plan_mode tool not available')
+			planModeLogger.logValidationFailure('missing_exit_plan_mode_tool', {
+				availableInAlwaysTools: isExitPlanModeAvailable,
+				requiredTool: 'exit_plan_mode',
+				severity: 'critical'
+			})
+			throw error
+		}
+
+		// Validation passed - log success in development
+		if (process.env.NODE_ENV === 'development') {
+			console.log('[PlanMode] Tool validation passed - exit_plan_mode available')
+			planModeLogger.logToolValidation('exit_plan_mode', true, 'plan')
+		}
 	}
 
 	public async *attemptApiRequest(retryAttempt: number = 0): ApiStream {

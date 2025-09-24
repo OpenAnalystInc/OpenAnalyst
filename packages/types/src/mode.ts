@@ -80,7 +80,7 @@ export type ModeConfig = z.infer<typeof modeConfigSchema>
  */
 
 export const customModesSettingsSchema = z.object({
-	customModes: z.array(modeConfigSchema).refine(
+	Agents: z.array(modeConfigSchema).refine(
 		(modes) => {
 			const slugs = new Set()
 
@@ -94,7 +94,7 @@ export const customModesSettingsSchema = z.object({
 			})
 		},
 		{
-			message: "Duplicate mode slugs are not allowed",
+			message: "Duplicate agent slugs are not allowed",
 		},
 	),
 })

@@ -1943,6 +1943,8 @@ export class ClineProvider
 			includeDiagnosticMessages,
 			maxDiagnosticMessages,
 			includeTaskHistoryInEnhance,
+			workflowMode,
+			approvedPlan,
 		} = await this.getState()
 
 		const telemetryKey = process.env.OACODE_POSTHOG_API_KEY
@@ -2083,6 +2085,9 @@ export class ClineProvider
 			availableTemplates: await this.templateManager.getAvailableTemplates(),
 			activeTemplateName: this.templateManager.getActiveTemplateName(),
 			dynamicModes: await this.getAllAvailableModes(),
+			// Plan Mode integration - preserve workflowMode, don't default to chat
+			workflowMode: workflowMode,
+			approvedPlan,
 		}
 	}
 
@@ -2289,6 +2294,9 @@ export class ClineProvider
 			maxDiagnosticMessages: stateValues.maxDiagnosticMessages ?? 50,
 			// Add includeTaskHistoryInEnhance setting
 			includeTaskHistoryInEnhance: stateValues.includeTaskHistoryInEnhance ?? false,
+			// Plan Mode integration - preserve user's workflowMode selection
+			workflowMode: stateValues.workflowMode,
+			approvedPlan: stateValues.approvedPlan,
 		}
 	}
 

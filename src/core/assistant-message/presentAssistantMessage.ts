@@ -40,6 +40,8 @@ import { Task } from "../task/Task"
 import { newRuleTool } from "../tools/newRuleTool" // oacode_change
 import { reportBugTool } from "../tools/reportBugTool" // oacode_change
 import { condenseTool } from "../tools/condenseTool" // oacode_change
+import { exitPlanModeTool } from "../tools/exitPlanModeTool" // Plan Mode
+import { ToolInterceptor } from "../planmode/ToolInterceptor"
 import { codebaseSearchTool } from "../tools/codebaseSearchTool"
 import { experiments, EXPERIMENT_IDS } from "../../shared/experiments"
 import { applyDiffToolLegacy } from "../tools/applyDiffTool"
@@ -390,7 +392,33 @@ export async function presentAssistantMessage(cline: Task, recursionDepth: numbe
 			}
 
 			// Validate tool use before execution.
-			const { mode, customModes } = (await cline.providerRef.deref()?.getState()) ?? {}
+			const { mode, customModes, workflowMode } = (await cline.providerRef.deref()?.getState()) ?? {}
+
+			// Plan Mode tool interception - redirect incorrect tools
+			const toolInterceptor = new ToolInterceptor()
+			const interceptionResult = toolInterceptor.interceptTool(
+				block.name,
+				workflowMode,
+				block.params
+			)
+
+			// Update block with intercepted values if redirection occurred
+			if (interceptionResult.wasIntercepted) {
+				const originalTool = block.name
+				block.name = interceptionResult.toolName as any // Type assertion needed for dynamic tool redirection
+				block.params = interceptionResult.params
+
+				// Notify user of interception for transparency
+				const interceptionMessage = toolInterceptor.getInterceptionMessage(interceptionResult)
+				if (interceptionMessage) {
+					await cline.say('text', interceptionMessage)
+				}
+
+				// Log interception in development
+				if (process.env.NODE_ENV === 'development') {
+					console.log(`[PlanMode] Intercepted ${originalTool} → ${block.name}`)
+				}
+			}
 
 			try {
 				validateToolUse(
@@ -595,6 +623,9 @@ export async function presentAssistantMessage(cline: Task, recursionDepth: numbe
 					break
 				case "condense":
 					await condenseTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+					break
+				case "exit_plan_mode":
+					await exitPlanModeTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
 					break
 				// oacode_change end
 			}

@@ -316,7 +316,18 @@ export const webviewMessageHandler = async (
 			// Initializing new instance of Cline will make sure that any
 			// agentically running promises in old instance don't affect our new
 			// task. This essentially creates a fresh slate for the new task.
-			
+
+			// Debug: Check current workflowMode when task starts
+			const currentState = await provider.getState()
+			console.log("[DEBUG] PlanMode: newTask starting with stored workflowMode:", currentState.workflowMode)
+			console.log("[DEBUG] PlanMode: newTask message workflowMode:", message.workflowMode)
+
+			// Use workflowMode from message if provided (to avoid race conditions)
+			if (message.workflowMode && ['plan', 'chat', 'agent'].includes(message.workflowMode)) {
+				console.log("[DEBUG] PlanMode: Updating workflowMode from newTask message:", message.workflowMode)
+				await updateGlobalState("workflowMode", message.workflowMode as 'plan' | 'chat' | 'agent')
+			}
+
 			let processedText = message.text || ""
 			
 			// Check for prompt block slash commands
@@ -3358,8 +3369,8 @@ export const webviewMessageHandler = async (
 					await fs.writeFile(filePath, message.content, "utf-8")
 
 					// Count modes in the template
-					const modeCount = validationResult.data.customModes?.length || 0
-					const modeNames = validationResult.data.customModes?.map((m: any) => m.name || m.slug).join(", ") || ""
+					const modeCount = validationResult.data.Agents?.length || 0
+					const modeNames = validationResult.data.Agents?.map((m: any) => m.name || m.slug).join(", ") || ""
 
 					// Automatically activate the uploaded template
 					const templateName = path.basename(message.filename, path.extname(message.filename))
@@ -3593,6 +3604,252 @@ export const webviewMessageHandler = async (
 					type: "activePromptBlocksLoaded",
 					activeBlocks: []
 				})
+			}
+			break
+		}
+
+		// Plan Mode workflow message handlers
+		case "workflowModeChanged": {
+			const { workflowMode } = message
+			console.log("[DEBUG] PlanMode: workflowModeChanged received:", workflowMode)
+			if (workflowMode && ['plan', 'chat', 'agent'].includes(workflowMode)) {
+				await updateGlobalState("workflowMode", workflowMode as 'plan' | 'chat' | 'agent')
+				console.log("[DEBUG] PlanMode: workflowMode saved to globalState:", workflowMode)
+				await provider.postStateToWebview()
+			}
+			break
+		}
+
+		case "approvePlan": {
+			try {
+				const { planContent, estimatedHours } = message
+
+				if (!planContent) {
+					await provider.postMessageToWebview({
+						type: "showSystemNotification",
+						notificationOptions: {
+							message: "No plan content provided",
+						}
+					})
+					break
+				}
+
+				// Import and use the ApprovePlan use case
+				const { VSCodePlanRepository } = await import("../../adapters/planmode/VSCodePlanRepository")
+				const { FileSystemPlanBlockStorage } = await import("../../adapters/planmode/FileSystemPlanBlockStorage")
+				const { ApprovePlan } = await import("../planmode/usecases/ApprovePlan")
+
+				const planRepository = new VSCodePlanRepository(provider.context)
+				const planBlockStorage = new FileSystemPlanBlockStorage()
+				const approvePlan = new ApprovePlan(planRepository, planBlockStorage)
+
+				const result = await approvePlan.execute({
+					planContent,
+					estimatedHours
+				})
+
+				if (result.success) {
+					// Update global state with approved plan
+					await updateGlobalState("approvedPlan", {
+						content: planContent,
+						approvedAt: result.approvedPlan.approvedAt,
+						currentPhase: result.approvedPlan.currentPhase,
+						completedPhases: [...result.approvedPlan.completedPhases],
+						estimatedHours: result.approvedPlan.estimatedHours,
+						planBlockId: result.approvedPlan.planBlockId
+					})
+
+					// Transition to execution mode
+					await updateGlobalState("workflowMode", result.newMode)
+					await provider.postStateToWebview()
+
+					await provider.postMessageToWebview({
+						type: "showSystemNotification",
+						notificationOptions: {
+							message: "Plan approved and execution started",
+						}
+					})
+
+					// Start a new task to execute the approved plan
+					const executionPrompt = `Execute the approved plan. The plan details are in the system prompt. Begin with Phase 1 and follow the plan systematically.`
+					await provider.initClineWithTask(executionPrompt)
+				}
+			} catch (error) {
+				console.error("Failed to approve plan:", error)
+				await provider.postMessageToWebview({
+					type: "showSystemNotification",
+					notificationOptions: {
+						message: `Failed to approve plan: ${error instanceof Error ? error.message : 'Unknown error'}`,
+					}
+				})
+			}
+			break
+		}
+
+		case "rejectPlan": {
+			try {
+				const { reason, planContent } = message
+
+				// Import and use the RejectPlan use case
+				const { VSCodePlanRepository } = await import("../../adapters/planmode/VSCodePlanRepository")
+				const { RejectPlan } = await import("../planmode/usecases/RejectPlan")
+
+				const planRepository = new VSCodePlanRepository(provider.context)
+				const rejectPlan = new RejectPlan(planRepository)
+
+				const result = await rejectPlan.execute({
+					reason,
+					planContent
+				})
+
+				if (result.success) {
+					// Clear any approved plan and stay in plan mode
+					await updateGlobalState("approvedPlan", undefined)
+					await updateGlobalState("workflowMode", result.currentMode)
+					await provider.postStateToWebview()
+
+					await provider.postMessageToWebview({
+						type: "showSystemNotification",
+						notificationOptions: {
+							message: "Plan rejected. Please create a new plan.",
+						}
+					})
+				}
+			} catch (error) {
+				console.error("Failed to reject plan:", error)
+				await provider.postMessageToWebview({
+					type: "showSystemNotification",
+					notificationOptions: {
+						message: `Failed to reject plan: ${error instanceof Error ? error.message : 'Unknown error'}`,
+					}
+				})
+			}
+			break
+		}
+
+		case "modifyPlan": {
+			try {
+				const { feedback, specificChanges, originalPlanContent, preserveStructure } = message
+
+				// Import and use the ModifyPlan use case
+				const { VSCodePlanRepository } = await import("../../adapters/planmode/VSCodePlanRepository")
+				const { ModifyPlan } = await import("../planmode/usecases/ModifyPlan")
+
+				const planRepository = new VSCodePlanRepository(provider.context)
+				const modifyPlan = new ModifyPlan(planRepository)
+
+				const result = await modifyPlan.execute({
+					feedback,
+					specificChanges,
+					originalPlanContent,
+					preserveStructure
+				})
+
+				if (result.success) {
+					// Clear approved plan and return to plan mode
+					await updateGlobalState("approvedPlan", undefined)
+					await updateGlobalState("workflowMode", result.currentMode)
+					await provider.postStateToWebview()
+
+					// Send modification guidance as a user message to continue the conversation
+					const modificationMessage = `<system-reminder>
+<enforcement-level>HIGHEST_PRIORITY</enforcement-level>
+
+PLAN MODIFICATION REQUEST
+
+User feedback requiring changes:
+${result.modificationGuidance?.join('\n') || feedback || 'General modifications requested'}
+
+<required-actions>
+1. Analyze the feedback thoroughly
+2. Create revised plan addressing all points
+3. MUST use exit_plan_mode tool with revised plan
+</required-actions>
+
+<forbidden>
+- No code execution
+- No file modifications
+- No attempt_completion tool
+- No plain text plan presentation
+- All modification tools are BLOCKED
+</forbidden>
+
+<critical>
+MANDATORY: You MUST use the exit_plan_mode tool to present the modified plan.
+DO NOT write the plan as regular text.
+DO NOT use attempt_completion.
+ALWAYS call exit_plan_mode with the revised plan.
+</critical>
+
+<validation>
+If exit_plan_mode is not used, the UI buttons will not appear and the workflow will break.
+The user will not be able to approve/modify/reject the plan.
+</validation>
+
+<important>
+This is a modification request, not an execution request.
+You are still in PLAN MODE - no execution is allowed.
+</important>
+</system-reminder>`
+
+					// Add the modification request as a user message to continue the conversation
+					const currentCline = provider.getCurrentCline()
+					if (currentCline) {
+						// Cancel any ongoing API request to avoid conflicts
+						await currentCline.abortTask()
+
+						// Brief delay to ensure state updates are processed
+						setTimeout(() => {
+							// Send the modification message as user input to continue the conversation
+							currentCline.handleWebviewAskResponse("messageResponse", modificationMessage, undefined)
+						}, 100)
+					}
+
+					await provider.postMessageToWebview({
+						type: "showSystemNotification",
+						notificationOptions: {
+							message: "Plan modification requested. Creating updated plan...",
+						}
+					})
+				}
+			} catch (error) {
+				console.error("Failed to modify plan:", error)
+				await provider.postMessageToWebview({
+					type: "showSystemNotification",
+					notificationOptions: {
+						message: `Failed to modify plan: ${error instanceof Error ? error.message : 'Unknown error'}`,
+					}
+				})
+			}
+			break
+		}
+
+		case "updatePlanProgress": {
+			try {
+				const { currentPhase, completedPhases } = message
+
+				if (typeof currentPhase !== 'number' || !Array.isArray(completedPhases)) {
+					break
+				}
+
+				// Import and use the VSCodePlanRepository
+				const { VSCodePlanRepository } = await import("../../adapters/planmode/VSCodePlanRepository")
+				const planRepository = new VSCodePlanRepository(provider.context)
+
+				await planRepository.updatePlanProgress(currentPhase, completedPhases)
+
+				// Update local state
+				const currentApprovedPlan = getGlobalState("approvedPlan")
+				if (currentApprovedPlan) {
+					await updateGlobalState("approvedPlan", {
+						...currentApprovedPlan,
+						currentPhase,
+						completedPhases
+					})
+					await provider.postStateToWebview()
+				}
+			} catch (error) {
+				console.error("Failed to update plan progress:", error)
 			}
 			break
 		}

@@ -211,7 +211,7 @@ export class CustomModesManager {
 			const source = isRoomodes ? ("project" as const) : ("global" as const)
 
 			// Add source to each mode
-			return result.data.customModes.map((mode) => ({ ...mode, source }))
+			return result.data.Agents.map((mode) => ({ ...mode, source }))
 		} catch (error) {
 			// Only log if the error wasn't already handled in parseYamlSafely
 			if (!(error as any).alreadyHandled) {
@@ -298,7 +298,7 @@ export class CustomModesManager {
 				const roomodesModes = roomodesPath ? await this.loadModesFromFile(roomodesPath) : []
 
 				// Merge modes from both sources (.oacodemodes takes precedence)
-				const mergedModes = await this.mergeCustomModes(roomodesModes, result.data.customModes)
+				const mergedModes = await this.mergeCustomModes(roomodesModes, result.data.Agents)
 				await this.context.globalState.update("customModes", mergedModes)
 				this.clearCache()
 				await this.onUpdate()

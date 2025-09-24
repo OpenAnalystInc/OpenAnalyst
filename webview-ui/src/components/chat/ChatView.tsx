@@ -125,6 +125,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 		historyPreviewCollapsed, // Added historyPreviewCollapsed
 		soundEnabled,
 		soundVolume,
+		workflowMode,
 		// cloudIsAuthenticated, // oacode_change
 	} = useExtensionState()
 
@@ -611,7 +612,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 					userRespondedRef.current = true
 
 					if (messagesRef.current.length === 0) {
-						vscode.postMessage({ type: "newTask", text, images })
+						vscode.postMessage({ type: "newTask", text, images, workflowMode })
 					} else if (clineAskRef.current) {
 						if (clineAskRef.current === "followup") {
 							markFollowUpAsAnswered()

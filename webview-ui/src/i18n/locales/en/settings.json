@@ -164,8 +164,8 @@
 			"description": "Enable auto-approval of individual MCP tools in the MCP Servers view (requires both this setting and the tool's individual \"Always allow\" checkbox)"
 		},
 		"modeSwitch": {
-			"label": "Mode",
-			"description": "Automatically switch between different modes without requiring approval"
+			"label": "Agent",
+			"description": "Automatically switch between different agents without requiring approval"
 		},
 		"subtasks": {
 			"label": "Subtasks",

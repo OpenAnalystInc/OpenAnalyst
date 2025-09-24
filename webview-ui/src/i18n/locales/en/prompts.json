@@ -1,24 +1,24 @@
 {
-	"title": "Modes",
+	"title": "Agents",
 	"done": "Done",
 	"modes": {
-		"title": "Modes",
-		"createNewMode": "Create new mode",
-		"importMode": "Import Mode",
-		"editModesConfig": "Edit modes configuration",
-		"editGlobalModes": "Edit Global Modes",
-		"editProjectModes": "Edit Project Modes (.oacodemodes)",
-		"createModeHelpText": "Modes are specialized personas that tailor OpenAnalyst's behavior. <0>Learn about Using Modes</0> or <1>Customizing Modes.</1>",
-		"selectMode": "Search modes",
-		"noMatchFound": "No modes found"
+		"title": "Agents",
+		"createNewMode": "Create new agent",
+		"importMode": "Import Agent",
+		"editModesConfig": "Edit agents configuration",
+		"editGlobalModes": "Edit Global Agents",
+		"editProjectModes": "Edit Project Agents (.oacodemodes)",
+		"createModeHelpText": "Agents are specialized personas that tailor OpenAnalyst's behavior. <0>Learn about Using Agents</0> or <1>Customizing Agents.</1>",
+		"selectMode": "Search agents",
+		"noMatchFound": "No agents found"
 	},
 	"apiConfiguration": {
 		"title": "API Configuration",
-		"select": "Select which API configuration to use for this mode"
+		"select": "Select which API configuration to use for this agent"
 	},
 	"tools": {
 		"title": "Available Tools",
-		"builtInModesText": "Tools for built-in modes cannot be modified",
+		"builtInModesText": "Tools for built-in agents cannot be modified",
 		"editTools": "Edit tools",
 		"doneEditing": "Done editing",
 		"allowedFiles": "Allowed files:",

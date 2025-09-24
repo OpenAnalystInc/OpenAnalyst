@@ -125,8 +125,8 @@ export async function uploadTemplateTool(
 		await provider.templateManager.getAvailableTemplates()
 
 		// Count modes in the template
-		const modeCount = validationResult.data.customModes?.length || 0
-		const modeNames = validationResult.data.customModes?.map(m => m.name || m.slug).join(", ") || ""
+		const modeCount = validationResult.data.Agents?.length || 0
+		const modeNames = validationResult.data.Agents?.map(m => m.name || m.slug).join(", ") || ""
 
 		// Notify about successful upload
 		pushToolResult(formatResponse.toolResult(

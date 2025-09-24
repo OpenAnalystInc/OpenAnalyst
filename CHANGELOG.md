@@ -9,6 +9,91 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Feature: Plan Mode Strategic Planning System (Enhanced with Claude Code Approach)
+Date: 2025-01-22 • Author: @claude
+Updated: 2025-09-23 • Enhanced with Claude Code's superior Plan Mode approach
+Files: src/core/planmode/, src/adapters/planmode/, src/core/tools/exitPlanModeTool.ts, src/shared/tools.ts, src/core/assistant-message/presentAssistantMessage.ts, src/core/task/Task.ts, src/core/webview/ClineProvider.ts, webview-ui/src/components/chat/PlanMessage.tsx, webview-ui/src/components/chat/ChatRow.tsx
+
+**WHY**
+- Users requested strategic planning capability similar to Claude Code where AI creates comprehensive plans before execution.
+- Need for structured approach to complex development tasks with phases and deliverables.
+- Requirement for strict AI adherence to approved plans as binding contracts.
+- Plans should be reusable blocks stored in filesystem for future similar requests.
+- **CRITICAL ISSUE**: Original implementation failed - AI was completing tasks immediately instead of waiting for plan approval.
+
+**CLAUDE CODE ENHANCEMENT (2025-09-23)**
+- Previous approach used system prompt instructions which AI ignored.
+- Claude Code uses system reminders (higher priority) + ExitPlanMode tool (clear action).
+- Problem: AI said "Task Completed" despite Plan Mode instructions.
+- Solution: Implemented Claude Code's proven tool-based workflow.
+
+**Original Functionality**
+- Implements Clean Architecture: Domain entities (PlanMode, ApprovedPlan) → Use cases (ApprovePlan, RejectPlan, ModifyPlan) → Adapters (VSCodePlanRepository, FileSystemPlanBlockStorage) → Framework (VS Code).
+- Three workflow modes: PLAN (read-only research), CHAT/AGENT (execution following approved plan).
+- System prompt injection enforces mode-specific behavior and includes approved plan content as binding contract.
+- Plans displayed inline in chat with rounded corner UI, approve/modify/reject buttons with modal dialogs.
+- Plan block storage system with 98% semantic matching threshold for reuse.
+- Progress tracking with visual indicators showing phase completion and percentage.
+- VS Code globalState persistence ensures plans survive extension restarts.
+- Automatic plan detection in chat messages using content analysis patterns.
+
+**Enhanced Functionality (Claude Code Approach)**
+- **ExitPlanMode Tool**: New tool (`src/core/tools/exitPlanModeTool.ts`) that AI calls to present plans instead of completing tasks.
+- **System Reminder**: Replaced verbose Plan Mode instructions with Claude Code's system reminder format that has absolute priority.
+- **Tool-Based Workflow**: AI receives clear action (call exit_plan_mode tool) instead of just restrictions.
+- **Workflow Persistence**: Fixed automatic fallback to 'chat' mode in ClineProvider.ts that was resetting Plan Mode.
+- **Priority Override**: System reminders supercede all other instructions, preventing AI from ignoring Plan Mode.
+- Translation support with planMode.json namespace.
+
+**BEFORE**
+```ts
+// No strategic planning capability
+switch (message.type) {
+  case "text":
+    return (
+      <div>
+        <Markdown markdown={message.text} partial={message.partial} />
+      </div>
+    )
+}
+```
+
+**AFTER**
+```ts
+// Plan detection and specialized rendering
+case "text":
+  const isPlanContent = message.text && detectPlanContent(message.text)
+  if (isPlanContent) {
+    return (
+      <div>
+        <PlanMessage
+          content={message.text}
+          isApproved={false}
+          approvedPlan={approvedPlan}
+          workflowMode={workflowMode}
+        />
+      </div>
+    )
+  }
+  return (
+    <div>
+      <Markdown markdown={message.text} partial={message.partial} />
+    </div>
+  )
+```
+
+**Tests**
+- Domain entity validation tests for PlanMode and ApprovedPlan.
+- Use case tests with mock repositories and storage adapters.
+- Plan detection algorithm tests with various content patterns.
+- Component rendering tests for PlanMessage with different states.
+
+**Notes**
+- Security: No sensitive data in plan storage, all user inputs validated.
+- Performance: Lazy imports for plan mode modules, efficient plan detection regex.
+- UX: Consistent VS Code theming, accessible modals, keyboard navigation support.
+- Migration: Backward compatible, new fields optional in existing interfaces.
+
 ### Feature: Prompt Blocks System
 Date: 2024-09-15 " Author: @claude
 Files: src/core/blocks/, src/adapters/blocks/, webview-ui/src/components/chat/ActivePrompts.tsx, webview-ui/src/context/PromptBlocksContext.tsx

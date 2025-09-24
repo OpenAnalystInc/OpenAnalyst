@@ -172,8 +172,8 @@ export interface ExtensionStateContextType extends ExtensionState {
 	includeTaskHistoryInEnhance?: boolean
 	setIncludeTaskHistoryInEnhance: (value: boolean) => void
 	// Workflow mode state
-	workflowMode?: string
-	setWorkflowMode: (value: string) => void
+	workflowMode?: 'plan' | 'chat' | 'agent'
+	setWorkflowMode: (value: 'plan' | 'chat' | 'agent') => void
 }
 
 export const ExtensionStateContext = createContext<ExtensionStateContextType | undefined>(undefined)
@@ -282,7 +282,7 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 		alwaysAllowUpdateTodoList: true,
 		includeDiagnosticMessages: true,
 		maxDiagnosticMessages: 50,
-		workflowMode: "chat", // Default workflow mode
+		// workflowMode will be set by user or come from extension state
 	})
 
 	const [didHydrateState, setDidHydrateState] = useState(false)
@@ -613,7 +613,7 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 		includeTaskHistoryInEnhance,
 		setIncludeTaskHistoryInEnhance,
 		workflowMode: state.workflowMode,
-		setWorkflowMode: (value) => setState((prevState) => ({ ...prevState, workflowMode: value })),
+		setWorkflowMode: (value: 'plan' | 'chat' | 'agent') => setState((prevState) => ({ ...prevState, workflowMode: value })),
 	}
 
 	return <ExtensionStateContext.Provider value={contextValue}>{children}</ExtensionStateContext.Provider>

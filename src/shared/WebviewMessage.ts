@@ -294,8 +294,12 @@ export interface WebviewMessage {
 		| "addActivePromptBlock"
 		| "removeActivePromptBlock"
 		| "getActivePromptBlocks"
-		// Workflow mode
+		// Workflow mode and plan management
 		| "workflowModeChanged"
+		| "approvePlan"
+		| "rejectPlan"
+		| "modifyPlan"
+		| "updatePlanProgress"
 	text?: string
 	editedMessageContent?: string
 	tab?: "settings" | "history" | "mcp" | "modes" | "chat" | "marketplace" | "account"
@@ -318,6 +322,7 @@ export interface WebviewMessage {
 	mcpId?: string
 	toolNames?: string[]
 	autoApprove?: boolean
+	workflowMode?: string // Plan Mode workflow state
 	workflowPath?: string // oacode_change
 	enabled?: boolean // oacode_change
 	rulePath?: string // oacode_change
@@ -381,7 +386,16 @@ export interface WebviewMessage {
 		codebaseIndexGeminiApiKey?: string
 		codebaseIndexMistralApiKey?: string
 	}
-	workflowMode?: string // For workflowModeChanged messages
+	// Plan Mode workflow fields
+	planContent?: string // For approvePlan, rejectPlan, modifyPlan
+	estimatedHours?: number // For approvePlan
+	reason?: string // For rejectPlan
+	feedback?: string // For modifyPlan
+	specificChanges?: string[] // For modifyPlan
+	originalPlanContent?: string // For modifyPlan
+	preserveStructure?: boolean // For modifyPlan
+	currentPhase?: number // For updatePlanProgress
+	completedPhases?: string[] // For updatePlanProgress
 }
 
 // oacode_change begin

@@ -143,6 +143,12 @@ export interface ExtensionMessage {
 		| "promptBlocksLoaded"
 		| "activePromptBlocksUpdated"
 		| "activePromptBlocksLoaded"
+		// Plan Mode workflow
+		| "workflowModeChanged"
+		| "approvePlan"
+		| "rejectPlan"
+		| "modifyPlan"
+		| "updatePlanProgress"
 	text?: string
 	payload?: ProfileDataResponsePayload | BalanceDataResponsePayload | TemplateListPayload // oacode_change: Add payload for profile, balance, and template data
 	action?:
@@ -352,6 +358,8 @@ export type ExtensionState = Pick<
 	| "systemNotificationsEnabled" // oacode_change
 	| "includeDiagnosticMessages"
 	| "maxDiagnosticMessages"
+	| "workflowMode" // Plan mode integration
+	| "approvedPlan" // Plan mode integration
 > & {
 	version: string
 	clineMessages: ClineMessage[]
@@ -407,6 +415,17 @@ export type ExtensionState = Pick<
 	marketplaceInstalledMetadata?: { project: Record<string, any>; global: Record<string, any> }
 	profileThresholds: Record<string, number>
 	hasOpenedModeSelector: boolean
+
+	// Plan Mode state
+	workflowMode?: 'plan' | 'chat' | 'agent'
+	approvedPlan?: {
+		content: string
+		approvedAt: number
+		currentPhase: number
+		completedPhases: string[]
+		estimatedHours?: number
+		planBlockId?: string
+	}
 }
 
 export interface ClineSayTool {

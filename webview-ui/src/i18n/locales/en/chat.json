@@ -107,27 +107,27 @@
 		},
 		"stickyModels": {
 			"title": "Sticky Models",
-			"description": "Each mode remembers your last used model"
+			"description": "Each agent remembers your last used model"
 		},
 		"tools": {
 			"title": "Tools",
 			"description": "Allow the AI to solve problems by browsing the web, running commands, and more"
 		},
 		"customizableModes": {
-			"title": "Customizable Modes",
+			"title": "Customizable Agents",
 			"description": "Specialized personas with their own behaviors and assigned models"
 		}
 	},
-	"selectMode": "Select mode for interaction",
+	"selectMode": "Select agent for interaction",
 	"selectApiConfig": "Select API configuration",
 	"selectModelConfig": "Select model",
 	"enhancePrompt": "Enhance prompt with additional context",
 	"modeSelector": {
-		"title": "Modes",
-		"marketplace": "Mode Marketplace",
-		"settings": "Mode Settings",
+		"title": "Agents",
+		"marketplace": "Agent Marketplace",
+		"settings": "Agent Settings",
 		"description": "Specialized personas that tailor OpenAnalyst's behavior.",
-		"searchPlaceholder": "Search modes...",
+		"searchPlaceholder": "Search agents...",
 		"noResults": "No results found"
 	},
 	"enhancePromptDescription": "The 'Enhance Prompt' button helps improve your prompt by providing additional context, clarification, or rephrasing. Try typing a prompt in here and clicking the button again to see how it works.",
@@ -143,8 +143,8 @@
 	"noValidImages": "No valid images were processed",
 	"separator": "Separator",
 	"edit": "Edit...",
-	"forNextMode": "for next mode",
-	"forPreviousMode": "for previous mode",
+	"forNextMode": "for next agent",
+	"forPreviousMode": "for previous agent",
 	"apiRequest": {
 		"title": "API Request",
 		"failed": "API Request Failed",
@@ -243,13 +243,13 @@
 		"wantsToAccessResource": "OpenAnalyst wants to access a resource on the {{serverName}} MCP server:"
 	},
 	"modes": {
-		"wantsToSwitch": "OpenAnalyst wants to switch to {{mode}} mode",
-		"wantsToSwitchWithReason": "OpenAnalyst wants to switch to {{mode}} mode because: {{reason}}",
-		"didSwitch": "OpenAnalyst switched to {{mode}} mode",
-		"didSwitchWithReason": "OpenAnalyst switched to {{mode}} mode because: {{reason}}"
+		"wantsToSwitch": "OpenAnalyst wants to switch to {{agent}} agent",
+		"wantsToSwitchWithReason": "OpenAnalyst wants to switch to {{agent}} agent because: {{reason}}",
+		"didSwitch": "OpenAnalyst switched to {{agent}} agent",
+		"didSwitchWithReason": "OpenAnalyst switched to {{agent}} agent because: {{reason}}"
 	},
 	"subtasks": {
-		"wantsToCreate": "OpenAnalyst wants to create a new subtask in {{mode}} mode:",
+		"wantsToCreate": "OpenAnalyst wants to create a new subtask in {{mode}} agent:",
 		"wantsToFinish": "OpenAnalyst wants to finish this subtask",
 		"newTaskContent": "Subtask Instructions",
 		"completionContent": "Subtask Completed",

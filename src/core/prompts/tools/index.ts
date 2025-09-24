@@ -30,6 +30,7 @@ import { getListTemplatesDescription } from "./list-templates"
 import { getActivateTemplateDescription } from "./activate-template"
 import { getDeactivateTemplateDescription } from "./deactivate-template"
 import { getDeleteTemplateDescription } from "./delete-template"
+import { getExitPlanModeDescription } from "./exit-plan-mode"
 import { CodeIndexManager } from "../../../services/code-index/manager"
 
 // Map of tool names to their description functions
@@ -61,6 +62,8 @@ const toolDescriptionMap: Record<string, (args: ToolArgs) => string | undefined>
 	activate_template: () => getActivateTemplateDescription(),
 	deactivate_template: () => getDeactivateTemplateDescription(),
 	delete_template: () => getDeleteTemplateDescription(),
+	// Plan Mode tools
+	exit_plan_mode: () => getExitPlanModeDescription(),
 }
 
 export function getToolDescriptionsForMode(
@@ -178,4 +181,5 @@ export {
 	getActivateTemplateDescription,
 	getDeactivateTemplateDescription,
 	getDeleteTemplateDescription,
+	getExitPlanModeDescription,
 }

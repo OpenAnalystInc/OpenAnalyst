@@ -46,6 +46,8 @@ export const toolNames = [
 	"activate_template",
 	"deactivate_template",
 	"delete_template",
+	// Plan Mode tools
+	"exit_plan_mode",
 ] as const
 
 export const toolNamesSchema = z.enum(toolNames)

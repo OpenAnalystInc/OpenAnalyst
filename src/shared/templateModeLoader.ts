@@ -85,7 +85,7 @@ async function loadModesFromTemplateFile(filePath: string): Promise<ModeConfig[]
 		const content = await fs.readFile(filePath, "utf-8")
 		const data = parseYamlSafely(content, filePath)
 
-		if (!data || typeof data !== "object" || !data.customModes) {
+		if (!data || typeof data !== "object" || !data.Agents) {
 			return []
 		}
 
@@ -97,7 +97,7 @@ async function loadModesFromTemplateFile(filePath: string): Promise<ModeConfig[]
 		}
 
 		// Return modes without source modification - they'll be treated as default modes
-		return result.data.customModes
+		return result.data.Agents
 	} catch (error) {
 		console.error(`[TemplateModeLoader] Failed to load modes from template ${filePath}:`, error)
 		return []
