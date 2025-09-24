@@ -1,20 +1,18 @@
 /**
  * RulesButton
- * This component provides the Rules button that opens the rules management
- * popover.
+ * This component provides the Rules button with integrated popover functionality.
+ * The RulesPopover contains a "Create Rule" button that opens the full management interface.
  * 
  * Features:
- * - Integration with RulesPopover component
+ * - Integration with RulesPopover (includes CreateRulePopover)
  * - Active rules count badge
  * - Hover and active states
  * - Keyboard accessibility
- * - Rule management callbacks
+ * - Full CRUD operations for rules via embedded popover
  */
 
 import React from 'react'
-import { FileText } from 'lucide-react'
 import { RulesPopover } from './RulesPopover'
-import { getActiveRules } from './mockRulesData'
 
 /**
  * Props for the RulesButton component
@@ -31,7 +29,6 @@ interface RulesButtonProps {
  * Rules button component with integrated popover functionality
  */
 export const RulesButton: React.FC<RulesButtonProps> = ({
-  disabled = false,
   onRuleToggle,
   onCreateRule,
   onManageRules,
@@ -40,11 +37,8 @@ export const RulesButton: React.FC<RulesButtonProps> = ({
   // ============================
   // Computed Values
   // ============================
-
-  /**
-   * Get count of active rules for badge display
-   */
-  const activeRulesCount = getActiveRules().length
+  
+  // Active rules count is now managed within RulesPopover
 
   // ============================
   // Event Handlers
@@ -83,6 +77,7 @@ export const RulesButton: React.FC<RulesButtonProps> = ({
       onRuleToggle={handleRuleToggle}
       onCreateRule={handleCreateRule}
       onManageRules={handleManageRules}
+      className={className}
     />
   )
 }

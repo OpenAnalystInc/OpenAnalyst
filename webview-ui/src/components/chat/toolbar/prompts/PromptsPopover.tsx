@@ -251,7 +251,7 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({ onPromptSelect, 
 				{/* Header */}
 				<div className="px-4 pt-2 border-b border-vscode-dropdown-border">
 					<div className="flex items-center justify-between">
-						<h3 className="font-medium text-sm text-vscode-foreground">Prompt Templates</h3>
+						<h3 className="font-medium text-sm text-vscode-foreground">Prompt Blocks</h3>
 						<button
 							onClick={handleClose}
 							className="text-vscode-descriptionForeground hover:text-vscode-foreground">
@@ -259,7 +259,7 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({ onPromptSelect, 
 						</button>
 					</div>
 					<p className="text-xs text-vscode-descriptionForeground mt-1">
-						Quick access to coding prompt templates
+						Custom instructions to guide AI responses for specific tasks
 					</p>
 				</div>
 

@@ -2,7 +2,6 @@ import { useRef, useState, useEffect } from "react"
 import { useWindowSize, useClickAway } from "react-use"
 import { VSCodeLink } from "@vscode/webview-ui-toolkit/react"
 import { useTranslation } from "react-i18next"
-import styled from "styled-components"
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../ui/tooltip"
 import { vscode } from "@/utils/vscode"
@@ -30,7 +29,7 @@ const DescriptionWithLink: React.FC<DescriptionWithLinkProps> = ({ children, hre
 	</p>
 )
 
-const OaRulesToggleModal: React.FC = () => {
+const OaWorkflowsToggleModal: React.FC = () => {
 	const { t } = useTranslation()
 
 	const [isVisible, setIsVisible] = useState(false)
@@ -39,9 +38,6 @@ const OaRulesToggleModal: React.FC = () => {
 	const { width: viewportWidth, height: viewportHeight } = useWindowSize()
 	const [arrowPosition, setArrowPosition] = useState(0)
 	const [menuPosition, setMenuPosition] = useState(0)
-	const [currentView, setCurrentView] = useState<"rule" | "workflow">("rule")
-	const [localRules, setLocalRules] = useState<[string, boolean][]>([])
-	const [globalRules, setGlobalRules] = useState<[string, boolean][]>([])
 	const [localWorkflows, setLocalWorkflows] = useState<[string, boolean][]>([])
 	const [globalWorkflows, setGlobalWorkflows] = useState<[string, boolean][]>([])
 
@@ -55,8 +51,6 @@ const OaRulesToggleModal: React.FC = () => {
 		const handleMessage = (event: MessageEvent) => {
 			const message = event.data
 			if (message.type === "rulesData") {
-				setLocalRules(sortedRules(message.localRules))
-				setGlobalRules(sortedRules(message.globalRules))
 				setLocalWorkflows(sortedRules(message.localWorkflows))
 				setGlobalWorkflows(sortedRules(message.globalWorkflows))
 			}
@@ -65,15 +59,6 @@ const OaRulesToggleModal: React.FC = () => {
 		window.addEventListener("message", handleMessage)
 		return () => window.removeEventListener("message", handleMessage)
 	}, [])
-
-	const toggleRule = (isGlobal: boolean, rulePath: string, enabled: boolean) => {
-		vscode.postMessage({
-			type: "toggleRule",
-			rulePath,
-			enabled,
-			isGlobal,
-		})
-	}
 
 	const toggleWorkflow = (isGlobal: boolean, workflowPath: string, enabled: boolean) => {
 		vscode.postMessage({
@@ -107,11 +92,11 @@ const OaRulesToggleModal: React.FC = () => {
 						<TooltipTrigger asChild>
 							<BottomButton
 								iconClass="codicon-law"
-								ariaLabel={t("oacode:rules.ariaLabel")}
+								ariaLabel="Workflows - Manage workflow automation"
 								onClick={() => setIsVisible(!isVisible)}
 							/>
 						</TooltipTrigger>
-						<TooltipContent>{t("oacode:rules.tooltip")}</TooltipContent>
+						<TooltipContent>Workflows</TooltipContent>
 					</Tooltip>
 				</TooltipProvider>
 			</div>
@@ -134,60 +119,25 @@ const OaRulesToggleModal: React.FC = () => {
 						}}
 					/>
 
-					<div
-						style={{
-							display: "flex",
-							justifyContent: "space-between",
-							marginBottom: "10px",
-						}}>
-						<div
-							style={{
-								display: "flex",
-								gap: "1px",
-								borderBottom: "1px solid var(--vscode-panel-border)",
-							}}>
-							<StyledTabButton $isActive={currentView === "rule"} onClick={() => setCurrentView("rule")}>
-								{t("oacode:rules.tabs.rules")}
-							</StyledTabButton>
-							<StyledTabButton
-								$isActive={currentView === "workflow"}
-								onClick={() => setCurrentView("workflow")}>
-								{t("oacode:rules.tabs.workflows")}
-							</StyledTabButton>
-						</div>
-					</div>
-
 					<div className="text-xs text-[var(--vscode-descriptionForeground)] mb-4">
-						{currentView === "rule" ? (
-							<DescriptionWithLink
-								href="https://oacode.ai/docs/advanced-usage/custom-rules"
-								linkText={t("oacode:docs")}>
-								{t("oacode:rules.description.rules")}
-							</DescriptionWithLink>
-						) : (
-							<DescriptionWithLink
-								href="https://oacode.ai/docs/features/slash-commands/workflows"
-								linkText={t("oacode:docs")}>
-								{t("oacode:rules.description.workflows")}{" "}
-								<span className="text-[var(--vscode-foreground)] font-bold">/workflow-name</span>{" "}
-								{t("oacode:rules.description.workflowsInChat")}
-							</DescriptionWithLink>
-						)}
+						<DescriptionWithLink
+							href="https://docs.openanalyst.com/workflows"
+							linkText={t("oacode:docs")}>
+							{t("oacode:rules.description.workflows")}{" "}
+							<span className="text-[var(--vscode-foreground)] font-bold">/workflow-name</span>{" "}
+							{t("oacode:rules.description.workflowsInChat")}
+						</DescriptionWithLink>
 					</div>
 
 					<RulesWorkflowsSection
-						type={currentView}
-						globalItems={currentView === "rule" ? globalRules : globalWorkflows}
-						localItems={currentView === "rule" ? localRules : localWorkflows}
+						type="workflow"
+						globalItems={globalWorkflows}
+						localItems={localWorkflows}
 						toggleGlobal={(path: string, enabled: boolean) =>
-							currentView === "rule"
-								? toggleRule(true, path, enabled)
-								: toggleWorkflow(true, path, enabled)
+							toggleWorkflow(true, path, enabled)
 						}
 						toggleLocal={(path: string, enabled: boolean) =>
-							currentView === "rule"
-								? toggleRule(false, path, enabled)
-								: toggleWorkflow(false, path, enabled)
+							toggleWorkflow(false, path, enabled)
 						}
 					/>
 				</div>
@@ -196,20 +146,5 @@ const OaRulesToggleModal: React.FC = () => {
 	)
 }
 
-const StyledTabButton = styled.button<{ $isActive: boolean }>`
-	background: none;
-	border: none;
-	border-bottom: 2px solid ${(props) => (props.$isActive ? "var(--vscode-foreground)" : "transparent")};
-	color: ${(props) => (props.$isActive ? "var(--vscode-foreground)" : "var(--vscode-descriptionForeground)")};
-	padding: 8px 16px;
-	cursor: pointer;
-	font-size: 13px;
-	margin-bottom: -1px;
-	font-family: inherit;
 
-	&:hover {
-		color: var(--vscode-foreground);
-	}
-`
-
-export default OaRulesToggleModal
+export default OaWorkflowsToggleModal

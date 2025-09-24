@@ -234,7 +234,6 @@ export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
         <div className={cn(
           'flex-shrink-0 p-2 rounded',
           categoryColors.bg,
-          'ring-1',
           categoryColors.border
         )}>
           <CategoryIcon className={cn('w-3 h-3', categoryColors.icon)} />
