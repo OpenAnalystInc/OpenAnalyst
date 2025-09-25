@@ -124,15 +124,15 @@ export async function uploadTemplateTool(
 		// Force template refresh by getting available templates (this will scan the directory)
 		await provider.templateManager.getAvailableTemplates()
 
-		// Count modes in the template
+		// Agents in the template
 		const modeCount = validationResult.data.Agents?.length || 0
 		const modeNames = validationResult.data.Agents?.map(m => m.name || m.slug).join(", ") || ""
 
 		// Notify about successful upload
 		pushToolResult(formatResponse.toolResult(
 			`Template "${fileName}" uploaded successfully to ${TEMPLATES_DIRECTORY}/\n\n` +
-			`Contains ${modeCount} mode(s): ${modeNames}\n\n` +
-			`The template modes will be available after activating this template.`
+			`Contains ${modeCount} agents : ${modeNames}\n\n` +
+			`The template Agents will be available after activating this template.`
 		))
 
 		// Reset error count on success

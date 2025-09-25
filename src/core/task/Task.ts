@@ -208,6 +208,10 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 	pausedModeSlug: string = defaultModeSlug
 	private pauseInterval: NodeJS.Timeout | undefined
 
+	// Plan modification support - allows injecting modification messages without aborting task
+	modificationPending: boolean = false
+	pendingModificationMessage?: string
+
 	// API
 	readonly apiConfiguration: ProviderSettings
 	api: ApiHandler
@@ -1314,6 +1318,24 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		}
 	}
 
+	/**
+	 * Set a pending modification message to be processed after the current API request completes
+	 * This allows modifying the task flow without aborting the task
+	 */
+	public setPendingModification(modificationMessage: string) {
+		console.log(`[Task] Setting pending modification for task ${this.taskId}.${this.instanceId}`)
+		this.modificationPending = true
+		this.pendingModificationMessage = modificationMessage
+	}
+
+	/**
+	 * Clear any pending modification
+	 */
+	private clearPendingModification() {
+		this.modificationPending = false
+		this.pendingModificationMessage = undefined
+	}
+
 	public async abortTask(isAbandoned = false) {
 		console.log(`[subtasks] aborting task ${this.taskId}.${this.instanceId}`)
 
@@ -1370,6 +1392,25 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		while (!this.abort) {
 			const didEndLoop = await this.recursivelyMakeClineRequests(nextUserContent, includeFileDetails)
 			includeFileDetails = false // We only need file details the first time.
+
+			// Check for pending modifications after API request completes
+			if (this.modificationPending && this.pendingModificationMessage) {
+				console.log(`[Task] Processing pending modification for task ${this.taskId}.${this.instanceId}`)
+
+				// Inject the modification message as if it came from the user
+				nextUserContent = [
+					{
+						type: "text",
+						text: this.pendingModificationMessage
+					}
+				]
+
+				// Clear the pending modification
+				this.clearPendingModification()
+
+				// Continue the loop to process the modification message
+				continue
+			}
 
 			// The way this agentic loop works is that cline will be given a
 			// task that he then calls tools to complete. Unless there's an

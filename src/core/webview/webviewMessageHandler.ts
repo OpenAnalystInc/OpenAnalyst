@@ -3926,14 +3926,10 @@ You are still in PLAN MODE - no execution is allowed.
 					// Add the modification request as a user message to continue the conversation
 					const currentCline = provider.getCurrentCline()
 					if (currentCline) {
-						// Cancel any ongoing API request to avoid conflicts
-						await currentCline.abortTask()
-
-						// Brief delay to ensure state updates are processed
-						setTimeout(() => {
-							// Send the modification message as user input to continue the conversation
-							currentCline.handleWebviewAskResponse("messageResponse", modificationMessage, undefined)
-						}, 100)
+						// Set pending modification instead of aborting the task
+						// This allows the current API request to complete naturally
+						// and inject the modification message at a safe point
+						currentCline.setPendingModification(modificationMessage)
 					}
 
 					await provider.postMessageToWebview({

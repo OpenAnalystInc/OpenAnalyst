@@ -152,12 +152,12 @@ export const TemplateSelector = ({ disabled = false, className }: TemplateSelect
 		{
 			value: "none",
 			label: "No Template",
-			description: "Use built-in modes only",
+			description: "Use built-in agents only",
 		},
 		...templates.map(template => ({
 			value: template.name,
 			label: template.name,
-			description: `${template.modeCount} mode(s): ${template.modes.map(m => m.name).join(", ")}`,
+			description: `${template.modeCount} Agents : ${template.modes.map(m => m.name).join(", ")}`,
 		})),
 		{
 			value: "upload",
