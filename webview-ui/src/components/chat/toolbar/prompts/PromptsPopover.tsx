@@ -230,13 +230,26 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({ onPromptSelect, 
 		<Popover open={open} onOpenChange={setOpen}>
 			<PopoverTrigger asChild>
 				<button
-					className={`flex items-center justify-center w-8 h-8 text-white rounded transition-all duration-200 ease-in-out ${
+					className={cn(
+						"flex items-center justify-center w-8 h-8 rounded transition-all duration-200 ease-in-out",
+						"border border-transparent",
 						open
-							? "bg-[rgba(255,255,255,0.20)] border-[rgba(255,255,255,0.2)] shadow-sm"
-							: "bg-transparent border-transparent hover:bg-[rgba(255,255,255,0.15)] hover:border-[rgba(255,255,255,0.1)] hover:shadow-sm"
-					}`}
-					style={{ position: "relative" }}
-					title="Prompts - Quick access to prompt templates">
+							? [
+									"bg-vscode-button-background",
+									"text-vscode-button-foreground",
+									"border-vscode-button-border",
+									"shadow-sm",
+							  ]
+							: [
+									"bg-transparent",
+									"text-vscode-foreground",
+									"opacity-60 hover:opacity-100",
+									"hover:bg-vscode-toolbar-hoverBackground",
+									"hover:border-vscode-contrastBorder",
+							  ],
+					)}
+					title="Prompts - Quick access to prompt templates"
+					aria-label="Prompts - Quick access to prompt templates">
 					<MessageSquare className="w-4 h-4" />
 				</button>
 			</PopoverTrigger>

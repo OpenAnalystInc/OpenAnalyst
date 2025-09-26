@@ -142,16 +142,6 @@ export const WorkflowPopover: React.FC<WorkflowPopoverProps> = ({
           </button>
         ))}
       </div>
-      
-      {/* Keyboard shortcut hint */}
-      <div className="border-t border-vscode-dropdown-border px-3 py-2">
-        <p className="text-xs text-vscode-descriptionForeground">
-          <kbd className="text-[10px] px-1 py-0.5 bg-vscode-keybindingLabel-background rounded">
-            Ctrl+Shift+W
-          </kbd>
-          {' '}to cycle through modes
-        </p>
-      </div>
     </div>
   )
 }
