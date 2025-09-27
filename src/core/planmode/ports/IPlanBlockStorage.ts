@@ -26,7 +26,7 @@ export interface PlanBlockMetadata {
 	readonly usageCount: number
 	readonly lastUsed?: string
 	readonly estimatedHours?: number
-	readonly complexity?: 'low' | 'medium' | 'high'
+	readonly complexity?: "low" | "medium" | "high"
 	readonly tags?: readonly string[]
 }
 
@@ -47,7 +47,7 @@ export interface PlanBlockVariable {
 	readonly description: string
 	readonly required: boolean
 	readonly defaultValue?: string
-	readonly type?: 'string' | 'number' | 'boolean' | 'select'
+	readonly type?: "string" | "number" | "boolean" | "select"
 	readonly options?: readonly string[]
 }
 
@@ -58,7 +58,7 @@ export interface PlanBlockSearchCriteria {
 	readonly query?: string
 	readonly category?: string
 	readonly tags?: readonly string[]
-	readonly complexity?: 'low' | 'medium' | 'high'
+	readonly complexity?: "low" | "medium" | "high"
 	readonly minUsageCount?: number
 	readonly createdAfter?: string
 	readonly limit?: number
@@ -80,7 +80,7 @@ export class PlanBlockStorageError extends Error {
 		message: string,
 		public readonly operation: string,
 		public readonly blockName?: string,
-		public override readonly cause?: Error
+		public override readonly cause?: Error,
 	) {
 		super(message)
 		this.name = "PlanBlockStorageError"
@@ -91,7 +91,7 @@ export class PlanBlockStorageError extends Error {
  * Storage interface for reusable plan blocks
  *
  * Abstracts the file system operations for plan block templates.
- * Implementations handle .oacode/blocks/plans/ directory structure.
+ * Implementations handle .oacode/plans/ directory structure.
  */
 export interface IPlanBlockStorage {
 	/**

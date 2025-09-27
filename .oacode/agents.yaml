@@ -1,0 +1,18 @@
+# OpenAnalyst Agents Configuration
+# This file defines custom AI agents for your workspace
+# Agents defined here override global agents with the same slug
+
+Agents: []
+
+# Example agent configuration:
+# Agents:
+#   - slug: "python-expert"
+#     name: "Python Expert"
+#     description: "Specialized Python development agent"
+#     roleDefinition: "You are an expert Python developer..."
+#     whenToUse: "When working with Python code"
+#     groups: ["read", "edit", "command", "browser", "mcp"]
+#     customInstructions: |
+#       1. Follow PEP 8 style guidelines
+#       2. Use type hints where appropriate
+#       3. Write comprehensive docstrings

@@ -2,7 +2,8 @@ export const GlobalFileNames = {
 	apiConversationHistory: "api_conversation_history.json",
 	uiMessages: "ui_messages.json",
 	mcpSettings: "mcp_settings.json",
-	customModes: "custom_modes.yaml",
+	agents: "agents.yaml",
+	customModes: "agents.yaml", // Alias for compatibility
 	taskMetadata: "task_metadata.json",
 	oaRules: ".oacode/rules", // oacode_change
 	workflows: ".oacode/workflows", // oacode_change

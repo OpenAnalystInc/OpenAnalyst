@@ -46,9 +46,9 @@ export class SimpleInstaller {
 
 		// If CustomModesManager is available, use importModeWithRules
 		if (this.customModesManager) {
-			// Transform marketplace content to import format (wrap in customModes array)
+			// Transform marketplace content to import format (wrap in Agents array)
 			const importData = {
-				customModes: [yaml.parse(item.content)],
+				Agents: [yaml.parse(item.content)],
 			}
 			const importYaml = yaml.stringify(importData)
 
@@ -90,19 +90,19 @@ export class SimpleInstaller {
 		const modeData = yaml.parse(item.content)
 
 		// Read existing file or create new structure
-		let existingData: any = { customModes: [] }
+		let existingData: any = { Agents: [] }
 		try {
 			const existing = await fs.readFile(filePath, "utf-8")
 			const parsed = yaml.parse(existing)
-			// Ensure we have a valid object with customModes array
-			existingData = parsed && typeof parsed === "object" ? parsed : { customModes: [] }
+			// Ensure we have a valid object with Agents array
+			existingData = parsed && typeof parsed === "object" ? parsed : { Agents: [] }
 		} catch (error: any) {
 			if (error.code === "ENOENT") {
 				// File doesn't exist, use default structure - this is fine
-				existingData = { customModes: [] }
+				existingData = { Agents: [] }
 			} else if (error.name === "YAMLParseError" || error.message?.includes("YAML")) {
 				// YAML parsing error - don't overwrite the file!
-				const fileName = target === "project" ? ".oacodemodes" : "custom-modes.yaml"
+				const fileName = target === "project" ? ".oacode/agents.yaml" : "agents.yaml"
 				throw new Error(
 					`Cannot install mode: The ${fileName} file contains invalid YAML. ` +
 						`Please fix the syntax errors in the file before installing new modes.`,
@@ -113,9 +113,9 @@ export class SimpleInstaller {
 			}
 		}
 
-		// Ensure customModes array exists
-		if (!existingData.customModes) {
-			existingData.customModes = []
+		// Ensure Agents array exists
+		if (!existingData.Agents) {
+			existingData.Agents = []
 		}
 
 		// The content is now a single mode object directly
@@ -124,11 +124,11 @@ export class SimpleInstaller {
 		}
 
 		// Remove existing mode with same slug if it exists
-		existingData.customModes = existingData.customModes.filter((mode: any) => mode.slug !== modeData.slug)
+		existingData.Agents = existingData.Agents.filter((mode: any) => mode.slug !== modeData.slug)
 
 		// Add the new mode
-		existingData.customModes.push(modeData)
-		const addedModeIndex = existingData.customModes.length - 1
+		existingData.Agents.push(modeData)
+		const addedModeIndex = existingData.Agents.length - 1
 
 		// Write back to file
 		await fs.mkdir(path.dirname(filePath), { recursive: true })
@@ -140,7 +140,7 @@ export class SimpleInstaller {
 		if (addedModeIndex >= 0) {
 			const lines = yamlContent.split("\n")
 			// Find the line containing the slug of the added mode
-			const addedMode = existingData.customModes[addedModeIndex]
+			const addedMode = existingData.Agents[addedModeIndex]
 			if (addedMode?.slug) {
 				const slugLineIndex = lines.findIndex(
 					(l) => l.includes(`slug: ${addedMode.slug}`) || l.includes(`slug: "${addedMode.slug}"`),
@@ -362,10 +362,10 @@ export class SimpleInstaller {
 			if (!workspaceFolder) {
 				throw new Error("No workspace folder found")
 			}
-			return path.join(workspaceFolder.uri.fsPath, ".oacodemodes")
+			return path.join(workspaceFolder.uri.fsPath, ".oacode", "agents.yaml")
 		} else {
 			const globalSettingsPath = await ensureSettingsDirectoryExists(this.context)
-			return path.join(globalSettingsPath, GlobalFileNames.customModes)
+			return path.join(globalSettingsPath, GlobalFileNames.agents)
 		}
 	}
 

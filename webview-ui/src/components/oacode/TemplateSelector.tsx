@@ -50,7 +50,7 @@ export const TemplateSelector = ({ disabled = false, className }: TemplateSelect
 	// Global drag & drop listeners for better UX
 	useEffect(() => {
 		const handleGlobalDragEnter = (e: DragEvent) => {
-			if (e.dataTransfer?.types.includes('Files')) {
+			if (e.dataTransfer?.types.includes("Files")) {
 				setDragActive(true)
 			}
 		}
@@ -80,20 +80,23 @@ export const TemplateSelector = ({ disabled = false, className }: TemplateSelect
 		}
 	}, [])
 
-	const handleChange = React.useCallback((selectedValue: string) => {
-		if (selectedValue === "none") {
-			// Deactivate current template
-			vscode.postMessage({ type: "deactivateTemplate" })
-			setActiveTemplate(null)
-		} else if (selectedValue !== activeTemplate) {
-			// Activate selected template
-			vscode.postMessage({ 
-				type: "activateTemplate", 
-				templateName: selectedValue 
-			})
-			setActiveTemplate(selectedValue)
-		}
-	}, [activeTemplate])
+	const handleChange = React.useCallback(
+		(selectedValue: string) => {
+			if (selectedValue === "none") {
+				// Deactivate current template
+				vscode.postMessage({ type: "deactivateTemplate" })
+				setActiveTemplate(null)
+			} else if (selectedValue !== activeTemplate) {
+				// Activate selected template
+				vscode.postMessage({
+					type: "activateTemplate",
+					templateName: selectedValue,
+				})
+				setActiveTemplate(selectedValue)
+			}
+		},
+		[activeTemplate],
+	)
 
 	const handleUploadSuccess = React.useCallback(() => {
 		// Refresh template list after successful upload
@@ -108,24 +111,25 @@ export const TemplateSelector = ({ disabled = false, className }: TemplateSelect
 
 	const handleFileDrop = React.useCallback((files: FileList) => {
 		const file = files[0]
-		if (file && (file.name.endsWith('.yaml') || file.name.endsWith('.yml'))) {
+		if (file && (file.name.endsWith(".yaml") || file.name.endsWith(".yml"))) {
 			// Handle direct file drop
-			file.text().then(content => {
-				vscode.postMessage({
-					type: 'uploadTemplateFile',
-					filename: file.name,
-					content: content
+			file.text()
+				.then((content) => {
+					vscode.postMessage({
+						type: "uploadTemplateFile",
+						filename: file.name,
+						content: content,
+					})
+					// Refresh after upload
+					setTimeout(() => {
+						vscode.postMessage({ type: "getTemplateList" })
+					}, 500)
 				})
-				// Refresh after upload
-				setTimeout(() => {
-					vscode.postMessage({ type: "getTemplateList" })
-				}, 500)
-			}).catch(error => {
-				console.error('Failed to read dropped file:', error)
-			})
+				.catch((error) => {
+					console.error("Failed to read dropped file:", error)
+				})
 		}
 	}, [])
-
 
 	// const handleDelete = React.useCallback((templateName: string) => {
 	// 	if (confirm(`Are you sure you want to delete template "${templateName}"?`)) {
@@ -152,12 +156,12 @@ export const TemplateSelector = ({ disabled = false, className }: TemplateSelect
 		{
 			value: "none",
 			label: "No Template",
-			description: "Use built-in modes only",
+			description: "Use built-in agents only",
 		},
-		...templates.map(template => ({
+		...templates.map((template) => ({
 			value: template.name,
 			label: template.name,
-			description: `${template.modeCount} mode(s): ${template.modes.map(m => m.name).join(", ")}`,
+			description: `${template.modeCount} Agents : ${template.modes.map((m) => m.name).join(", ")}`,
 		})),
 		{
 			value: "upload",
@@ -183,7 +187,7 @@ export const TemplateSelector = ({ disabled = false, className }: TemplateSelect
 				dragActive={dragActive}
 				triggerClassName="w-full min-h-[26px] bg-[var(--background)] border-[var(--vscode-input-border)] hover:bg-[var(--color-vscode-list-hoverBackground)]"
 			/>
-			
+
 			<TemplateUploadModal
 				isOpen={showUploadModal}
 				onClose={() => setShowUploadModal(false)}

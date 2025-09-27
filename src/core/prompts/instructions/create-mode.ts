@@ -6,17 +6,17 @@ export async function createModeInstructions(context: vscode.ExtensionContext | 
 	if (!context) throw new Error("Missing VSCode Extension Context")
 
 	const settingsDir = path.join(context.globalStorageUri.fsPath, "settings")
-	const customModesPath = path.join(settingsDir, GlobalFileNames.customModes)
+	const agentsPath = path.join(settingsDir, GlobalFileNames.agents)
 
 	return `
-Custom modes can be configured in two ways:
-  1. Globally via '${customModesPath}' (created automatically on startup)
-  2. Per-workspace via '.oacodemodes' in the workspace root directory
+Custom agents can be configured in two ways:
+  1. Globally via '${agentsPath}' (created automatically on startup)
+  2. Per-workspace via '.oacode/agents.yaml' in the workspace
 
-When modes with the same slug exist in both files, the workspace-specific .oacodemodes version takes precedence. This allows projects to override global modes or define project-specific modes.
+When agents with the same slug exist in both files, the workspace-specific .oacode/agents.yaml version takes precedence. This allows projects to override global agents or define project-specific agents.
 
 
-If asked to create a project mode, create it in .oacodemodes in the workspace root. If asked to create a global mode, use the global custom modes file.
+If asked to create a project agent, create it in .oacode/agents.yaml in the workspace. If asked to create a global agent, use the global agents file.
 
 - The following fields are required and must not be empty:
   * slug: A valid slug (lowercase letters, numbers, and hyphens). Must be unique, and shorter is better.
@@ -33,7 +33,7 @@ If asked to create a project mode, create it in .oacodemodes in the workspace ro
 
 Both files should follow this structure (in YAML format):
 
-customModes:
+Agents:
   - slug: designer  # Required: unique slug with lowercase letters, numbers, and hyphens
     name: Designer  # Required: mode display name
     description: UI/UX design systems expert  # Optional but recommended: short description (5 words)

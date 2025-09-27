@@ -140,7 +140,6 @@ describe("RooProtectedController", () => {
 
 			expect(patterns).toEqual([
 				".oacodeignore",
-				".oacodemodes",
 				".oacoderules",
 				".oacode/**",
 				".oacodeprotected",

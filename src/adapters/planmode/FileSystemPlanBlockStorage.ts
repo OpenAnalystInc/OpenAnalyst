@@ -2,7 +2,7 @@
  * Module: FileSystemPlanBlockStorage (adapter)
  * Purpose: File system adapter implementing IPlanBlockStorage
  * Responsibilities:
- *  - Implement plan block storage using YAML files in .oacode/blocks/plans/
+ *  - Implement plan block storage using YAML files in .oacode/plans/
  *  - Handle file I/O operations with proper error handling
  *  - Provide search and matching capabilities for plan blocks
  * Invariants:
@@ -24,13 +24,13 @@ import {
 	PlanBlockMetadata,
 	PlanBlockSearchCriteria,
 	PlanBlockVariable,
-	PlanBlockStorageError
+	PlanBlockStorageError,
 } from "../../core/planmode/ports/IPlanBlockStorage"
 
 /**
  * Directory structure for plan blocks
  */
-const PLAN_BLOCKS_DIR = ".oacode/blocks/plans"
+const PLAN_BLOCKS_DIR = ".oacode/plans"
 const PLAN_BLOCK_EXTENSION = ".yaml"
 
 /**
@@ -61,10 +61,7 @@ export class FileSystemPlanBlockStorage implements IPlanBlockStorage {
 	private getPlanBlocksDirectory(): string {
 		const workspacePath = getWorkspacePath()
 		if (!workspacePath) {
-			throw new PlanBlockStorageError(
-				"No workspace available for plan block storage",
-				"getPlanBlocksDirectory"
-			)
+			throw new PlanBlockStorageError("No workspace available for plan block storage", "getPlanBlocksDirectory")
 		}
 
 		return path.join(workspacePath, PLAN_BLOCKS_DIR)
@@ -79,20 +76,16 @@ export class FileSystemPlanBlockStorage implements IPlanBlockStorage {
 	 */
 	private validatePlanBlockName(name: string): string {
 		if (!name?.trim()) {
-			throw new PlanBlockStorageError(
-				"Plan block name cannot be empty",
-				"validatePlanBlockName",
-				name
-			)
+			throw new PlanBlockStorageError("Plan block name cannot be empty", "validatePlanBlockName", name)
 		}
 
-		const sanitized = name.trim().replace(/[^a-zA-Z0-9_-]/g, '-')
+		const sanitized = name.trim().replace(/[^a-zA-Z0-9_-]/g, "-")
 
 		if (sanitized !== name) {
-			if (process.env.NODE_ENV === 'development') {
-				console.warn('[FileSystemPlanBlockStorage] Plan block name sanitized', {
+			if (process.env.NODE_ENV === "development") {
+				console.warn("[FileSystemPlanBlockStorage] Plan block name sanitized", {
 					original: name,
-					sanitized
+					sanitized,
 				})
 			}
 		}
@@ -126,7 +119,7 @@ export class FileSystemPlanBlockStorage implements IPlanBlockStorage {
 				"Failed to create plan blocks directory",
 				"ensureDirectoryExists",
 				undefined,
-				error instanceof Error ? error : undefined
+				error instanceof Error ? error : undefined,
 			)
 		}
 	}
@@ -143,10 +136,10 @@ export class FileSystemPlanBlockStorage implements IPlanBlockStorage {
 			return yaml.parse(content) || {}
 		} catch (error) {
 			throw new PlanBlockStorageError(
-				`Invalid YAML in plan block: ${error instanceof Error ? error.message : 'Parse error'}`,
+				`Invalid YAML in plan block: ${error instanceof Error ? error.message : "Parse error"}`,
 				"parseYamlSafely",
 				path.basename(filePath),
-				error instanceof Error ? error : undefined
+				error instanceof Error ? error : undefined,
 			)
 		}
 	}
@@ -184,7 +177,7 @@ export class FileSystemPlanBlockStorage implements IPlanBlockStorage {
 				throw new PlanBlockStorageError(
 					`Plan block '${planBlock.name}' already exists`,
 					"savePlanBlock",
-					planBlock.name
+					planBlock.name,
 				)
 			} catch (error) {
 				// File doesn't exist, which is what we want
@@ -197,32 +190,31 @@ export class FileSystemPlanBlockStorage implements IPlanBlockStorage {
 			const validation = await this.validatePlanBlock(planBlock)
 			if (!validation.isValid) {
 				throw new PlanBlockStorageError(
-					`Plan block validation failed: ${validation.errors.join(', ')}`,
+					`Plan block validation failed: ${validation.errors.join(", ")}`,
 					"savePlanBlock",
-					planBlock.name
+					planBlock.name,
 				)
 			}
 
 			// Convert to YAML and save
 			const yamlContent = yaml.stringify(planBlock, {
 				indent: 2,
-				lineWidth: 120
+				lineWidth: 120,
 			})
 
-			await fs.writeFile(filePath, yamlContent, 'utf-8')
+			await fs.writeFile(filePath, yamlContent, "utf-8")
 
 			// Invalidate cache
 			this.invalidateCache()
 
-			if (process.env.NODE_ENV === 'development') {
-				console.debug('[FileSystemPlanBlockStorage] Plan block saved', {
+			if (process.env.NODE_ENV === "development") {
+				console.debug("[FileSystemPlanBlockStorage] Plan block saved", {
 					name: planBlock.name,
 					category: planBlock.category,
 					filePath,
-					timestamp: new Date().toISOString()
+					timestamp: new Date().toISOString(),
 				})
 			}
-
 		} catch (error) {
 			if (error instanceof PlanBlockStorageError) {
 				throw error
@@ -232,7 +224,7 @@ export class FileSystemPlanBlockStorage implements IPlanBlockStorage {
 				`Failed to save plan block '${planBlock.name}'`,
 				"savePlanBlock",
 				planBlock.name,
-				error instanceof Error ? error : undefined
+				error instanceof Error ? error : undefined,
 			)
 		}
 	}
@@ -256,7 +248,7 @@ export class FileSystemPlanBlockStorage implements IPlanBlockStorage {
 			}
 
 			// Read and parse file
-			const content = await fs.readFile(filePath, 'utf-8')
+			const content = await fs.readFile(filePath, "utf-8")
 			const planBlockData = this.parseYamlSafely(content, filePath)
 
 			// Validate required fields
@@ -264,12 +256,11 @@ export class FileSystemPlanBlockStorage implements IPlanBlockStorage {
 				throw new PlanBlockStorageError(
 					`Invalid plan block structure in '${name}': missing required fields`,
 					"loadPlanBlock",
-					name
+					name,
 				)
 			}
 
 			return planBlockData as PlanBlock
-
 		} catch (error) {
 			if (error instanceof PlanBlockStorageError) {
 				throw error
@@ -279,7 +270,7 @@ export class FileSystemPlanBlockStorage implements IPlanBlockStorage {
 				`Failed to load plan block '${name}'`,
 				"loadPlanBlock",
 				name,
-				error instanceof Error ? error : undefined
+				error instanceof Error ? error : undefined,
 			)
 		}
 	}
@@ -308,16 +299,14 @@ export class FileSystemPlanBlockStorage implements IPlanBlockStorage {
 
 			// Read directory
 			const entries = await fs.readdir(blocksDir, { withFileTypes: true })
-			const yamlFiles = entries.filter(entry =>
-				entry.isFile() && entry.name.endsWith(PLAN_BLOCK_EXTENSION)
-			)
+			const yamlFiles = entries.filter((entry) => entry.isFile() && entry.name.endsWith(PLAN_BLOCK_EXTENSION))
 
 			const metadata: PlanBlockMetadata[] = []
 
 			for (const file of yamlFiles) {
 				try {
 					const filePath = path.join(blocksDir, file.name)
-					const content = await fs.readFile(filePath, 'utf-8')
+					const content = await fs.readFile(filePath, "utf-8")
 					const planBlock = this.parseYamlSafely(content, filePath)
 
 					// Extract metadata (exclude template content for performance)
@@ -331,7 +320,7 @@ export class FileSystemPlanBlockStorage implements IPlanBlockStorage {
 						lastUsed,
 						estimatedHours,
 						complexity,
-						tags
+						tags,
 					} = planBlock
 
 					if (name && category && description) {
@@ -345,15 +334,15 @@ export class FileSystemPlanBlockStorage implements IPlanBlockStorage {
 							lastUsed,
 							estimatedHours,
 							complexity,
-							tags
+							tags,
 						})
 					}
 				} catch (error) {
 					// Log but don't fail the entire operation for one bad file
-					if (process.env.NODE_ENV === 'development') {
-						console.warn('[FileSystemPlanBlockStorage] Failed to read plan block', {
+					if (process.env.NODE_ENV === "development") {
+						console.warn("[FileSystemPlanBlockStorage] Failed to read plan block", {
 							file: file.name,
-							error: error instanceof Error ? error.message : 'Unknown error'
+							error: error instanceof Error ? error.message : "Unknown error",
 						})
 					}
 				}
@@ -363,17 +352,16 @@ export class FileSystemPlanBlockStorage implements IPlanBlockStorage {
 			this.metadataCache = {
 				metadata,
 				lastUpdated: Date.now(),
-				cacheKey: blocksDir
+				cacheKey: blocksDir,
 			}
 
 			return metadata
-
 		} catch (error) {
 			throw new PlanBlockStorageError(
 				"Failed to list plan blocks",
 				"listPlanBlocks",
 				undefined,
-				error instanceof Error ? error : undefined
+				error instanceof Error ? error : undefined,
 			)
 		}
 	}
@@ -421,9 +409,7 @@ export class FileSystemPlanBlockStorage implements IPlanBlockStorage {
 
 				// Tag filtering
 				if (criteria.tags && criteria.tags.length > 0) {
-					const hasMatchingTag = criteria.tags.some(tag =>
-						metadata.tags?.includes(tag)
-					)
+					const hasMatchingTag = criteria.tags.some((tag) => metadata.tags?.includes(tag))
 					if (!hasMatchingTag) {
 						continue
 					}
@@ -442,13 +428,12 @@ export class FileSystemPlanBlockStorage implements IPlanBlockStorage {
 			}
 
 			return matchingBlocks
-
 		} catch (error) {
 			throw new PlanBlockStorageError(
 				"Failed to search plan blocks",
 				"searchPlanBlocks",
 				undefined,
-				error instanceof Error ? error : undefined
+				error instanceof Error ? error : undefined,
 			)
 		}
 	}
@@ -468,29 +453,28 @@ export class FileSystemPlanBlockStorage implements IPlanBlockStorage {
 				await fs.unlink(filePath)
 				this.invalidateCache()
 
-				if (process.env.NODE_ENV === 'development') {
-					console.debug('[FileSystemPlanBlockStorage] Plan block deleted', {
+				if (process.env.NODE_ENV === "development") {
+					console.debug("[FileSystemPlanBlockStorage] Plan block deleted", {
 						name,
 						filePath,
-						timestamp: new Date().toISOString()
+						timestamp: new Date().toISOString(),
 					})
 				}
 
 				return true
 			} catch (error) {
 				// Check if file doesn't exist
-				if ((error as any)?.code === 'ENOENT') {
+				if ((error as any)?.code === "ENOENT") {
 					return false
 				}
 				throw error
 			}
-
 		} catch (error) {
 			throw new PlanBlockStorageError(
 				`Failed to delete plan block '${name}'`,
 				"deletePlanBlock",
 				name,
-				error instanceof Error ? error : undefined
+				error instanceof Error ? error : undefined,
 			)
 		}
 	}
@@ -512,13 +496,12 @@ export class FileSystemPlanBlockStorage implements IPlanBlockStorage {
 			} catch {
 				return false
 			}
-
 		} catch (error) {
 			throw new PlanBlockStorageError(
 				`Failed to check if plan block '${name}' exists`,
 				"existsPlanBlock",
 				name,
-				error instanceof Error ? error : undefined
+				error instanceof Error ? error : undefined,
 			)
 		}
 	}
@@ -533,30 +516,25 @@ export class FileSystemPlanBlockStorage implements IPlanBlockStorage {
 		try {
 			const planBlock = await this.loadPlanBlock(name)
 			if (!planBlock) {
-				throw new PlanBlockStorageError(
-					`Plan block '${name}' not found`,
-					"recordPlanBlockUsage",
-					name
-				)
+				throw new PlanBlockStorageError(`Plan block '${name}' not found`, "recordPlanBlockUsage", name)
 			}
 
 			// Update usage statistics
 			const updatedBlock: PlanBlock = {
 				...planBlock,
 				usageCount: (planBlock.usageCount || 0) + 1,
-				lastUsed: new Date().toISOString()
+				lastUsed: new Date().toISOString(),
 			}
 
 			// Save back to file (overwrite existing)
 			const filePath = this.getPlanBlockFilePath(name)
 			const yamlContent = yaml.stringify(updatedBlock, {
 				indent: 2,
-				lineWidth: 120
+				lineWidth: 120,
 			})
 
-			await fs.writeFile(filePath, yamlContent, 'utf-8')
+			await fs.writeFile(filePath, yamlContent, "utf-8")
 			this.invalidateCache()
-
 		} catch (error) {
 			if (error instanceof PlanBlockStorageError) {
 				throw error
@@ -566,7 +544,7 @@ export class FileSystemPlanBlockStorage implements IPlanBlockStorage {
 				`Failed to record usage for plan block '${name}'`,
 				"recordPlanBlockUsage",
 				name,
-				error instanceof Error ? error : undefined
+				error instanceof Error ? error : undefined,
 			)
 		}
 	}
@@ -591,14 +569,12 @@ export class FileSystemPlanBlockStorage implements IPlanBlockStorage {
 				const blockTerms = [
 					...block.name.toLowerCase().split(/[-_\s]+/),
 					...block.description.toLowerCase().split(/\s+/),
-					...(block.matchKeywords || [])
+					...(block.matchKeywords || []),
 				]
 
 				// Calculate similarity score
-				const matchCount = requestTerms.filter(term =>
-					blockTerms.some(blockTerm =>
-						blockTerm.includes(term) || term.includes(blockTerm)
-					)
+				const matchCount = requestTerms.filter((term) =>
+					blockTerms.some((blockTerm) => blockTerm.includes(term) || term.includes(blockTerm)),
 				).length
 
 				score = matchCount / requestTerms.length
@@ -611,14 +587,13 @@ export class FileSystemPlanBlockStorage implements IPlanBlockStorage {
 			// Sort by score descending
 			matches.sort((a, b) => b.score - a.score)
 
-			return matches.map(match => match.block)
-
+			return matches.map((match) => match.block)
 		} catch (error) {
 			throw new PlanBlockStorageError(
 				"Failed to find matching plan blocks",
 				"findMatchingPlanBlocks",
 				undefined,
-				error instanceof Error ? error : undefined
+				error instanceof Error ? error : undefined,
 			)
 		}
 	}
@@ -638,7 +613,7 @@ export class FileSystemPlanBlockStorage implements IPlanBlockStorage {
 			const metadata = await this.listPlanBlocks()
 			const categoryCounts: Record<string, number> = {}
 
-			metadata.forEach(block => {
+			metadata.forEach((block) => {
 				categoryCounts[block.category] = (categoryCounts[block.category] || 0) + 1
 			})
 
@@ -665,17 +640,17 @@ export class FileSystemPlanBlockStorage implements IPlanBlockStorage {
 				totalBlocks: metadata.length,
 				categoryCounts,
 				totalSizeBytes,
-				lastModified: metadata.length > 0 ?
-					Math.max(...metadata.map(m => new Date(m.createdAt).getTime())).toString() :
-					undefined
+				lastModified:
+					metadata.length > 0
+						? Math.max(...metadata.map((m) => new Date(m.createdAt).getTime())).toString()
+						: undefined,
 			}
-
 		} catch (error) {
 			throw new PlanBlockStorageError(
 				"Failed to get storage information",
 				"getStorageInfo",
 				undefined,
-				error instanceof Error ? error : undefined
+				error instanceof Error ? error : undefined,
 			)
 		}
 	}
@@ -742,7 +717,7 @@ export class FileSystemPlanBlockStorage implements IPlanBlockStorage {
 		return {
 			isValid: errors.length === 0,
 			errors,
-			warnings
+			warnings,
 		}
 	}
 }

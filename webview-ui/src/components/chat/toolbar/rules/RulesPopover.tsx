@@ -241,14 +241,14 @@ export const RulesPopover: React.FC<RulesPopoverProps> = ({ onRuleToggle, onCrea
 									"text-vscode-button-foreground",
 									"border-vscode-button-border",
 									"shadow-sm",
-							  ]
+								]
 							: [
 									"bg-transparent",
 									"text-vscode-foreground",
 									"opacity-60 hover:opacity-100",
 									"hover:bg-vscode-toolbar-hoverBackground",
 									"hover:border-vscode-contrastBorder",
-							  ],
+								],
 					)}
 					title="Rules - Manage coding guidelines and best practices"
 					aria-label="Rules - Manage coding guidelines and best practices">
