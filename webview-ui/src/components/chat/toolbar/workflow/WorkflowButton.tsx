@@ -100,10 +100,9 @@ export const WorkflowButton: React.FC<WorkflowButtonProps> = ({
 				disableSearch={true}
 				triggerClassName={cn(
 					"min-w-[100px] max-w-[150px]",
-					"bg-transparent",
-					"border border-[rgba(255,255,255,0.08)]",
-					"hover:bg-[rgba(255,255,255,0.03)]",
-					"hover:border-[rgba(255,255,255,0.15)]",
+					"bg-[var(--background)]",
+					"border-[var(--vscode-input-border)]",
+					"hover:bg-[var(--color-vscode-list-hoverBackground)]",
 					disabled && "opacity-50 cursor-not-allowed",
 				)}
 				contentClassName="w-[250px]"

@@ -181,6 +181,7 @@ export const TemplateSelector = ({ disabled = false, className }: TemplateSelect
 				onAction={handleAction}
 				onDrop={handleFileDrop}
 				dragActive={dragActive}
+				triggerClassName="w-full min-h-[26px] bg-[var(--background)] border-[var(--vscode-input-border)] hover:bg-[var(--color-vscode-list-hoverBackground)]"
 			/>
 			
 			<TemplateUploadModal

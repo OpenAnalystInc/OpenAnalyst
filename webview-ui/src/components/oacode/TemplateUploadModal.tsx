@@ -1,9 +1,11 @@
 // oacode_change - new file
 import React, { useCallback, useState } from "react"
+import ReactDOM from "react-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useAppTranslation } from "@/i18n/TranslationContext"
 import { vscode } from "@/utils/vscode"
+import { X } from "lucide-react"
 
 interface TemplateUploadModalProps {
 	isOpen: boolean
@@ -80,9 +82,9 @@ export const TemplateUploadModal = ({ isOpen, onClose, onUploadSuccess }: Templa
 
 	if (!isOpen) return null
 
-	return (
-		<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-			<div className="bg-vscode-input-background border border-vscode-dropdown-border rounded-lg p-6 w-96 max-w-full mx-4">
+	return ReactDOM.createPortal(
+		<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+			<div className="bg-vscode-input-background border border-vscode-dropdown-border rounded-lg p-6 w-96 max-w-full mx-4 relative">
 				<div className="flex justify-between items-center mb-4">
 					<h3 className="text-lg font-semibold text-vscode-foreground">Upload Template</h3>
 					<Button
@@ -92,7 +94,7 @@ export const TemplateUploadModal = ({ isOpen, onClose, onUploadSuccess }: Templa
 						disabled={isUploading}
 						className="p-1"
 					>
-						×
+						<X className="h-4 w-4" />
 					</Button>
 				</div>
 
@@ -170,6 +172,7 @@ export const TemplateUploadModal = ({ isOpen, onClose, onUploadSuccess }: Templa
 					</div>
 				</div>
 			</div>
-		</div>
+		</div>,
+		document.body
 	)
 }

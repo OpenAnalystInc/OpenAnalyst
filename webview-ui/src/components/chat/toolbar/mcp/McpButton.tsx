@@ -9,6 +9,7 @@
 
 import React, { useMemo } from "react"
 import { Server } from "lucide-react"
+import { cn } from "@/lib/utils"
 import { useExtensionState } from "@/context/ExtensionStateContext"
 
 /**
@@ -70,10 +71,19 @@ export const McpButton: React.FC<McpButtonProps> = ({ disabled = false, classNam
 
 	return (
 		<button
-			className="flex items-center justify-center w-8 h-8 text-white rounded transition-all duration-200 ease-in-out bg-transparent border-transparent hover:bg-[rgba(255,255,255,0.15)] hover:border-[rgba(255,255,255,0.1)] hover:shadow-sm"
-			style={{ position: "relative" }}
+			className={cn(
+				"flex items-center justify-center w-8 h-8 rounded transition-all duration-200 ease-in-out",
+				"border border-transparent",
+				"bg-transparent",
+				"text-vscode-foreground",
+				"opacity-60 hover:opacity-100",
+				"hover:bg-vscode-toolbar-hoverBackground",
+				"hover:border-vscode-contrastBorder",
+				disabled && "opacity-30 cursor-not-allowed",
+			)}
 			title="MCP Servers"
-			// Handle click
+			aria-label="MCP Servers"
+			disabled={disabled}
 			onClick={handleClick}>
 			<Server className="w-4 h-4" />
 		</button>
