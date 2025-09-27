@@ -113,7 +113,6 @@
 					"icon": "assets/icons/oa.svg",
 					"darkIcon": "assets/icons/oa-dark.svg",
 					"when": "isMac || isLinux || isWindows"
-					
 				}
 			]
 		},

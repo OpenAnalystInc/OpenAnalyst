@@ -239,14 +239,14 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({ onPromptSelect, 
 									"text-vscode-button-foreground",
 									"border-vscode-button-border",
 									"shadow-sm",
-							  ]
+								]
 							: [
 									"bg-transparent",
 									"text-vscode-foreground",
 									"opacity-60 hover:opacity-100",
 									"hover:bg-vscode-toolbar-hoverBackground",
 									"hover:border-vscode-contrastBorder",
-							  ],
+								],
 					)}
 					title="Prompts - Quick access to prompt templates"
 					aria-label="Prompts - Quick access to prompt templates">
