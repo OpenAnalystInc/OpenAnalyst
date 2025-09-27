@@ -12,7 +12,7 @@ export interface PromptBlockInfo {
 	enabled: boolean
 	variables?: Record<string, string>
 	
-	// Phase 2.1: Source information for enhanced prompt management
+	// Source information for enhanced prompt management
 	// Used to determine edit/delete capabilities and display source badges
 	source?: "workspace" | "global" | "defaults" // Physical source location
 	sourceCategory?: "default" | "custom" // UI categorization for tabs (default vs custom prompts)
@@ -118,7 +118,7 @@ export function promptBlocksToSlashCommands(blocks: PromptBlockInfo[]): PromptBl
 	return blocks.map((block) => ({
 		name: block.name,
 		description: block.description,
-		// NEW: Use sourceCategory to properly categorize slash commands
+		// Use sourceCategory to properly categorize slash commands
 		section: block.sourceCategory === "custom" ? "custom" : "prompts",
 		category: block.category,
 		promptBlock: block,
@@ -126,7 +126,7 @@ export function promptBlocksToSlashCommands(blocks: PromptBlockInfo[]): PromptBl
 }
 
 /**
- * Phase 2.1: Check if a prompt block is editable/deletable (custom prompts only)
+ * Check if a prompt block is editable/deletable (custom prompts only)
  * 
  * @param block - The prompt block to check
  * @returns true if the prompt can be edited/deleted (workspace or global), false for defaults
@@ -137,7 +137,7 @@ export function isPromptBlockEditable(block: PromptBlockInfo): boolean {
 }
 
 /**
- * Phase 2.1: Get the source display name for badge display
+ * Get the source display name for badge display
  * 
  * @param source - The source type
  * @returns Display name for the source

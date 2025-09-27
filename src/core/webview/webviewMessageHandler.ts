@@ -63,26 +63,24 @@ import { PromptBlocksFactory } from "../blocks"
 
 const ALLOWED_VSCODE_SETTINGS = new Set(["terminal.integrated.inheritEnv"])
 
-// Temporary storage for active prompt blocks (per session)
-// TODO: Replace with proper conversation state management
+// Active prompt blocks
 const activePromptBlocks = new Map<string, Record<string, any>>()
 
 /**
  * Helper function to refresh and send prompt blocks to webview
- * Replicates the loadPromptBlocks logic for consistent responses
  */
 async function refreshPromptBlocks(provider: ClineProvider): Promise<void> {
 	try {
 		const factory = PromptBlocksFactory.getInstance()
 		const repository = factory.createRepository(provider.context.extensionPath)
 		
-		// Load all blocks with source information (same as loadPromptBlocks handler)
+		// Load all blocks with source information
 		const blocksWithSourceInfo = await repository.loadAllWithSource()
 		const blocksWithSource = []
 
 		// Process blocks with preserved source information
 		for (const { block, source } of blocksWithSourceInfo) {
-			// Only include enabled blocks (filter like LoadPromptBlocks use case)
+			// Only include enabled blocks
 			if (!block.isEnabled()) {
 				continue
 			}

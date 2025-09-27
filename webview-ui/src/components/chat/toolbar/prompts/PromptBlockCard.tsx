@@ -1,5 +1,5 @@
 /**
- * PromptBlockCard - Enhanced for Phase 2.2
+ * PromptBlockCard
  *
  * Displays individual YAML prompt blocks from the extension backend.
  * Enhanced to support edit/delete functionality for custom prompts.
@@ -12,7 +12,7 @@
  * - Compact and expanded display modes
  * - Loading states for activation process
  * 
- * Phase 2.2 Enhancements:
+ * Enhancements:
  * - Edit/Delete buttons for custom prompts only (source !== "defaults")
  * - Global/Workspace source badges for custom prompts
  * - VSCode integration for edit functionality
@@ -49,7 +49,7 @@ interface PromptBlockCardProps {
 	/** Callback when favorite is toggled */
 	onToggleFavorite?: (blockName: string, isFavorite: boolean) => void
 	
-	// Phase 2.2: New callbacks for edit/delete functionality
+	// New callbacks for edit/delete functionality
 	/** Callback when edit operation starts (for parent component state management) */
 	onEditStart?: () => void
 	/** Callback when delete operation starts (for parent component state management) */
@@ -155,16 +155,16 @@ export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
 	const CategoryIcon = getCategoryIcon(promptBlock.category)
 	const categoryColors = getCategoryColors(promptBlock.category)
 
-	// PHASE 4.4 NEW: Use enhanced context methods for better sync
+	// Use enhanced context methods for better sync
 	const isActive = isBlockActive(promptBlock.name)
 	const activationState = getActivationState(promptBlock.name)
 	const isProcessing = activationState !== "idle"
 	const conflictInfo = getConflictInfo(promptBlock.name)
 	
-	// Phase 2.3: Check if this is a custom prompt for visual differentiation
+	// Check if this is a custom prompt for visual differentiation
 	const isCustomPrompt = isPromptBlockEditable(promptBlock)
 	
-	// Phase 2.3: Get custom prompt styling classes
+	// Get custom prompt styling classes
 	const getCustomPromptStyles = () => {
 		if (!isCustomPrompt) return {}
 		
@@ -185,7 +185,7 @@ export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
 	// ============================
 
 	/**
-	 * Phase 2.2: Handle delete button click for custom prompts
+	 * Handle delete button click for custom prompts
 	 * Sends delete request directly to backend (like rules do)
 	 */
 	const handleDeleteClick = (e: React.MouseEvent) => {
@@ -204,7 +204,7 @@ export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
 	}
 
 	/**
-	 * Phase 2.2: Handle edit button click for custom prompts
+	 * Handle edit button click for custom prompts
 	 * Opens the prompt file in VSCode for editing
 	 */
 	const handleEditClick = (e: React.MouseEvent) => {
@@ -224,17 +224,17 @@ export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
 	}
 
 	/**
-	 * PHASE 5.1 ENHANCED: Handle prompt block activation using unified handler
+	 * Handle prompt block activation using unified handler
 	 *
 	 * This now uses the same activation logic as slash commands to ensure
 	 * identical behavior and system prompt enhancement.
 	 */
 	const handleActivate = async () => {
 		try {
-			// PHASE 5.1 NEW: Use unified activation handler for consistent behavior
+			// Use unified activation handler for consistent behavior
 			const { unifiedPromptActivationHandler } = await import("@/services/UnifiedPromptActivationHandler")
 
-			// PHASE 5.1 NEW: Create activation context with all required methods
+			// Create activation context with all required methods
 			const context = {
 				availableBlocks,
 				activeBlocks,
@@ -259,21 +259,21 @@ export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
 				console.log(`[PromptBlockCard] ${result.userMessage}`)
 				onSelect?.(promptBlock)
 
-				// PHASE 5.1 NEW: Log detailed activation information
+				// Log detailed activation information
 				if (result.wasReplacement && result.categoryConflict) {
 					console.log(
 						`[PromptBlockCard] Category conflict resolved: replaced '${result.categoryConflict.existingBlock.block.name}' with '${promptBlock.name}' in category '${result.categoryConflict.category}'`,
 					)
 				}
 
-				// PHASE 5.3: Success notification is now handled automatically by UnifiedPromptActivationHandler
+				// Success notification is now handled automatically by UnifiedPromptActivationHandler
 			} else {
 				console.error(`[PromptBlockCard] ${result.error}`)
-				// PHASE 5.3: Error notification is now handled automatically by UnifiedPromptActivationHandler
+				// Error notification is now handled automatically by UnifiedPromptActivationHandler
 			}
 		} catch (error) {
 			console.error(`[PromptBlockCard] Unified activation handler failed:`, error)
-			// PHASE 5.3: Critical error - this shouldn't happen but if it does, the handler shows notifications
+			// Critical error - this shouldn't happen but if it does, the handler shows notifications
 		}
 	}
 
@@ -325,7 +325,7 @@ export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
 							{promptBlock.name}
 						</h4>
 
-						{/* Phase 2.2: Source badge for custom prompts */}
+						{/* Source badge for custom prompts */}
 						{isPromptBlockEditable(promptBlock) && promptBlock.source && (
 							<div className="flex items-center gap-1">
 								{/* Source icon and label */}
@@ -343,7 +343,7 @@ export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
 							</div>
 						)}
 						
-						{/* Phase 2.2: Edit/Delete buttons for custom prompts */}
+						{/* Edit/Delete buttons for custom prompts */}
 						{isPromptBlockEditable(promptBlock) && (
 							<div className="flex items-center gap-1">
 								{/* Edit Button */}

@@ -1,7 +1,7 @@
 /**
  * CreatePromptPopover
  * 
- * Phase 1.2: Prompt creation interface as a popover.
+ * Prompt creation interface as a popover.
  * Based on CreateRulePopover but adapted for YAML prompt template creation.
  * This component focuses solely on creating new custom prompt templates.
  * 
@@ -44,7 +44,7 @@ interface CreatePromptPopoverProps {
 /**
  * Main CreatePromptPopover component - prompt creation only
  * 
- * Phase 1.2: This component handles the UI for creating new custom prompts.
+ * This component handles the UI for creating new custom prompts.
  * Backend integration will be added in later phases.
  */
 export const CreatePromptPopover: React.FC<CreatePromptPopoverProps> = ({
@@ -104,7 +104,7 @@ export const CreatePromptPopover: React.FC<CreatePromptPopoverProps> = ({
 
 	/**
 	 * Validate prompt filename
-	 * Phase 1.2: Basic validation, will be enhanced in later phases
+	 * Basic validation, will be enhanced in later phases
 	 * 
 	 * @param name - The filename to validate
 	 * @returns Error message or null if valid
@@ -140,7 +140,7 @@ export const CreatePromptPopover: React.FC<CreatePromptPopoverProps> = ({
 
 	/**
 	 * Handle form submission
-	 * Phase 1.2: Validates input and prepares for backend integration
+	 * Validates input and prepares for backend integration
 	 */
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault()

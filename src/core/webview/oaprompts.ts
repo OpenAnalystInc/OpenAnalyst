@@ -45,9 +45,7 @@ function getPromptFilePath(promptName: string, isGlobal: boolean): string {
 
 /**
  * Generate YAML template content for new prompt files
- * Based on eda-analysis.yaml template with specified fields only
  * @param promptName - Name for the prompt
- * @param category - Category for the prompt (analysis, visualization, reporting, methodology)
  * @returns YAML content string
  */
 function generatePromptTemplate(promptName: string, category: string): string {
@@ -56,7 +54,7 @@ function generatePromptTemplate(promptName: string, category: string): string {
 	
 	return `name: "${cleanName}"
 description: "Add a brief description of what this prompt does"
-category: "${category}"
+category: "custom"
 tags: ["custom", "prompt"]
 priority: 50
 enabled: true

@@ -33,16 +33,16 @@ import { usePromptBlocks } from "@/context/PromptBlocksContext"
 import { PromptBlockCard } from "./PromptBlockCard"
 import { vscode } from "@/utils/vscode"
 
-// Phase 1.3: Import CreatePromptPopover component
+// Import CreatePromptPopover component
 import CreatePromptPopover from "./CreatePromptPopover"
 
 /**
- * Props for the PromptsPopover component - UPDATED IN PHASE 3
+ * Props for the PromptsPopover component
  *
  * Changed from mock PromptTemplateType to real PromptBlockInfo
  */
 interface PromptsPopoverProps {
-	onPromptSelect?: (prompt: PromptBlockInfo) => void // CHANGED: Now uses PromptBlockInfo
+	onPromptSelect?: (prompt: PromptBlockInfo) => void // Now uses PromptBlockInfo
 	className?: string
 }
 
@@ -66,13 +66,13 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({ onPromptSelect, 
 	const [activeTab, setActiveTab] = useState<"default" | "custom">("default")
 	const [isLoading, setIsLoading] = useState(false)
 	
-	// Phase 1.1: State for Create Prompt popover functionality
+	// State for Create Prompt popover functionality
 	const [showCreatePromptPopover, setShowCreatePromptPopover] = useState(false)
 	
 	// Focus retention for VSCode operations (similar to rules implementation)
 	const [preventClose, setPreventClose] = useState(false)
 
-	// PHASE 4.4 ENHANCED: Access enhanced YAML prompt blocks from context
+	// Access enhanced YAML prompt blocks from context
 	const {
 		availableBlocks,
 		activeBlocks,
@@ -94,7 +94,7 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({ onPromptSelect, 
 	// Computed Values
 	// ============================
 
-	// PHASE 4.4 ENHANCEMENT: Use categorized blocks directly from context (no need for useMemo)
+	// Use categorized blocks directly from context (no need for useMemo)
 	// The context now provides defaultBlocks and customBlocks directly
 
 	/**
@@ -174,7 +174,7 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({ onPromptSelect, 
 	}
 
 	/**
-	 * Phase 1.1: Handle create prompt button click - opens creation popover
+	 * Handle create prompt button click - opens creation popover
 	 */
 	const handleCreatePromptClick = () => {
 		setShowCreatePromptPopover(true)
@@ -182,7 +182,7 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({ onPromptSelect, 
 	}
 
 	/**
-	 * Phase 1.1: Handle CreatePromptPopover close - prevent parent from closing
+	 * Handle CreatePromptPopover close - prevent parent from closing
 	 */
 	const handleCreatePromptPopoverChange = (newOpen: boolean) => {
 		setPreventClose(true) // Prevent parent from closing
@@ -192,24 +192,24 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({ onPromptSelect, 
 	}
 
 	/**
-	 * Phase 2.2: Handle edit operation start for custom prompts
+	 * Handle edit operation start for custom prompts
 	 * Manages UI state during edit operations
 	 */
 	const handleEditStart = () => {
 		setPreventClose(true) // Prevent popover from closing during edit
 		console.log('[PromptsPopover] Edit operation started')
-		// Allow popover to close after VSCode operation completes (increased timeout to match rules)
+		// Allow popover to close after VSCode operation completes
 		setTimeout(() => setPreventClose(false), 2000)
 	}
 
 	/**
-	 * Phase 2.2: Handle delete operation start for custom prompts
-	 * Manages UI state during delete operations (matches rules implementation)
+	 * Handle delete operation start for custom prompts
+	 * Manages UI state during delete operations
 	 */
 	const handleDeleteStart = () => {
 		setPreventClose(true) // Prevent popover from closing during delete
 		console.log('[PromptsPopover] Delete operation started')
-		// Allow popover to close after operation completes (increased timeout to match edit behavior)
+		// Allow popover to close after operation completes
 		setTimeout(() => setPreventClose(false), 2000)
 	}
 
