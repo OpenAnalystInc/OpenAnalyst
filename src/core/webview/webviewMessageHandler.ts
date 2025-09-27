@@ -56,6 +56,7 @@ import { GetModelsOptions } from "../../shared/api"
 import { generateSystemPrompt } from "./generateSystemPrompt"
 import { getCommand } from "../../utils/commands"
 import { toggleWorkflow, toggleRule, createRuleFile, deleteRuleFile } from "./oarules"
+import { createPromptFile, deletePromptFile, editPromptBlock } from "./oaprompts"
 import { mermaidFixPrompt } from "../prompts/utilities/mermaid" // oacode_change
 import { editMessageHandler, fetchOacodeNotificationsHandler } from "../oacode/webview/webviewMessageHandlerUtils" // oacode_change
 import { PromptBlocksFactory } from "../blocks"
@@ -65,6 +66,74 @@ const ALLOWED_VSCODE_SETTINGS = new Set(["terminal.integrated.inheritEnv"])
 // Temporary storage for active prompt blocks (per session)
 // TODO: Replace with proper conversation state management
 const activePromptBlocks = new Map<string, Record<string, any>>()
+
+/**
+ * Helper function to refresh and send prompt blocks to webview
+ * Replicates the loadPromptBlocks logic for consistent responses
+ */
+async function refreshPromptBlocks(provider: ClineProvider): Promise<void> {
+	try {
+		const factory = PromptBlocksFactory.getInstance()
+		const repository = factory.createRepository(provider.context.extensionPath)
+		
+		// Load all blocks with source information (same as loadPromptBlocks handler)
+		const blocksWithSourceInfo = await repository.loadAllWithSource()
+		const blocksWithSource = []
+
+		// Process blocks with preserved source information
+		for (const { block, source } of blocksWithSourceInfo) {
+			// Only include enabled blocks (filter like LoadPromptBlocks use case)
+			if (!block.isEnabled()) {
+				continue
+			}
+
+			// Categorize based on source: "defaults" = default, others = custom
+			const category = source === "defaults" ? "default" : "custom"
+
+			blocksWithSource.push({
+				name: block.name,
+				description: block.description,
+				category: block.category, // This is the prompt category (analysis, visualization, etc.)
+				tags: block.tags,
+				priority: block.priority,
+				enabled: block.enabled,
+				source: source, // Source path info (workspace/global/defaults)
+				sourceCategory: category, // Categorization for toolbar (default/custom)
+			})
+		}
+
+		// Categorize blocks for toolbar support
+		const defaultBlocks = blocksWithSource.filter((block) => block.sourceCategory === "default")
+		const customBlocks = blocksWithSource.filter((block) => block.sourceCategory === "custom")
+		
+		console.log(`[refreshPromptBlocks] Loaded ${blocksWithSource.length} total blocks (${defaultBlocks.length} default, ${customBlocks.length} custom)`)
+		
+		// Send categorized response for toolbar functionality
+		await provider.postMessageToWebview({
+			type: "promptBlocksLoaded",
+			blocks: blocksWithSource,
+			defaultBlocks,
+			customBlocks,
+			totalCount: blocksWithSource.length,
+			defaultCount: defaultBlocks.length,
+			customCount: customBlocks.length,
+		})
+	} catch (error) {
+		console.error("Error refreshing prompt blocks:", error)
+		// Send empty response on error to prevent UI hanging
+		await provider.postMessageToWebview({
+			type: "promptBlocksLoaded",
+			blocks: [],
+			defaultBlocks: [],
+			customBlocks: [],
+			totalCount: 0,
+			defaultCount: 0,
+			customCount: 0,
+			error: error instanceof Error ? error.message : String(error),
+			loadFailed: true,
+		})
+	}
+}
 
 /**
  * Get current active prompt blocks for system prompt generation
@@ -2514,6 +2583,114 @@ export const webviewMessageHandler = async (
 			break
 		}
 
+		/**
+		 * Create new custom prompt file
+		 * Validates input parameters and creates YAML prompt file with template content
+		 */
+		case "createPromptFile": {
+			// Enhanced parameter validation
+			if (
+				message.filename &&
+				typeof message.filename === "string" &&
+				message.filename.trim().length > 0 &&
+				message.promptCategory &&
+				typeof message.promptCategory === "string" &&
+				["analysis", "visualization", "reporting", "methodology"].includes(message.promptCategory) &&
+				typeof message.isGlobal === "boolean"
+			) {
+				try {
+					await createPromptFile(message.filename.trim(), message.isGlobal, message.promptCategory)
+					// Refresh prompt blocks to show the new file
+					await refreshPromptBlocks(provider)
+				} catch (error) {
+					console.error("Error creating prompt file:", error)
+					// Extract error message for user feedback
+					const errorMessage = error instanceof Error ? error.message : "Unknown error occurred"
+					vscode.window.showErrorMessage(`Failed to create prompt file: ${errorMessage}`)
+					// Still refresh in case of partial success or to show current state
+					await refreshPromptBlocks(provider)
+				}
+			} else {
+				// Invalid parameters - log and show error
+				console.error("Invalid parameters for createPromptFile:", {
+					filename: message.filename,
+					promptCategory: message.promptCategory,
+					isGlobal: message.isGlobal
+				})
+				vscode.window.showErrorMessage("Invalid prompt creation parameters. Please check the filename and category.")
+			}
+			break
+		}
+
+		/**
+		 * Delete existing custom prompt file
+		 * Shows confirmation dialog and removes file from filesystem
+		 */
+		case "deletePromptFile": {
+			// Enhanced parameter validation
+			if (
+				message.promptName &&
+				typeof message.promptName === "string" &&
+				message.promptName.trim().length > 0 &&
+				message.promptSource &&
+				(message.promptSource === "workspace" || message.promptSource === "global")
+			) {
+				try {
+					await deletePromptFile(message.promptName.trim(), message.promptSource)
+					// Refresh prompt blocks to reflect the deletion
+					await refreshPromptBlocks(provider)
+				} catch (error) {
+					console.error("Error deleting prompt file:", error)
+					// Extract error message for user feedback
+					const errorMessage = error instanceof Error ? error.message : "Unknown error occurred"
+					vscode.window.showErrorMessage(`Failed to delete prompt file: ${errorMessage}`)
+					// Refresh to show current state even after error
+					await refreshPromptBlocks(provider)
+				}
+			} else {
+				// Invalid parameters - log and show error
+				console.error("Invalid parameters for deletePromptFile:", {
+					promptName: message.promptName,
+					promptSource: message.promptSource
+				})
+				vscode.window.showErrorMessage("Invalid prompt deletion parameters. Please specify a valid prompt name and source.")
+			}
+			break
+		}
+
+		/**
+		 * Open existing prompt file for editing in VSCode
+		 * Locates the prompt file and opens it in the editor
+		 */
+		case "editPromptBlock": {
+			// Enhanced parameter validation
+			if (
+				message.promptName &&
+				typeof message.promptName === "string" &&
+				message.promptName.trim().length > 0 &&
+				message.promptSource &&
+				(message.promptSource === "workspace" || message.promptSource === "global")
+			) {
+				try {
+					await editPromptBlock(message.promptName.trim(), message.promptSource)
+				} catch (error) {
+					console.error("Error editing prompt file:", error)
+					// Extract error message for user feedback
+					const errorMessage = error instanceof Error ? error.message : "Unknown error occurred"
+					vscode.window.showErrorMessage(`Failed to open prompt file for editing: ${errorMessage}`)
+				}
+				// No need to refresh prompt blocks for edit operation
+			} else {
+				// Invalid parameters - log and show error
+				console.error("Invalid parameters for editPromptBlock:", {
+					promptName: message.promptName,
+					promptSource: message.promptSource
+				})
+				vscode.window.showErrorMessage("Invalid prompt edit parameters. Please specify a valid prompt name and source.")
+			}
+			break
+		}
+
 		case "reportBug":
 			provider.getCurrentCline()?.handleWebviewAskResponse("yesButtonClicked")
 			break
@@ -3577,14 +3754,30 @@ export const webviewMessageHandler = async (
 					throw new Error("Block name is required for addActivePromptBlock")
 				}
 
-				// Add to temporary storage (maintains active blocks across extension session)
+				// Load the factory and use case to access block data
+				const factory = PromptBlocksFactory.getInstance()
+				const loadUseCase = factory.createLoadPromptBlocks(provider.context.extensionPath)
+				
+				// Load the new block to get its category for conflict resolution
+				const newBlock = await loadUseCase.executeByName(message.blockName)
+				if (!newBlock) {
+					throw new Error(`Prompt block '${message.blockName}' not found`)
+				}
+
+				// Remove any existing blocks in the same category to maintain one prompt per category
+				for (const [existingBlockName, _] of activePromptBlocks.entries()) {
+					const existingBlock = await loadUseCase.executeByName(existingBlockName)
+					if (existingBlock && existingBlock.category === newBlock.category) {
+						console.log(`[Backend] Category conflict: Removing existing block '${existingBlockName}' from category '${existingBlock.category}'`)
+						activePromptBlocks.delete(existingBlockName)
+					}
+				}
+
+				// Add the new block to temporary storage (maintains active blocks across extension session)
+				console.log(`[Backend] Adding new block '${message.blockName}' in category '${newBlock.category}'`)
 				activePromptBlocks.set(message.blockName, {
 					variables: message.variables || {},
 				})
-
-				// Load the actual blocks from YAML files and send updated active list
-				const factory = PromptBlocksFactory.getInstance()
-				const loadUseCase = factory.createLoadPromptBlocks(provider.context.extensionPath)
 
 				// Build active blocks list with full block data
 				const activeBlocks = []

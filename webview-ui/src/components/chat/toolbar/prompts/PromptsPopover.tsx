@@ -21,8 +21,9 @@
 
 import React, { useState, useMemo } from "react"
 import { cn } from "@/lib/utils"
-import { Search, X, MessageSquare, Loader2, FolderOpen } from "lucide-react"
+import { Search, X, MessageSquare, Loader2, FolderOpen, Plus } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui"
+import { Button } from "@/components/ui"
 import { Input } from "@/components/ui"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui"
 
@@ -30,6 +31,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui"
 import { PromptBlockInfo } from "@/utils/prompt-blocks"
 import { usePromptBlocks } from "@/context/PromptBlocksContext"
 import { PromptBlockCard } from "./PromptBlockCard"
+import { vscode } from "@/utils/vscode"
+
+// Phase 1.3: Import CreatePromptPopover component
+import CreatePromptPopover from "./CreatePromptPopover"
 
 /**
  * Props for the PromptsPopover component - UPDATED IN PHASE 3
@@ -60,6 +65,12 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({ onPromptSelect, 
 	const [searchValue, setSearchValue] = useState("")
 	const [activeTab, setActiveTab] = useState<"default" | "custom">("default")
 	const [isLoading, setIsLoading] = useState(false)
+	
+	// Phase 1.1: State for Create Prompt popover functionality
+	const [showCreatePromptPopover, setShowCreatePromptPopover] = useState(false)
+	
+	// Focus retention for VSCode operations (similar to rules implementation)
+	const [preventClose, setPreventClose] = useState(false)
 
 	// PHASE 4.4 ENHANCED: Access enhanced YAML prompt blocks from context
 	const {
@@ -71,13 +82,13 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({ onPromptSelect, 
 		refreshAvailableBlocks,
 	} = usePromptBlocks()
 
-	// STATE FIX: Refresh data when popover opens to ensure UI shows current file state
+	// Refresh data when popover opens - use direct message like rules do
 	React.useEffect(() => {
 		if (open) {
-			// Only refresh when opening (not when closing) to maintain state synchronization
-			refreshAvailableBlocks()
+			// Direct message posting (like rules) to avoid context state resets
+			vscode.postMessage({ type: "loadPromptBlocks" })
 		}
-	}, [open]) // Removed refreshAvailableBlocks from deps to prevent infinite refresh
+	}, [open])
 
 	// ============================
 	// Computed Values
@@ -151,6 +162,7 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({ onPromptSelect, 
 	 * Handle popover close
 	 */
 	const handleClose = () => {
+		if (preventClose) return // Prevent closing during VSCode operations
 		setOpen(false)
 	}
 
@@ -159,6 +171,46 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({ onPromptSelect, 
 	 */
 	const handleClearSearch = () => {
 		setSearchValue("")
+	}
+
+	/**
+	 * Phase 1.1: Handle create prompt button click - opens creation popover
+	 */
+	const handleCreatePromptClick = () => {
+		setShowCreatePromptPopover(true)
+		// Note: onCreatePrompt callback will be added in future phases when backend is ready
+	}
+
+	/**
+	 * Phase 1.1: Handle CreatePromptPopover close - prevent parent from closing
+	 */
+	const handleCreatePromptPopoverChange = (newOpen: boolean) => {
+		setPreventClose(true) // Prevent parent from closing
+		setShowCreatePromptPopover(newOpen)
+		// Allow parent to close after a brief delay
+		setTimeout(() => setPreventClose(false), 100)
+	}
+
+	/**
+	 * Phase 2.2: Handle edit operation start for custom prompts
+	 * Manages UI state during edit operations
+	 */
+	const handleEditStart = () => {
+		setPreventClose(true) // Prevent popover from closing during edit
+		console.log('[PromptsPopover] Edit operation started')
+		// Allow popover to close after VSCode operation completes (increased timeout to match rules)
+		setTimeout(() => setPreventClose(false), 2000)
+	}
+
+	/**
+	 * Phase 2.2: Handle delete operation start for custom prompts
+	 * Manages UI state during delete operations (matches rules implementation)
+	 */
+	const handleDeleteStart = () => {
+		setPreventClose(true) // Prevent popover from closing during delete
+		console.log('[PromptsPopover] Delete operation started')
+		// Allow popover to close after operation completes (increased timeout to match edit behavior)
+		setTimeout(() => setPreventClose(false), 2000)
 	}
 
 	// ============================
@@ -211,6 +263,8 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({ onPromptSelect, 
 										key={block.name}
 										promptBlock={block}
 										onSelect={handleBlockSelect}
+										onEditStart={handleEditStart}
+										onDeleteStart={handleDeleteStart}
 										compact={false}
 									/>
 								))}
@@ -227,7 +281,12 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({ onPromptSelect, 
 	// ============================
 
 	return (
-		<Popover open={open} onOpenChange={setOpen}>
+		<Popover
+			open={open}
+			onOpenChange={(newOpen) => {
+				if (!newOpen && preventClose) return // Prevent closing during operations
+				setOpen(newOpen)
+			}}>
 			<PopoverTrigger asChild>
 				<button
 					className={cn(
@@ -331,6 +390,26 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({ onPromptSelect, 
 
 				{/* Footer */}
 				<div className="px-4 py-3 border-t border-vscode-dropdown-border mt-2">
+					{/* Phase 1.3: Action Buttons - Integrated Create Prompt functionality */}
+					<div className="flex items-center gap-2 mb-2">
+						<CreatePromptPopover
+							open={showCreatePromptPopover}
+							onOpenChange={handleCreatePromptPopoverChange}
+							trigger={
+								<Button
+									variant="secondary"
+									size="sm"
+									onClick={handleCreatePromptClick}
+									className="flex-1 h-7 text-xs bg-vscode-editor-background hover:bg-vscode-editor-background/80"
+									title="Create a new custom prompt template"
+									aria-label="Create a new custom prompt template">
+									<Plus className="w-3 h-3 mr-1" />
+									Create Prompt
+								</Button>
+							}
+						/>
+					</div>
+
 					{/* Statistics */}
 					<div className="flex items-center justify-end text-xs text-vscode-descriptionForeground">
 						<span>{activeBlocks.length} active</span>
