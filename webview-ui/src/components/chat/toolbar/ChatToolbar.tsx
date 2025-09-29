@@ -36,6 +36,7 @@ export const ChatToolbar: React.FC<ChatToolbarProps> = ({
 	onPromptSelect,
 	workflowMode,
 	onWorkflowModeChange,
+	containerWidth
 }) => {
 	// ============================
 	// State Management
@@ -102,14 +103,7 @@ export const ChatToolbar: React.FC<ChatToolbarProps> = ({
 
 	const toolbarStyles = cn(
 		// Base layout - changed to justify between for proper spacing
-		"flex items-center justify-between gap-1 px-2 py-1",
-
-		// Visual styling
-		"bg-vscode-editor-background",
-		"border-b border-vscode-panel-border",
-
-		// Responsive behavior
-		"min-h-10",
+		"flex items-center justify-between gap-1 px-2",
 
 		// Accessibility and interactions
 		"chat-toolbar",
@@ -183,16 +177,13 @@ export const ChatToolbar: React.FC<ChatToolbarProps> = ({
 			</div>
 
 			{/* Right side - Workflow Mode Button */}
-			<WorkflowButton
-				currentMode={(workflowMode || "chat") as any}
-				onModeChange={onWorkflowModeChange || (() => {})}
-				disabled={disabled}
-			/>
-
-			{/* TODO: Add individual popover components here */}
-			{/* Models, Rules, and Prompts popovers are now handled by their respective button components */}
-
-			{/* Tools and MCP popovers are now handled by their respective button components */}
+			{containerWidth && containerWidth >= 210 && (
+				<WorkflowButton
+					currentMode={(workflowMode || "chat") as any}
+					onModeChange={onWorkflowModeChange || (() => {})}
+					disabled={disabled}
+				/>
+			)}
 		</div>
 	)
 }

@@ -449,7 +449,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 
 				// TYPE 1: Handle prompt block commands (from YAML files)
 				if (command.promptBlock) {
-					// PHASE 5.1 NEW: Use unified activation handler for consistent behavior
+					// Use unified activation handler for consistent behavior
 					// This ensures slash commands and toolbar use identical activation logic
 					import("@/services/UnifiedPromptActivationHandler").then(({ unifiedPromptActivationHandler }) => {
 						const context = {
@@ -1266,7 +1266,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 					</div>
 
 					{/* oacode_change - template selector */}
-					<div className="shrink min-w-0 max-w-[200px]">
+					<div className={cn("shrink min-w-0 max-w-[200px]", { hidden: containerWidth < 300 })}>
 						<TemplateSelector />
 					</div>
 
@@ -1433,7 +1433,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 						"z-[2]",
 						"scrollbar-none",
 						"scrollbar-hide",
-						"pb-16", // oacode_change: Increased padding to prevent overlap with control bar
+						"pb-14.5", // oacode_change: Increased padding to prevent overlap with control bar
 					)}
 					onScroll={() => updateHighlights()}
 				/>
@@ -1679,7 +1679,8 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 								}}
 								workflowMode={workflowMode || "chat"}
 								onWorkflowModeChange={setWorkflowMode}
-								className="mb-2"
+								containerWidth={containerWidth}
+								className="mb-1 mt-2"
 							/>
 						)}
 

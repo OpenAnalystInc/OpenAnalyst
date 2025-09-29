@@ -31,6 +31,11 @@ export const TemplateSelector = ({ disabled = false, className }: TemplateSelect
 		vscode.postMessage({ type: "getTemplateList" })
 	}, [])
 
+	// Refresh templates when dropdown opens (like rules functionality)
+	const handleDropdownOpen = React.useCallback(() => {
+		vscode.postMessage({ type: "getTemplateList" })
+	}, [])
+
 	// Listen for template list updates
 	useEffect(() => {
 		const handler = (event: MessageEvent) => {
@@ -184,6 +189,7 @@ export const TemplateSelector = ({ disabled = false, className }: TemplateSelect
 				onChange={handleChange}
 				onAction={handleAction}
 				onDrop={handleFileDrop}
+				onOpen={handleDropdownOpen}
 				dragActive={dragActive}
 				triggerClassName="w-full min-h-[26px] bg-[var(--background)] border-[var(--vscode-input-border)] hover:bg-[var(--color-vscode-list-hoverBackground)]"
 			/>

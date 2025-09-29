@@ -21,6 +21,7 @@ export interface ChatToolbarProps {
   onToolSelect?: (tool: ToolOption) => void
   workflowMode?: 'plan' | 'chat' | 'agent'
   onWorkflowModeChange?: (mode: 'plan' | 'chat' | 'agent') => void
+  containerWidth?: number
 }
 
 // ============================
