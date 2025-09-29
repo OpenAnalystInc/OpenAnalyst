@@ -114,7 +114,7 @@ export class TelemetryService {
 		this.captureEvent(TelemetryEventName.PLAN_MODE_ENTERED, {
 			taskId,
 			fromMode,
-			timestamp: new Date().toISOString()
+			timestamp: new Date().toISOString(),
 		})
 	}
 
@@ -122,7 +122,7 @@ export class TelemetryService {
 		this.captureEvent(TelemetryEventName.PLAN_MODE_EXITED, {
 			taskId,
 			toMode,
-			timestamp: new Date().toISOString()
+			timestamp: new Date().toISOString(),
 		})
 	}
 
@@ -130,61 +130,57 @@ export class TelemetryService {
 		taskId: string,
 		originalTool: string,
 		correctedTool: string,
-		reason?: string
+		reason?: string,
 	): void {
 		this.captureEvent(TelemetryEventName.PLAN_MODE_TOOL_INTERCEPTED, {
 			taskId,
 			originalTool,
 			correctedTool,
 			reason,
-			timestamp: new Date().toISOString()
+			timestamp: new Date().toISOString(),
 		})
 	}
 
-	public capturePlanModeToolBlocked(
-		taskId: string,
-		blockedTool: string,
-		reason?: string
-	): void {
+	public capturePlanModeToolBlocked(taskId: string, blockedTool: string, reason?: string): void {
 		this.captureEvent(TelemetryEventName.PLAN_MODE_TOOL_BLOCKED, {
 			taskId,
 			blockedTool,
 			reason,
-			timestamp: new Date().toISOString()
+			timestamp: new Date().toISOString(),
 		})
 	}
 
 	public capturePlanModeValidationFailed(
 		taskId: string,
 		validationType: string,
-		details?: Record<string, any>
+		details?: Record<string, unknown>,
 	): void {
 		this.captureEvent(TelemetryEventName.PLAN_MODE_VALIDATION_FAILED, {
 			taskId,
 			validationType,
 			timestamp: new Date().toISOString(),
-			...details
+			...details,
 		})
 	}
 
 	public capturePlanAction(
-		action: 'presented' | 'approved' | 'modified' | 'rejected',
+		action: "presented" | "approved" | "modified" | "rejected",
 		taskId: string,
 		planTitle?: string,
-		details?: Record<string, any>
+		details?: Record<string, unknown>,
 	): void {
 		const eventMap = {
-			'presented': TelemetryEventName.PLAN_MODE_PLAN_PRESENTED,
-			'approved': TelemetryEventName.PLAN_MODE_PLAN_APPROVED,
-			'modified': TelemetryEventName.PLAN_MODE_PLAN_MODIFIED,
-			'rejected': TelemetryEventName.PLAN_MODE_PLAN_REJECTED
+			presented: TelemetryEventName.PLAN_MODE_PLAN_PRESENTED,
+			approved: TelemetryEventName.PLAN_MODE_PLAN_APPROVED,
+			modified: TelemetryEventName.PLAN_MODE_PLAN_MODIFIED,
+			rejected: TelemetryEventName.PLAN_MODE_PLAN_REJECTED,
 		}
 
 		this.captureEvent(eventMap[action], {
 			taskId,
 			planTitle,
 			timestamp: new Date().toISOString(),
-			...details
+			...details,
 		})
 	}
 
