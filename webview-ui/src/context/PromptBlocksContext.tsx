@@ -139,7 +139,8 @@ export const PromptBlocksProvider: React.FC<PromptBlocksProviderProps> = ({ chil
 
 			switch (message.type) {
 				case "promptBlocksLoaded":
-				case "promptBlocksUpdated":
+					// Handle normal prompt blocks loading
+
 					if (__DEV__) {
 						console.log(
 							"[PromptBlocksContext] Received blocks from extension:",

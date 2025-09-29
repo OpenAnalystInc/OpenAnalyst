@@ -27,12 +27,12 @@ import { attemptCompletionTool } from "../tools/attemptCompletionTool"
 import { newTaskTool } from "../tools/newTaskTool"
 
 import { updateTodoListTool } from "../tools/updateTodoListTool"
-// oacode_change - template tools
-import { uploadTemplateTool } from "../tools/uploadTemplateTool"
-import { listTemplatesTool } from "../tools/listTemplatesTool"
-import { activateTemplateTool } from "../tools/activateTemplateTool"
-import { deactivateTemplateTool } from "../tools/deactivateTemplateTool"
-import { deleteTemplateTool } from "../tools/deleteTemplateTool"
+// oacode_change - template tools (temporarily commented out for ExtendedTemplateManager integration)
+// import { uploadTemplateTool } from "../tools/uploadTemplateTool"
+// import { listTemplatesTool } from "../tools/listTemplatesTool"
+// import { activateTemplateTool } from "../tools/activateTemplateTool"
+// import { deactivateTemplateTool } from "../tools/deactivateTemplateTool"
+// import { deleteTemplateTool } from "../tools/deleteTemplateTool"
 
 import { formatResponse } from "../prompts/responses"
 import { validateToolUse } from "../tools/validateToolUse"
@@ -240,17 +240,17 @@ export async function presentAssistantMessage(cline: Task, recursionDepth: numbe
 					case "condense":
 						return `[${block.name}]`
 					// oacode_change end
-					// oacode_change start: Template system tools
-					case "upload_template":
-						return `[${block.name} for '${block.params.filename}']`
-					case "list_templates":
-						return `[${block.name}]`
-					case "activate_template":
-						return `[${block.name} for '${block.params.template_name}']`
-					case "deactivate_template":
-						return `[${block.name}]`
-					case "delete_template":
-						return `[${block.name} for '${block.params.template_name}']`
+					// oacode_change start: Template system tools (temporarily commented out for ExtendedTemplateManager integration)
+					// case "upload_template":
+					// 	return `[${block.name} for '${block.params.filename}']`
+					// case "list_templates":
+					// 	return `[${block.name}]`
+					// case "activate_template":
+					// 	return `[${block.name} for '${block.params.template_name}']`
+					// case "deactivate_template":
+					// 	return `[${block.name}]`
+					// case "delete_template":
+					// 	return `[${block.name} for '${block.params.template_name}']`
 					// oacode_change end
 					default:
 						return `[${block.name}]`
@@ -396,11 +396,7 @@ export async function presentAssistantMessage(cline: Task, recursionDepth: numbe
 
 			// Plan Mode tool interception - redirect incorrect tools
 			const toolInterceptor = new ToolInterceptor()
-			const interceptionResult = toolInterceptor.interceptTool(
-				block.name,
-				workflowMode,
-				block.params
-			)
+			const interceptionResult = toolInterceptor.interceptTool(block.name, workflowMode, block.params)
 
 			// Update block with intercepted values if redirection occurred
 			if (interceptionResult.wasIntercepted) {
@@ -411,11 +407,11 @@ export async function presentAssistantMessage(cline: Task, recursionDepth: numbe
 				// Notify user of interception for transparency
 				const interceptionMessage = toolInterceptor.getInterceptionMessage(interceptionResult)
 				if (interceptionMessage) {
-					await cline.say('text', interceptionMessage)
+					await cline.say("text", interceptionMessage)
 				}
 
 				// Log interception in development
-				if (process.env.NODE_ENV === 'development') {
+				if (process.env.NODE_ENV === "development") {
 					console.log(`[PlanMode] Intercepted ${originalTool} → ${block.name}`)
 				}
 			}
@@ -483,22 +479,22 @@ export async function presentAssistantMessage(cline: Task, recursionDepth: numbe
 				case "update_todo_list":
 					await updateTodoListTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
 					break
-				// oacode_change - template management tools
-				case "upload_template":
-					await uploadTemplateTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
-					break
-				case "list_templates":
-					await listTemplatesTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
-					break
-				case "activate_template":
-					await activateTemplateTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
-					break
-				case "deactivate_template":
-					await deactivateTemplateTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
-					break
-				case "delete_template":
-					await deleteTemplateTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
-					break
+				// oacode_change - template management tools (temporarily commented out for ExtendedTemplateManager integration)
+				// case "upload_template":
+				// 	await uploadTemplateTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+				// 	break
+				// case "list_templates":
+				// 	await listTemplatesTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+				// 	break
+				// case "activate_template":
+				// 	await activateTemplateTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+				// 	break
+				// case "deactivate_template":
+				// 	await deactivateTemplateTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+				// 	break
+				// case "delete_template":
+				// 	await deleteTemplateTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+				// 	break
 				case "apply_diff": {
 					// Get the provider and state to check experiment settings
 					const provider = cline.providerRef.deref()

@@ -20,6 +20,7 @@ import * as path from "path"
 import * as fs from "fs/promises"
 import * as yaml from "yaml"
 import stripBom from "strip-bom"
+import { GlobalFileNames } from "../../shared/globalFileNames"
 
 import type { IExtendedTemplateRepository, Disposable } from "../../core/templates/ports/IExtendedTemplateRepository"
 import type { ITemplateBlockProvider } from "../../core/templates/ports/ITemplateBlockProvider"
@@ -29,7 +30,7 @@ import type { TemplateError } from "../../core/templates/domain/TemplateError"
 import { TemplateErrorCode } from "../../core/templates/domain/TemplateError"
 import type { Result } from "../../core/templates/domain/Result"
 import { Result as R } from "../../core/templates/domain/Result"
-import { customModesSettingsSchema } from "@roo-code/types"
+import { customModesSettingsSchema, type ModeConfig } from "@roo-code/types"
 import { fileExistsAtPath } from "../../utils/fs"
 import { getWorkspacePath } from "../../utils/path"
 
@@ -54,11 +55,13 @@ interface CachedTemplate {
 export class ExtendedTemplateManager implements IExtendedTemplateRepository, ITemplateBlockProvider, vscode.Disposable {
 	private cache = new Map<string, CachedTemplate>()
 	private activeTemplate: ExtendedTemplate | null = null
+	private activeTemplateName: string | null = null
 	private disposables: vscode.Disposable[] = []
 	private ruleToggles = new Map<string, boolean>()
 	private fileWatcher: vscode.FileSystemWatcher | null = null
 	private debounceTimer: NodeJS.Timeout | null = null
 	private externalCallbacks: (() => void)[] = []
+	private generatedFiles = new Set<string>() // Track generated files for cleanup
 
 	constructor(
 		private readonly context: vscode.ExtensionContext,
@@ -171,9 +174,20 @@ export class ExtendedTemplateManager implements IExtendedTemplateRepository, ITe
 	}
 
 	async setActiveTemplate(template: ExtendedTemplate | null): Promise<void> {
+		// Clean up existing generated files first
+		await this.cleanupGeneratedFiles()
+
 		this.activeTemplate = template
-		const templateName = template?.metadata.name || null
-		await this.context.globalState.update("activeExtendedTemplate", templateName)
+		this.activeTemplateName = template?.metadata.name || null
+		await this.context.globalState.update("activeExtendedTemplate", this.activeTemplateName)
+
+		// Generate new files if template is not null
+		if (template) {
+			await this.generatePromptFiles(template)
+			await this.generateRuleFiles(template)
+			// Add a delay to ensure file system watchers detect the changes
+			await new Promise((resolve) => setTimeout(resolve, 500))
+		}
 	}
 
 	async listTemplates(): Promise<string[]> {
@@ -269,7 +283,264 @@ export class ExtendedTemplateManager implements IExtendedTemplateRepository, ITe
 	}
 
 	getActiveTemplateName(): string | null {
-		return this.activeTemplate?.metadata.name || null
+		return this.activeTemplateName
+	}
+
+	// ============================
+	// Backward compatibility methods for UI integration
+	// ============================
+
+	/**
+	 * Get available templates with metadata
+	 * @description Backward compatibility method for UI
+	 */
+	async getAvailableTemplates(): Promise<
+		Array<{
+			name: string
+			filename: string
+			modeCount: number
+			modes: Array<{ slug: string; name: string }>
+		}>
+	> {
+		const templates = await this.listTemplates()
+		const result = []
+
+		for (const templateName of templates) {
+			try {
+				const loadResult = await this.loadTemplate(templateName)
+				if (loadResult.ok) {
+					const template = loadResult.value
+					result.push({
+						name: templateName,
+						filename: `${templateName}.yaml`,
+						modeCount: template.agents.length,
+						modes: template.agents.map((agent) => ({
+							slug: agent.slug,
+							name: agent.name || agent.slug,
+						})),
+					})
+				}
+			} catch (error) {
+				if (process.env.NODE_ENV === "development") {
+					console.warn(`[ExtendedTemplateManager] Failed to load template ${templateName}:`, error)
+				}
+			}
+		}
+
+		return result
+	}
+
+	/**
+	 * Activate a template by name
+	 * @description Backward compatibility method for UI
+	 */
+	async activateTemplate(templateName: string): Promise<boolean> {
+		try {
+			const loadResult = await this.loadTemplate(templateName)
+			if (!loadResult.ok) {
+				throw new Error(`Failed to load template: ${loadResult.error.message}`)
+			}
+
+			// Clean up any existing generated files first
+			await this.cleanupGeneratedFiles()
+
+			// Set the active template
+			await this.setActiveTemplate(loadResult.value)
+
+			// Generate prompt and rule files from the template
+			await this.generatePromptFiles(loadResult.value)
+			await this.generateRuleFiles(loadResult.value)
+
+			// Add a small delay to ensure file system watchers detect the changes
+			await new Promise((resolve) => setTimeout(resolve, 500))
+
+			// Trigger template change to reload prompts/rules in the system
+			await this.onTemplateChange()
+
+			// Force a refresh of the prompt blocks cache
+			if (process.env.NODE_ENV === "development") {
+				console.log("[ExtendedTemplateManager] Template activated, files generated, triggering refresh")
+			}
+
+			return true
+		} catch (error) {
+			if (process.env.NODE_ENV === "development") {
+				console.error(`[ExtendedTemplateManager] Failed to activate template:`, error)
+			}
+			throw error
+		}
+	}
+
+	/**
+	 * Deactivate current template
+	 * @description Backward compatibility method for UI
+	 */
+	async deactivateTemplate(): Promise<void> {
+		// Clean up generated files
+		await this.cleanupGeneratedFiles()
+
+		this.activeTemplate = null
+		this.activeTemplateName = null
+		await this.context.globalState.update("activeExtendedTemplate", null)
+		await this.context.globalState.update("templateRuleToggles", {})
+		this.ruleToggles.clear()
+		await this.onTemplateChange()
+	}
+
+	/**
+	 * Delete a template file
+	 * @description Backward compatibility method for UI
+	 */
+	async deleteTemplate(templateName: string): Promise<boolean> {
+		const workspacePath = getWorkspacePath()
+		if (!workspacePath) {
+			throw new Error("No workspace found")
+		}
+
+		const templatesDir = path.join(workspacePath, TEMPLATES_DIRECTORY)
+		const filePath = path.join(templatesDir, `${templateName}.yaml`)
+
+		try {
+			// Check if file exists with .yaml extension
+			let exists = await fileExistsAtPath(filePath)
+			let actualPath = filePath
+
+			// If not, try .yml extension
+			if (!exists) {
+				const ymlPath = path.join(templatesDir, `${templateName}.yml`)
+				exists = await fileExistsAtPath(ymlPath)
+				actualPath = ymlPath
+			}
+
+			if (!exists) {
+				throw new Error(`Template "${templateName}" not found`)
+			}
+
+			await fs.unlink(actualPath)
+
+			// If this was the active template, deactivate it
+			const activeTemplate = await this.getActiveTemplate()
+			if (activeTemplate?.metadata.name === templateName) {
+				await this.deactivateTemplate()
+			}
+
+			// Clear from cache
+			this.cache.delete(templateName)
+
+			return true
+		} catch (error) {
+			const errorMsg = error instanceof Error ? error.message : String(error)
+			throw new Error(`Failed to delete template: ${errorMsg}`)
+		}
+	}
+
+	/**
+	 * Get modes from active template
+	 * @description Backward compatibility method for UI
+	 */
+	async getActiveTemplateModes(): Promise<ModeConfig[]> {
+		const activeTemplate = await this.getActiveTemplate()
+		if (!activeTemplate) {
+			return []
+		}
+		return [...activeTemplate.agents]
+	}
+
+	// ============================
+	// File Generation Methods
+	// ============================
+
+	/**
+	 * Generate prompt files from template
+	 * @description Creates .yaml files for each template prompt
+	 */
+	private async generatePromptFiles(template: ExtendedTemplate): Promise<void> {
+		const workspacePath = getWorkspacePath()
+		if (!workspacePath) return
+
+		// Create prompts directory if it doesn't exist
+		const promptsDir = path.join(workspacePath, ".oacode", "prompts")
+		await fs.mkdir(promptsDir, { recursive: true })
+
+		// Generate a .yaml file for each prompt
+		for (const prompt of template.prompts) {
+			const fileName = `template_${prompt.name}.yaml`
+			const filePath = path.join(promptsDir, fileName)
+
+			if (process.env.NODE_ENV === "development") {
+				console.log(`[ExtendedTemplateManager] Generating prompt file: ${filePath}`)
+			}
+
+			// Create YAML content
+			const yamlContent = {
+				name: prompt.name,
+				displayName: prompt.name, // Use name as displayName
+				description: prompt.description || "",
+				category: prompt.category,
+				enabled: true, // Default to enabled
+				pinned: false, // Default to not pinned
+				priority: prompt.priority || 0,
+				prompt: prompt.content, // Use 'prompt' field as expected by YamlPromptBlockParser
+			}
+
+			// Write the file
+			const yamlString = yaml.stringify(yamlContent)
+			await fs.writeFile(filePath, yamlString, "utf-8")
+			this.generatedFiles.add(filePath)
+
+			if (process.env.NODE_ENV === "development") {
+				console.log(`[ExtendedTemplateManager] Generated prompt file: ${fileName}`)
+				console.log(`[ExtendedTemplateManager] Content preview:`, yamlString.substring(0, 200))
+			}
+		}
+	}
+
+	/**
+	 * Generate rule files from template
+	 * @description Creates .md files for each template rule
+	 */
+	private async generateRuleFiles(template: ExtendedTemplate): Promise<void> {
+		const workspacePath = getWorkspacePath()
+		if (!workspacePath) return
+
+		// Create rules directory if it doesn't exist
+		const rulesDir = path.join(workspacePath, GlobalFileNames.oaRules)
+		await fs.mkdir(rulesDir, { recursive: true })
+
+		// Generate a .md file for each rule
+		for (const rule of template.rules) {
+			const fileName = `template_${rule.name}.md`
+			const filePath = path.join(rulesDir, fileName)
+
+			// Write the rule content directly as markdown
+			await fs.writeFile(filePath, rule.content, "utf-8")
+			this.generatedFiles.add(filePath)
+
+			if (process.env.NODE_ENV === "development") {
+				console.log(`[ExtendedTemplateManager] Generated rule file: ${fileName}`)
+			}
+		}
+	}
+
+	/**
+	 * Cleanup generated files
+	 * @description Removes all template-generated files
+	 */
+	private async cleanupGeneratedFiles(): Promise<void> {
+		for (const filePath of this.generatedFiles) {
+			try {
+				await fs.unlink(filePath)
+				if (process.env.NODE_ENV === "development") {
+					console.log(`[ExtendedTemplateManager] Deleted generated file: ${path.basename(filePath)}`)
+				}
+			} catch (error) {
+				// File might already be deleted, that's OK
+				if (process.env.NODE_ENV === "development") {
+					console.warn(`[ExtendedTemplateManager] Could not delete file: ${filePath}`, error)
+				}
+			}
+		}
+		this.generatedFiles.clear()
 	}
 
 	// ============================
@@ -277,6 +548,11 @@ export class ExtendedTemplateManager implements IExtendedTemplateRepository, ITe
 	// ============================
 
 	dispose(): void {
+		// Clean up generated files on dispose
+		this.cleanupGeneratedFiles().catch((error) => {
+			console.error("[ExtendedTemplateManager] Error cleaning up files on dispose:", error)
+		})
+
 		if (this.debounceTimer) {
 			clearTimeout(this.debounceTimer)
 		}
@@ -384,6 +660,12 @@ export class ExtendedTemplateManager implements IExtendedTemplateRepository, ITe
 			const result = await this.loadTemplate(templateName)
 			if (result.ok) {
 				this.activeTemplate = result.value
+				this.activeTemplateName = templateName
+				// Generate files for the active template on startup
+				await this.generatePromptFiles(result.value)
+				await this.generateRuleFiles(result.value)
+				// Add a delay to ensure file system watchers detect the changes
+				await new Promise((resolve) => setTimeout(resolve, 500))
 			}
 		}
 	}

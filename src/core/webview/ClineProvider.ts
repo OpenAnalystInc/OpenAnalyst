@@ -79,7 +79,7 @@ import { getEnabledRules } from "./oarules"
 import { ProviderSettingsManager } from "../config/ProviderSettingsManager"
 import { CustomModesManager } from "../config/CustomModesManager"
 // oacode_change
-import { TemplateManager } from "../config/TemplateManager"
+import { ExtendedTemplateManager } from "../../adapters/templates/ExtendedTemplateManager"
 import { Task, TaskOptions } from "../task/Task"
 import { getSystemPromptFilePath } from "../prompts/sections/custom-system-prompt"
 
@@ -130,7 +130,7 @@ export class ClineProvider
 	public readonly providerSettingsManager: ProviderSettingsManager
 	public readonly customModesManager: CustomModesManager
 	// oacode_change
-	public readonly templateManager: TemplateManager
+	public readonly templateManager: ExtendedTemplateManager
 
 	constructor(
 		readonly context: vscode.ExtensionContext,
@@ -162,9 +162,11 @@ export class ClineProvider
 			await this.postStateToWebview()
 		})
 
-		// oacode_change - initialize template manager
-		this.templateManager = new TemplateManager(this.context, async () => {
+		// oacode_change - initialize extended template manager
+		this.templateManager = new ExtendedTemplateManager(this.context, async () => {
 			await this.postStateToWebview()
+			// No need for additional refresh - file watchers will detect the new files
+			// and the UI will get fresh data when it requests prompt blocks
 		})
 
 		// Initialize MCP Hub through the singleton manager
@@ -197,22 +199,24 @@ export class ClineProvider
 		try {
 			// Get template modes from the template manager
 			const templateModes = await this.templateManager.getActiveTemplateModes()
-			
+
 			// Import built-in modes
 			const { DEFAULT_MODES } = await import("@roo-code/types")
-			
+
 			// Check for conflicts and combine modes
-			const slugs = new Set(DEFAULT_MODES.map(mode => mode.slug))
-			const uniqueTemplateModes = templateModes.filter(mode => {
+			const slugs = new Set(DEFAULT_MODES.map((mode) => mode.slug))
+			const uniqueTemplateModes = templateModes.filter((mode) => {
 				if (slugs.has(mode.slug)) {
 					console.warn(`[ClineProvider] Template mode "${mode.slug}" conflicts with built-in mode, skipping`)
 					return false
 				}
 				return true
 			})
-			
+
 			const allModes = [...DEFAULT_MODES, ...uniqueTemplateModes]
-			console.log(`[ClineProvider] Providing ${allModes.length} modes (${DEFAULT_MODES.length} built-in + ${uniqueTemplateModes.length} template)`)
+			console.log(
+				`[ClineProvider] Providing ${allModes.length} modes (${DEFAULT_MODES.length} built-in + ${uniqueTemplateModes.length} template)`,
+			)
 			return allModes
 		} catch (error) {
 			console.error("[ClineProvider] Failed to get available modes:", error)
@@ -1387,26 +1391,28 @@ export class ClineProvider
 
 	/**
 	 * Enhanced OACode callback handler for new JWT authentication system
-	 * 
+	 *
 	 * Handles structured callback data from Phase 2 frontend authentication flow
 	 * with enhanced user information and plan limits.
 	 */
 	async handleEnhancedOaCodeCallback(callbackData: any) {
 		try {
-			console.log('🔐 Enhanced OACode authentication callback received')
-			
+			console.log("🔐 Enhanced OACode authentication callback received")
+
 			// Extract token and user data
 			const token = callbackData.token
 			const userData = callbackData.user
 			const environment = callbackData.environment
 
 			if (!token) {
-				throw new Error('No authentication token provided')
+				throw new Error("No authentication token provided")
 			}
 
 			// Import token utilities and auth state manager
-			const { extractUserFromToken, isTokenExpired, getTokenExpiration } = await import('../../utils/oacode-token')
-			const { createAuthStateManager } = await import('../../utils/auth-state-manager')
+			const { extractUserFromToken, isTokenExpired, getTokenExpiration } = await import(
+				"../../utils/oacode-token"
+			)
+			const { createAuthStateManager } = await import("../../utils/auth-state-manager")
 
 			// Validate token and extract user info
 			const tokenUserInfo = extractUserFromToken(token)
@@ -1414,15 +1420,15 @@ export class ClineProvider
 			const expiration = getTokenExpiration(token)
 
 			if (expired) {
-				vscode.window.showErrorMessage('Authentication token has expired. Please sign in again.')
+				vscode.window.showErrorMessage("Authentication token has expired. Please sign in again.")
 				return
 			}
 
-			console.log('✅ Token validation successful:', {
+			console.log("✅ Token validation successful:", {
 				user: tokenUserInfo?.email,
 				plan: tokenUserInfo?.plan,
 				balance: tokenUserInfo?.balance,
-				expiresAt: expiration
+				expiresAt: expiration,
 			})
 
 			// Configure the provider (same as legacy method) - this stores the token
@@ -1447,9 +1453,7 @@ export class ClineProvider
 			const authStateManager = createAuthStateManager(this.contextProxy)
 			const userDisplayInfo = await authStateManager.getUserDisplayInfo()
 
-			vscode.window.showInformationMessage(
-				`OpenAnalyst configured successfully! Welcome ${userDisplayInfo}`
-			)
+			vscode.window.showInformationMessage(`OpenAnalyst configured successfully! Welcome ${userDisplayInfo}`)
 
 			// Send enhanced authentication data to webview with auth state
 			const authState = await authStateManager.getAuthState()
@@ -1461,27 +1465,26 @@ export class ClineProvider
 					user: authState.user,
 					environment,
 					authState,
-					timestamp: Date.now()
-				}
+					timestamp: Date.now(),
+				},
 			})
 
 			// Trigger profile data refresh to update UI immediately
 			await this.postMessageToWebview({
-				type: "updateProfileData"
+				type: "updateProfileData",
 			})
 
-			console.log('🎉 Enhanced OACode authentication completed successfully')
-
+			console.log("🎉 Enhanced OACode authentication completed successfully")
 		} catch (error) {
-			console.error('❌ Enhanced OACode authentication failed:', error)
-			
+			console.error("❌ Enhanced OACode authentication failed:", error)
+
 			// Fallback to basic token handling
 			if (callbackData.token) {
-				console.log('🔄 Falling back to basic token authentication')
+				console.log("🔄 Falling back to basic token authentication")
 				await this.handleOaCodeCallback(callbackData.token)
 			} else {
 				vscode.window.showErrorMessage(
-					`Authentication failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+					`Authentication failed: ${error instanceof Error ? error.message : "Unknown error"}`,
 				)
 			}
 		}
@@ -1489,20 +1492,20 @@ export class ClineProvider
 
 	/**
 	 * Validate current OACode authentication token
-	 * 
+	 *
 	 * @returns Validation result with user info and status
 	 */
 	async validateOACodeToken(): Promise<{
-		valid: boolean;
-		expired: boolean;
-		user?: any;
-		error?: string;
-		expiresIn?: number; // minutes until expiration
+		valid: boolean
+		expired: boolean
+		user?: any
+		error?: string
+		expiresIn?: number // minutes until expiration
 	}> {
 		try {
 			// Import utilities
-			const { createAuthStateManager } = await import('../../utils/auth-state-manager')
-			
+			const { createAuthStateManager } = await import("../../utils/auth-state-manager")
+
 			// Get auth state
 			const authStateManager = createAuthStateManager(this.contextProxy)
 			const authState = await authStateManager.getAuthState()
@@ -1511,7 +1514,7 @@ export class ClineProvider
 				return {
 					valid: false,
 					expired: authState.isExpired,
-					error: authState.error || 'Not authenticated'
+					error: authState.error || "Not authenticated",
 				}
 			}
 
@@ -1522,29 +1525,28 @@ export class ClineProvider
 				valid: true,
 				expired: false,
 				user: authState.user,
-				expiresIn: expiresIn || undefined
+				expiresIn: expiresIn || undefined,
 			}
-
 		} catch (error) {
-			console.error('❌ Token validation failed:', error)
+			console.error("❌ Token validation failed:", error)
 			return {
 				valid: false,
 				expired: false,
-				error: error instanceof Error ? error.message : 'Validation error'
+				error: error instanceof Error ? error.message : "Validation error",
 			}
 		}
 	}
 
 	/**
 	 * Check if token needs attention (expired or expiring soon)
-	 * 
+	 *
 	 * @param warningMinutes - Minutes before expiration to show warning
 	 * @returns Whether token needs user attention
 	 */
 	async checkTokenHealth(warningMinutes: number = 60): Promise<{
-		needsAttention: boolean;
-		reason?: string;
-		action?: 'renew' | 'authenticate';
+		needsAttention: boolean
+		reason?: string
+		action?: "renew" | "authenticate"
 	}> {
 		try {
 			const validation = await this.validateOACodeToken()
@@ -1552,8 +1554,8 @@ export class ClineProvider
 			if (!validation.valid) {
 				return {
 					needsAttention: true,
-					reason: validation.expired ? 'Token expired' : 'Authentication required',
-					action: 'authenticate'
+					reason: validation.expired ? "Token expired" : "Authentication required",
+					action: "authenticate",
 				}
 			}
 
@@ -1562,18 +1564,17 @@ export class ClineProvider
 				return {
 					needsAttention: true,
 					reason: `Token expires in ${validation.expiresIn} minutes`,
-					action: 'renew'
+					action: "renew",
 				}
 			}
 
 			return { needsAttention: false }
-
 		} catch (error) {
-			console.error('❌ Token health check failed:', error)
+			console.error("❌ Token health check failed:", error)
 			return {
 				needsAttention: true,
-				reason: 'Token health check failed',
-				action: 'authenticate'
+				reason: "Token health check failed",
+				action: "authenticate",
 			}
 		}
 	}
@@ -2105,11 +2106,11 @@ export class ClineProvider
 		try {
 			const templateModes = await this.templateManager.getActiveTemplateModes()
 			// Merge template modes with custom modes, avoiding duplicates
-			const templateModesSlugs = templateModes.map(mode => mode.slug)
-			const filteredCustomModes = customModes.filter(mode => !templateModesSlugs.includes(mode.slug))
+			const templateModesSlugs = templateModes.map((mode) => mode.slug)
+			const filteredCustomModes = customModes.filter((mode) => !templateModesSlugs.includes(mode.slug))
 			customModes = [...templateModes, ...filteredCustomModes]
 		} catch (error) {
-			console.warn('[ClineProvider] Failed to load template modes for state:', error)
+			console.warn("[ClineProvider] Failed to load template modes for state:", error)
 		}
 
 		// Determine apiProvider with the same logic as before.
