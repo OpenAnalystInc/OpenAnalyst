@@ -232,6 +232,9 @@ export interface WebviewMessage {
 		| "toggleRule" // oacode_change
 		| "createRuleFile" // oacode_change
 		| "deleteRuleFile" // oacode_change
+		| "createPromptFile" // Create new custom prompt file
+		| "deletePromptFile" // Delete existing custom prompt file
+		| "editPromptBlock" // Open prompt file for editing
 		| "hasOpenedModeSelector"
 		| "accountButtonClicked"
 		| "rooCloudSignIn"
@@ -329,6 +332,10 @@ export interface WebviewMessage {
 	isGlobal?: boolean // oacode_change
 	filename?: string // oacode_change
 	ruleType?: string // oacode_change
+	// Prompt file operations
+	promptName?: string // Name of the prompt for edit/delete operations
+	promptCategory?: string // Category for new prompt creation
+	promptSource?: "workspace" | "global" // Scope for prompt operations
 	notificationId?: string // oacode_change
 	// oacode_change - template management
 	templateName?: string

@@ -92,7 +92,7 @@ export const TemplateUploadModal = ({ isOpen, onClose, onUploadSuccess }: Templa
 	if (!isOpen) return null
 
 	return ReactDOM.createPortal(
-		<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+		<div className="fixed inset-0 bg-vscode-editor-background bg-opacity-80 flex items-center justify-center">
 			<div className="bg-vscode-input-background border border-vscode-dropdown-border rounded-lg p-6 w-96 max-w-full mx-4 relative">
 				<div className="flex justify-between items-center mb-4">
 					<h3 className="text-lg font-semibold text-vscode-foreground">Upload Template</h3>

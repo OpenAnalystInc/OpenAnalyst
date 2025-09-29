@@ -150,13 +150,35 @@ export const PromptBlocksProvider: React.FC<PromptBlocksProviderProps> = ({ chil
 						console.log("[PromptBlocksContext] Default blocks:", message.defaultBlocks?.length || 0)
 						console.log("[PromptBlocksContext] Custom blocks:", message.customBlocks?.length || 0)
 					}
-					setAvailableBlocks(message.blocks || [])
+					
+					// Validate categorization and source information
+					const allBlocks = message.blocks || []
+					const defaultBlocks = message.defaultBlocks || []
+					const customBlocks = message.customBlocks || []
+					
+					// Ensure categorization is consistent
+					if (__DEV__) {
+						const totalCategorized = defaultBlocks.length + customBlocks.length
+						if (totalCategorized !== allBlocks.length) {
+							console.warn(`[PromptBlocksContext] Categorization mismatch: ${allBlocks.length} total vs ${totalCategorized} categorized`)
+						}
+						
+						// Validate custom blocks have proper source information
+						customBlocks.forEach((block) => {
+							if (!block.source || (block.source !== "workspace" && block.source !== "global")) {
+								console.warn(`[PromptBlocksContext] Custom block missing source: ${block.name}`)
+							}
+							if (block.sourceCategory !== "custom") {
+								console.warn(`[PromptBlocksContext] Block categorized as custom but sourceCategory is: ${block.sourceCategory}`)
+							}
+						})
+					}
+					
+					setAvailableBlocks(allBlocks)
+					setDefaultBlocks(defaultBlocks)
+					setCustomBlocks(customBlocks)
 
-					// NEW: Use backend-provided categorization instead of manual categorization
-					setDefaultBlocks(message.defaultBlocks || [])
-					setCustomBlocks(message.customBlocks || [])
-
-					// PHASE 4.1 NEW: Reset activation states when blocks are reloaded
+					// Reset activation states when blocks are reloaded
 					setActivationStates({})
 					break
 
@@ -247,11 +269,24 @@ export const PromptBlocksProvider: React.FC<PromptBlocksProviderProps> = ({ chil
 	 * Flow: UI → Context → PromptActivationService → Extension → System Prompt Enhancement
 	 */
 	const addActiveBlock = async (blockName: string, variables?: Record<string, string>) => {
-		// PHASE 4.1 NEW: Set activation state to indicate loading
+		// Find the block being activated for logging and validation
+		const targetBlock = availableBlocks.find((block) => block.name === blockName)
+		
+		// Enhanced validation for custom prompts
+		if (targetBlock && targetBlock.sourceCategory === "custom") {
+			console.log(`[PromptBlocksContext] Activating custom prompt: ${blockName} (${targetBlock.source})`)
+			
+			// Validate that custom prompts have required source information
+			if (!targetBlock.source || (targetBlock.source !== "workspace" && targetBlock.source !== "global")) {
+				console.warn(`[PromptBlocksContext] Custom prompt missing valid source information: ${blockName}`)
+			}
+		}
+		
+		// Set activation state to indicate loading
 		setActivationStates((prev) => ({ ...prev, [blockName]: "activating" }))
 
 		try {
-			// PHASE 4.2 ENHANCED: Use the shared activation service with enhanced conflict resolution
+			// Use the shared activation service with enhanced conflict resolution
 			const result = promptActivationService.activatePromptBlock(
 				blockName,
 				availableBlocks,

@@ -11,9 +11,11 @@ export interface PromptBlockInfo {
 	priority: number
 	enabled: boolean
 	variables?: Record<string, string>
-	// NEW: Source information for categorization (added to match backend)
-	source?: "workspace" | "global" | "defaults" // Source path information
-	sourceCategory?: "default" | "custom" // UI categorization (default vs custom prompts)
+	
+	// Source information for enhanced prompt management
+	// Used to determine edit/delete capabilities and display source badges
+	source?: "workspace" | "global" | "defaults" // Physical source location
+	sourceCategory?: "default" | "custom" // UI categorization for tabs (default vs custom prompts)
 }
 
 export interface ActivePromptBlockInfo {
@@ -116,11 +118,41 @@ export function promptBlocksToSlashCommands(blocks: PromptBlockInfo[]): PromptBl
 	return blocks.map((block) => ({
 		name: block.name,
 		description: block.description,
-		// NEW: Use sourceCategory to properly categorize slash commands
+		// Use sourceCategory to properly categorize slash commands
 		section: block.sourceCategory === "custom" ? "custom" : "prompts",
 		category: block.category,
 		promptBlock: block,
 	}))
+}
+
+/**
+ * Check if a prompt block is editable/deletable (custom prompts only)
+ * 
+ * @param block - The prompt block to check
+ * @returns true if the prompt can be edited/deleted (workspace or global), false for defaults
+ */
+export function isPromptBlockEditable(block: PromptBlockInfo): boolean {
+	// Only custom prompts (workspace/global) are editable, not defaults
+	return block.source !== "defaults" && block.sourceCategory === "custom"
+}
+
+/**
+ * Get the source display name for badge display
+ * 
+ * @param source - The source type
+ * @returns Display name for the source
+ */
+export function getSourceDisplayName(source: "workspace" | "global" | "defaults"): string {
+	switch (source) {
+		case "workspace":
+			return "Workspace"
+		case "global":
+			return "Global"
+		case "defaults":
+			return "Default"
+		default:
+			return "Unknown"
+	}
 }
 
 /**
