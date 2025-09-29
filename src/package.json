@@ -18,9 +18,9 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Oa-Org/oacode"
+		"url": "https://github.com/OpenAnalystInc/OpenAnalyst"
 	},
-	"homepage": "https://oacode.ai",
+	"homepage": "https://openanalyst.com",
 	"categories": [
 		"AI",
 		"Chat",
