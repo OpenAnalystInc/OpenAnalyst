@@ -10,7 +10,7 @@ import { promptActivationService, CategoryConflictInfo } from "@/services/Prompt
 /**
  * Context interface for managing prompt blocks in the application
  *
- * PHASE 4.1 ENHANCEMENT: Added toolbar-specific state management
+ * Added toolbar-specific state management
  *
  * This context manages two types of prompt block data:
  * 1. Available blocks: All prompt blocks loaded from YAML files (defaults + custom)
@@ -31,10 +31,10 @@ interface PromptBlocksContextType {
 	// Active prompt blocks for current conversation (enhances system prompt)
 	activeBlocks: ActivePromptBlockInfo[]
 
-	// PHASE 4.1 NEW: Enhanced activation state tracking
+	// Enhanced activation state tracking
 	activationStates: Record<string, "idle" | "activating" | "deactivating">
 
-	// PHASE 4.1 NEW: Categorized prompt blocks for UI organization
+	// Categorized prompt blocks for UI organization
 	defaultBlocks: PromptBlockInfo[] // From defaults/blocks/prompts/
 	customBlocks: PromptBlockInfo[] // User-defined prompts
 
@@ -45,13 +45,13 @@ interface PromptBlocksContextType {
 	clearActiveBlocks: () => void
 	refreshActiveBlocks: () => Promise<void>
 
-	// PHASE 4.1 NEW: Enhanced toolbar support methods
+	// Enhanced toolbar support methods
 	toggleActiveBlock: (blockName: string, variables?: Record<string, string>) => Promise<void>
 	isBlockActive: (blockName: string) => boolean
 	getActiveBlockByCategory: (category: string) => ActivePromptBlockInfo | undefined
 	getActivationState: (blockName: string) => "idle" | "activating" | "deactivating"
 
-	// PHASE 4.3 NEW: Additional activation/deactivation methods
+	// Additional activation/deactivation methods
 	activateBlocksInCategory: (category: string, blockName: string, variables?: Record<string, string>) => Promise<void>
 	deactivateCategory: (category: string) => Promise<void>
 	replaceActiveBlock: (
@@ -74,15 +74,15 @@ export const PromptBlocksProvider: React.FC<PromptBlocksProviderProps> = ({ chil
 	const [loadingBlocks, setLoadingBlocks] = useState(false)
 	const [activeBlocks, setActiveBlocks] = useState<ActivePromptBlockInfo[]>([])
 
-	// PHASE 4.1 NEW: Enhanced state management for toolbar integration
+	// Enhanced state management for toolbar integration
 	const [activationStates, setActivationStates] = useState<Record<string, "idle" | "activating" | "deactivating">>({})
 	const [defaultBlocks, setDefaultBlocks] = useState<PromptBlockInfo[]>([])
 	const [customBlocks, setCustomBlocks] = useState<PromptBlockInfo[]>([])
 
-	// PHASE 4.1 ENHANCED: Clean up activation states when blocks change
+	// Clean up activation states when blocks change
 	// NOTE: Categorization is now handled by backend-provided defaultBlocks/customBlocks
 	useEffect(() => {
-		// PHASE 4.5 NEW: Clean up activation states for blocks that no longer exist
+		// Clean up activation states for blocks that no longer exist
 		setActivationStates((prev) => {
 			const existingBlockNames = new Set(availableBlocks.map((b) => b.name))
 			const cleanedStates: typeof prev = {}
@@ -106,7 +106,7 @@ export const PromptBlocksProvider: React.FC<PromptBlocksProviderProps> = ({ chil
 		refreshActiveBlocks()
 	}, [])
 
-	// PHASE 4.5 NEW: Cleanup activation states for blocks that are no longer active
+	// Cleanup activation states for blocks that are no longer active
 	useEffect(() => {
 		const activeBlockNames = new Set(activeBlocks.map((ab) => ab.block.name))
 
@@ -132,7 +132,7 @@ export const PromptBlocksProvider: React.FC<PromptBlocksProviderProps> = ({ chil
 		})
 	}, [activeBlocks])
 
-	// PHASE 4.1 ENHANCED: Listen for prompt block updates from extension with activation state tracking
+	// Listen for prompt block updates from extension with activation state tracking
 	useEffect(() => {
 		const handleMessage = (event: MessageEvent) => {
 			const message = event.data
@@ -164,7 +164,7 @@ export const PromptBlocksProvider: React.FC<PromptBlocksProviderProps> = ({ chil
 						}
 						
 						// Validate custom blocks have proper source information
-						customBlocks.forEach((block) => {
+						customBlocks.forEach((block: PromptBlockInfo) => {
 							if (!block.source || (block.source !== "workspace" && block.source !== "global")) {
 								console.warn(`[PromptBlocksContext] Custom block missing source: ${block.name}`)
 							}
@@ -192,7 +192,7 @@ export const PromptBlocksProvider: React.FC<PromptBlocksProviderProps> = ({ chil
 					}
 					setActiveBlocks(message.activeBlocks || [])
 
-					// PHASE 4.1 NEW: Clear activation states for blocks that are now active/inactive
+					// Clear activation states for blocks that are now active/inactive
 					const updatedActiveBlocks = message.activeBlocks || []
 					setActivationStates((prev) => {
 						const newStates = { ...prev }
@@ -215,7 +215,7 @@ export const PromptBlocksProvider: React.FC<PromptBlocksProviderProps> = ({ chil
 					break
 
 				case "promptBlockAdded":
-					// PHASE 4.1 NEW: Update activation state and refresh
+					// Update activation state and refresh
 					if (message.blockName) {
 						setActivationStates((prev) => ({ ...prev, [message.blockName]: "idle" }))
 					}
@@ -223,7 +223,7 @@ export const PromptBlocksProvider: React.FC<PromptBlocksProviderProps> = ({ chil
 					break
 
 				case "promptBlockRemoved":
-					// PHASE 4.1 NEW: Update activation state and refresh
+					// Update activation state and refresh
 					if (message.blockName) {
 						setActivationStates((prev) => ({ ...prev, [message.blockName]: "idle" }))
 					}
@@ -260,7 +260,7 @@ export const PromptBlocksProvider: React.FC<PromptBlocksProviderProps> = ({ chil
 	}
 
 	/**
-	 * PHASE 4.1 ENHANCED: Add a prompt block to active state with activation tracking
+	 * Add a prompt block to active state with activation tracking
 	 *
 	 * This delegates to the shared PromptActivationService which contains
 	 * the unified logic used by both slash commands and toolbar.
@@ -302,7 +302,7 @@ export const PromptBlocksProvider: React.FC<PromptBlocksProviderProps> = ({ chil
 				throw new Error(result.error || "Unknown activation error")
 			}
 
-			// PHASE 4.2 NEW: Log category conflict information for debugging
+			// Log category conflict information for debugging
 			if (result.categoryConflict) {
 				console.log(`[PromptBlocksContext] Category conflict resolved:`, {
 					category: result.categoryConflict.category,
@@ -312,7 +312,7 @@ export const PromptBlocksProvider: React.FC<PromptBlocksProviderProps> = ({ chil
 				})
 			}
 		} catch (error) {
-			// PHASE 4.1 NEW: Reset activation state on error
+			// Reset activation state on error
 			console.error(`[PromptBlocksContext] Failed to activate block ${blockName}:`, error)
 			setActivationStates((prev) => ({ ...prev, [blockName]: "idle" }))
 			throw error
@@ -320,17 +320,17 @@ export const PromptBlocksProvider: React.FC<PromptBlocksProviderProps> = ({ chil
 	}
 
 	/**
-	 * PHASE 4.1 ENHANCED: Remove a prompt block from active state with deactivation tracking
+	 * Remove a prompt block from active state with deactivation tracking
 	 */
 	const removeActiveBlock = async (blockName: string) => {
-		// PHASE 4.1 NEW: Set deactivation state to indicate loading
+		// Set deactivation state to indicate loading
 		setActivationStates((prev) => ({ ...prev, [blockName]: "deactivating" }))
 
 		try {
 			// Use the shared service for consistent behavior
 			promptActivationService.deactivatePromptBlock(blockName, setActiveBlocks)
 		} catch (error) {
-			// PHASE 4.1 NEW: Reset activation state on error
+			// Reset activation state on error
 			console.error(`[PromptBlocksContext] Failed to deactivate block ${blockName}:`, error)
 			setActivationStates((prev) => ({ ...prev, [blockName]: "idle" }))
 			throw error
@@ -342,7 +342,7 @@ export const PromptBlocksProvider: React.FC<PromptBlocksProviderProps> = ({ chil
 		const currentBlocks = [...activeBlocks]
 		setActiveBlocks([])
 
-		// PHASE 4.1 NEW: Set all blocks to deactivating state
+		// Set all blocks to deactivating state
 		const deactivatingStates: Record<string, "deactivating"> = {}
 		currentBlocks.forEach((ab) => {
 			deactivatingStates[ab.block.name] = "deactivating"
@@ -355,7 +355,7 @@ export const PromptBlocksProvider: React.FC<PromptBlocksProviderProps> = ({ chil
 		})
 	}
 
-	// PHASE 4.1 NEW: Enhanced toolbar support methods
+	// Enhanced toolbar support methods
 
 	/**
 	 * Toggle a prompt block between active and inactive states
@@ -391,7 +391,7 @@ export const PromptBlocksProvider: React.FC<PromptBlocksProviderProps> = ({ chil
 		return activationStates[blockName] || "idle"
 	}
 
-	// PHASE 4.3 NEW: Additional activation/deactivation methods implementation
+	// Additional activation/deactivation methods implementation
 
 	/**
 	 * Activate a specific block in a category (handles category conflicts automatically)
@@ -492,7 +492,7 @@ export const PromptBlocksProvider: React.FC<PromptBlocksProviderProps> = ({ chil
 		loadingBlocks,
 		activeBlocks,
 
-		// PHASE 4.1 NEW: Enhanced state properties
+		// Enhanced state properties
 		activationStates,
 		defaultBlocks,
 		customBlocks,
@@ -504,13 +504,13 @@ export const PromptBlocksProvider: React.FC<PromptBlocksProviderProps> = ({ chil
 		clearActiveBlocks,
 		refreshActiveBlocks,
 
-		// PHASE 4.1 NEW: Enhanced toolbar support methods
+		// Enhanced toolbar support methods
 		toggleActiveBlock,
 		isBlockActive,
 		getActiveBlockByCategory,
 		getActivationState,
 
-		// PHASE 4.3 NEW: Additional activation/deactivation methods
+		// Additional activation/deactivation methods
 		activateBlocksInCategory,
 		deactivateCategory,
 		replaceActiveBlock,
