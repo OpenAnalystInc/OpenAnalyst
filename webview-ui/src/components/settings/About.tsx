@@ -51,7 +51,7 @@ export const About = ({ telemetrySetting, setTelemetrySetting, className, ...pro
 						<Trans
 							i18nKey="settings:footer.telemetry.description"
 							components={{
-								privacyLink: <VSCodeLink href="https://oacode.ai/privacy" />,
+								privacyLink: <VSCodeLink href="https://openanalyst.com" />,
 							}}
 						/>
 					</p>
@@ -61,7 +61,7 @@ export const About = ({ telemetrySetting, setTelemetrySetting, className, ...pro
 					<Trans
 						i18nKey="settings:footer.feedback"
 						components={{
-							githubLink: <VSCodeLink href="https://github.com/OpenAnalystInc/OpenAnalyst" />,
+							githubLink: <VSCodeLink href="https://github.com/OpenAnalystInc/OpenAnalyst/issues" />,
 							redditLink: <VSCodeLink href="https://www.reddit.com/r/OpenAnalyst" />,
 							discordLink: <VSCodeLink href="https://discord.gg/chfCZBXS2x" />,
 						}}

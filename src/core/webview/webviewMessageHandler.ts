@@ -1721,11 +1721,11 @@ export const webviewMessageHandler = async (
 			)
 
 			if (answer === githubIssuesText) {
-				await vscode.env.openExternal(vscode.Uri.parse("https://github.com/Oa-Org/oacode/issues"))
+				await vscode.env.openExternal(vscode.Uri.parse("https://github.com/OpenAnalystInc/OpenAnalyst/issues"))
 			} else if (answer === discordText) {
-				await vscode.env.openExternal(vscode.Uri.parse("https://discord.gg/fxrhCFGhkP"))
+				await vscode.env.openExternal(vscode.Uri.parse("https://discord.gg/chfCZBXS2x"))
 			} else if (answer === customerSupport) {
-				await vscode.env.openExternal(vscode.Uri.parse("https://oacode.ai/support"))
+				await vscode.env.openExternal(vscode.Uri.parse("https://openanalyst.com"))
 			}
 			break
 		}
