@@ -142,14 +142,8 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 			})
 		}
 
-		// Category validation
-		if (data.category && !isValidCategory(data.category)) {
-			errors.push({
-				field: "category",
-				message: `Invalid category: ${data.category}. Must be one of: analysis, visualization, reporting, methodology`,
-				code: "INVALID_CATEGORY"
-			})
-		}
+		// Category validation: Allow any non-empty string for flexibility
+		// Users can use predefined or custom categories
 
 		// Priority validation
 		if (data.priority !== undefined) {
@@ -333,23 +327,19 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 
 	/**
 	 * Validate category value
+	 * Allows any non-empty string for flexibility
 	 */
 	validateCategory(category: string): ValidationResult {
 		const errors: ValidationError[] = []
-		
+
 		if (!category?.trim()) {
 			errors.push({
 				field: "category",
 				message: "Category is required",
 				code: "REQUIRED_FIELD_MISSING"
 			})
-		} else if (!isValidCategory(category)) {
-			errors.push({
-				field: "category",
-				message: `Invalid category: ${category}. Must be one of: analysis, visualization, reporting, methodology`,
-				code: "INVALID_CATEGORY"
-			})
 		}
+		// Allow any non-empty category string - no enum restriction
 
 		return {
 			isValid: errors.length === 0,

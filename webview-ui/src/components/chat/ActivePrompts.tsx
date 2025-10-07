@@ -23,15 +23,17 @@ export const ActivePrompts: React.FC<ActivePromptsProps> = ({ className }) => {
 	const getCategoryColor = (category: string): string => {
 		switch (category) {
 			case "analysis":
-				return "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800"
+				return "bg-blue-100 text-gray-900 border-blue-300 dark:bg-blue-900/30 dark:text-white dark:border-blue-700"
 			case "visualization":
-				return "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800"
+				return "bg-green-100 text-gray-900 border-green-300 dark:bg-green-900/30 dark:text-white dark:border-green-700"
 			case "reporting":
-				return "bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800"
+				return "bg-purple-100 text-gray-900 border-purple-300 dark:bg-purple-900/30 dark:text-white dark:border-purple-700"
 			case "methodology":
-				return "bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/20 dark:text-orange-300 dark:border-orange-800"
+				return "bg-orange-100 text-gray-900 border-orange-300 dark:bg-orange-900/30 dark:text-white dark:border-orange-700"
+			case "custom":
+				return "bg-yellow-100 text-gray-900 border-yellow-300 dark:bg-yellow-900/30 dark:text-white dark:border-yellow-700"
 			default:
-				return "bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900/20 dark:text-gray-300 dark:border-gray-800"
+				return "bg-yellow-100 text-gray-900 border-yellow-300 dark:bg-yellow-900/30 dark:text-white dark:border-yellow-700"
 		}
 	}
 

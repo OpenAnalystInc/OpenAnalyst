@@ -1,14 +1,15 @@
 /**
  * Prompt block categories for conflict resolution and organization
- * 
+ *
  * Only one prompt per category can be active at a time to prevent
  * conflicting instructions in the system prompt.
  */
 export enum PromptCategory {
 	ANALYSIS = "analysis",
-	VISUALIZATION = "visualization", 
+	VISUALIZATION = "visualization",
 	REPORTING = "reporting",
 	METHODOLOGY = "methodology",
+	CUSTOM = "custom",
 }
 
 /**
@@ -17,8 +18,9 @@ export enum PromptCategory {
 export const CATEGORY_DISPLAY_NAMES: Record<PromptCategory, string> = {
 	[PromptCategory.ANALYSIS]: "Analysis",
 	[PromptCategory.VISUALIZATION]: "Visualization",
-	[PromptCategory.REPORTING]: "Reporting", 
+	[PromptCategory.REPORTING]: "Reporting",
 	[PromptCategory.METHODOLOGY]: "Methodology",
+	[PromptCategory.CUSTOM]: "Custom",
 }
 
 /**
@@ -29,6 +31,7 @@ export const CATEGORY_DESCRIPTIONS: Record<PromptCategory, string> = {
 	[PromptCategory.VISUALIZATION]: "Chart creation and visualization guidelines",
 	[PromptCategory.REPORTING]: "Report generation and formatting instructions",
 	[PromptCategory.METHODOLOGY]: "Analysis methodology and best practices",
+	[PromptCategory.CUSTOM]: "User-defined custom prompt instructions",
 }
 
 /**

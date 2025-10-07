@@ -114,10 +114,10 @@ const getCategoryColors = (category: string) => {
 			}
 		default:
 			return {
-				bg: "bg-gray-500/10",
-				border: "border-gray-500/30",
-				text: "text-gray-400",
-				icon: "text-gray-400",
+				bg: "bg-yellow-700/10",
+				border: "border-yellow-500/30",
+				text: "text-yellow-400",
+				icon: "text-yellow-400",
 			}
 	}
 }
@@ -199,8 +199,6 @@ export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
 			promptName: promptBlock.name,
 			promptSource: promptBlock.source as "workspace" | "global" // Safe since delete is only available for custom prompts
 		})
-		
-		console.log(`[PromptBlockCard] Delete requested for prompt: ${promptBlock.name}`)
 	}
 
 	/**
@@ -219,8 +217,6 @@ export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
 			promptName: promptBlock.name,
 			promptSource: promptBlock.source as "workspace" | "global" // Safe since edit is only available for custom prompts
 		})
-		
-		console.log(`[PromptBlockCard] Edit requested for prompt: ${promptBlock.name}`)
 	}
 
 	/**
@@ -256,24 +252,12 @@ export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
 			)
 
 			if (result.success) {
-				console.log(`[PromptBlockCard] ${result.userMessage}`)
 				onSelect?.(promptBlock)
-
-				// Log detailed activation information
-				if (result.wasReplacement && result.categoryConflict) {
-					console.log(
-						`[PromptBlockCard] Category conflict resolved: replaced '${result.categoryConflict.existingBlock.block.name}' with '${promptBlock.name}' in category '${result.categoryConflict.category}'`,
-					)
-				}
-
-				// Success notification is now handled automatically by UnifiedPromptActivationHandler
-			} else {
-				console.error(`[PromptBlockCard] ${result.error}`)
-				// Error notification is now handled automatically by UnifiedPromptActivationHandler
+				// Success notification is handled automatically by UnifiedPromptActivationHandler
 			}
+			// Error notification is handled automatically by UnifiedPromptActivationHandler
 		} catch (error) {
-			console.error(`[PromptBlockCard] Unified activation handler failed:`, error)
-			// Critical error - this shouldn't happen but if it does, the handler shows notifications
+			// Critical error - handler shows notifications
 		}
 	}
 

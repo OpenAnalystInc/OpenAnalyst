@@ -6,12 +6,12 @@ import { vscode } from "@/utils/vscode"
 export interface PromptBlockInfo {
 	name: string
 	description: string
-	category: "analysis" | "visualization" | "reporting" | "methodology"
+	category: "analysis" | "visualization" | "reporting" | "methodology" | "custom"
 	tags: string[]
 	priority: number
 	enabled: boolean
 	variables?: Record<string, string>
-	
+
 	// Source information for enhanced prompt management
 	// Used to determine edit/delete capabilities and display source badges
 	source?: "workspace" | "global" | "defaults" // Physical source location

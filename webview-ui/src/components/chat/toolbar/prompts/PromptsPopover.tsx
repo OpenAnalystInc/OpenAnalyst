@@ -47,13 +47,6 @@ interface PromptsPopoverProps {
 }
 
 /**
- * Available YAML prompt categories from domain model
- * These match the categories in PromptCategory.ts: analysis, visualization, reporting, methodology
- */
-const YAML_PROMPT_CATEGORIES = ["analysis", "visualization", "reporting", "methodology"] as const
-type YamlPromptCategory = (typeof YAML_PROMPT_CATEGORIES)[number]
-
-/**
  * Main PromptsPopover component
  */
 export const PromptsPopover: React.FC<PromptsPopoverProps> = ({ onPromptSelect, className }) => {
@@ -125,11 +118,16 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({ onPromptSelect, 
 
 	/**
 	 * Group blocks by category for organized display
+	 * Dynamically groups by actual categories in blocks, not just predefined ones
 	 */
 	const blocksByCategory = useMemo(() => {
-		const grouped: Record<YamlPromptCategory, PromptBlockInfo[]> = {} as any
+		const grouped: Record<string, PromptBlockInfo[]> = {}
 
-		YAML_PROMPT_CATEGORIES.forEach((category) => {
+		// Get all unique categories from filtered blocks
+		const uniqueCategories = Array.from(new Set(filteredBlocks.map((block) => block.category)))
+
+		// Group blocks by their actual category
+		uniqueCategories.forEach((category) => {
 			grouped[category] = filteredBlocks.filter((block) => block.category === category)
 		})
 
@@ -250,8 +248,7 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({ onPromptSelect, 
 
 		return (
 			<div className="space-y-4">
-				{YAML_PROMPT_CATEGORIES.map((category) => {
-					const categoryBlocks = blocksByCategory[category]
+				{Object.entries(blocksByCategory).map(([category, categoryBlocks]) => {
 					if (categoryBlocks.length === 0) return null
 
 					return (

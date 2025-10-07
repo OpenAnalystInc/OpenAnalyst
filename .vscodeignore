@@ -73,6 +73,9 @@ assets/docs/**
 # Include .env file for telemetry
 !.env
 
+# Include defaults directory for prompt blocks
+!defaults/**
+
 # Ignore IntelliJ and Qodo plugin folders
 .idea/**
 .qodo/**

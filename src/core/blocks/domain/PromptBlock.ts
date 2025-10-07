@@ -164,13 +164,9 @@ export class PromptBlock {
 			throw new PromptBlockValidationError("Category is required", "category")
 		}
 
-		// Validate category
-		if (!isValidCategory(data.category)) {
-			throw new PromptBlockValidationError(
-				`Invalid category: ${data.category}. Must be one of: analysis, visualization, reporting, methodology`,
-				"category"
-			)
-		}
+		// Category validation: Allow any non-empty string for flexibility
+		// Users can use predefined categories (analysis, visualization, reporting, methodology, custom)
+		// or define their own custom categories
 
 		// Validate name format
 		if (!data.name.match(/^[a-zA-Z0-9_-]+$/)) {

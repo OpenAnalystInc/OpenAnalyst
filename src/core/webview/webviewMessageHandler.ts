@@ -85,27 +85,27 @@ async function refreshPromptBlocks(provider: ClineProvider): Promise<void> {
 				continue
 			}
 
-			// Categorize based on source: "defaults" = default, others = custom
-			const category = source === "defaults" ? "default" : "custom"
+			// Categorize based on "custom" tag: if tags include "custom", it goes to Custom tab
+			// This allows users to edit the category field while still appearing in Custom tab
+			const hasCustomTag = Array.isArray(block.tags) && block.tags.includes("custom")
+			const sourceCategory = hasCustomTag ? "custom" : "default"
 
 			blocksWithSource.push({
 				name: block.name,
 				description: block.description,
-				category: block.category, // This is the prompt category (analysis, visualization, etc.)
+				category: block.category, // This is the prompt category (analysis, visualization, etc.) - user editable
 				tags: block.tags,
 				priority: block.priority,
 				enabled: block.enabled,
 				source: source, // Source path info (workspace/global/defaults)
-				sourceCategory: category, // Categorization for toolbar (default/custom)
+				sourceCategory: sourceCategory, // Categorization for toolbar (default/custom) - based on "custom" tag
 			})
 		}
 
 		// Categorize blocks for toolbar support
 		const defaultBlocks = blocksWithSource.filter((block) => block.sourceCategory === "default")
 		const customBlocks = blocksWithSource.filter((block) => block.sourceCategory === "custom")
-		
-		console.log(`[refreshPromptBlocks] Loaded ${blocksWithSource.length} total blocks (${defaultBlocks.length} default, ${customBlocks.length} custom)`)
-		
+
 		// Send categorized response for toolbar functionality
 		await provider.postMessageToWebview({
 			type: "promptBlocksLoaded",
@@ -426,8 +426,7 @@ export const webviewMessageHandler = async (
 								})
 							})
 							.catch(() => {
-								// Fallback to console if logger import fails
-								console.log(`[PromptBlocks] Activated block: ${block.name}`)
+								// Logger import failed, continue silently
 							})
 
 						// TODO: Store in conversation state when available
@@ -2584,20 +2583,19 @@ export const webviewMessageHandler = async (
 		/**
 		 * Create new custom prompt file
 		 * Validates input parameters and creates YAML prompt file with template content
+		 * All user-created prompts use "custom" category
 		 */
 		case "createPromptFile": {
-			// Enhanced parameter validation
+			// Simplified parameter validation - category is no longer required from UI
 			if (
 				message.filename &&
 				typeof message.filename === "string" &&
 				message.filename.trim().length > 0 &&
-				message.promptCategory &&
-				typeof message.promptCategory === "string" &&
-				["analysis", "visualization", "reporting", "methodology"].includes(message.promptCategory) &&
 				typeof message.isGlobal === "boolean"
 			) {
 				try {
-					await createPromptFile(message.filename.trim(), message.isGlobal, message.promptCategory)
+					// Always use "custom" category for user-created prompts
+					await createPromptFile(message.filename.trim(), message.isGlobal, "custom")
 					// Refresh prompt blocks to show the new file
 					await refreshPromptBlocks(provider)
 				} catch (error) {
@@ -2612,10 +2610,9 @@ export const webviewMessageHandler = async (
 				// Invalid parameters - log and show error
 				console.error("Invalid parameters for createPromptFile:", {
 					filename: message.filename,
-					promptCategory: message.promptCategory,
 					isGlobal: message.isGlobal
 				})
-				vscode.window.showErrorMessage("Invalid prompt creation parameters. Please check the filename and category.")
+				vscode.window.showErrorMessage("Invalid prompt creation parameters. Please check the filename.")
 			}
 			break
 		}
@@ -3636,37 +3633,26 @@ export const webviewMessageHandler = async (
 						continue
 					}
 
-					// Categorize based on source: "defaults" = default, others = custom
-					const category = source === "defaults" ? "default" : "custom"
+					// Categorize based on "custom" tag: if tags include "custom", it goes to Custom tab
+					// This allows users to edit the category field while still appearing in Custom tab
+					const hasCustomTag = Array.isArray(block.tags) && block.tags.includes("custom")
+					const sourceCategory = hasCustomTag ? "custom" : "default"
 
 					blocksWithSource.push({
 						name: block.name,
 						description: block.description,
-						category: block.category, // This is the prompt category (analysis, visualization, etc.)
+						category: block.category, // This is the prompt category (analysis, visualization, etc.) - user editable
 						tags: block.tags,
 						priority: block.priority,
 						enabled: block.enabled,
 						source: source, // Source path info (workspace/global/defaults)
-						sourceCategory: category, // Categorization for toolbar (default/custom)
+						sourceCategory: sourceCategory, // Categorization for toolbar (default/custom) - based on "custom" tag
 					})
 				}
 
 				// Separate blocks by source category for toolbar
 				const defaultBlocks = blocksWithSource.filter((b) => b.sourceCategory === "default")
 				const customBlocks = blocksWithSource.filter((b) => b.sourceCategory === "custom")
-
-				// Debug logging (only in development)
-				if (process.env.NODE_ENV === "development") {
-					const config = factory.getConfigurationInfo(provider.context.extensionPath)
-					console.log("[PromptBlocks] Loading from paths:", config)
-					console.log("[PromptBlocks] Loaded blocks:", blocksWithSource.length, "blocks")
-					console.log("[PromptBlocks] Default blocks:", defaultBlocks.length)
-					console.log("[PromptBlocks] Custom blocks:", customBlocks.length)
-					console.log(
-						"[PromptBlocks] Sending to webview:",
-						blocksWithSource.map((b) => `${b.name} (${b.sourceCategory})`),
-					)
-				}
 
 				// Send categorized response for new toolbar functionality
 				await provider.postMessageToWebview({
@@ -3766,13 +3752,11 @@ export const webviewMessageHandler = async (
 				for (const [existingBlockName, _] of activePromptBlocks.entries()) {
 					const existingBlock = await loadUseCase.executeByName(existingBlockName)
 					if (existingBlock && existingBlock.category === newBlock.category) {
-						console.log(`[Backend] Category conflict: Removing existing block '${existingBlockName}' from category '${existingBlock.category}'`)
 						activePromptBlocks.delete(existingBlockName)
 					}
 				}
 
 				// Add the new block to temporary storage (maintains active blocks across extension session)
-				console.log(`[Backend] Adding new block '${message.blockName}' in category '${newBlock.category}'`)
 				activePromptBlocks.set(message.blockName, {
 					variables: message.variables || {},
 				})
