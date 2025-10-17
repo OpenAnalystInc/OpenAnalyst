@@ -829,13 +829,13 @@ export const ChatRowContent = ({
 											<Trans
 												i18nKey="chat:modes.wantsToSwitchWithReason"
 												components={{ code: <code>{tool.mode}</code> }}
-												values={{ mode: tool.mode, reason: tool.reason }}
+												values={{ agent: tool.mode, reason: tool.reason }}
 											/>
 										) : (
 											<Trans
 												i18nKey="chat:modes.wantsToSwitch"
 												components={{ code: <code>{tool.mode}</code> }}
-												values={{ mode: tool.mode }}
+												values={{ agent: tool.mode }}
 											/>
 										)}
 									</>
@@ -845,13 +845,13 @@ export const ChatRowContent = ({
 											<Trans
 												i18nKey="chat:modes.didSwitchWithReason"
 												components={{ code: <code>{tool.mode}</code> }}
-												values={{ mode: tool.mode, reason: tool.reason }}
+												values={{ agent: tool.mode, reason: tool.reason }}
 											/>
 										) : (
 											<Trans
 												i18nKey="chat:modes.didSwitch"
 												components={{ code: <code>{tool.mode}</code> }}
-												values={{ mode: tool.mode }}
+												values={{ agent: tool.mode }}
 											/>
 										)}
 									</>

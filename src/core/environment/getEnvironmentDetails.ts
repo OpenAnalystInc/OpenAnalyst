@@ -248,7 +248,7 @@ export async function getEnvironmentDetails(cline: Task, includeFileDetails: boo
 
 	const currentMode = modeDetails.slug ?? mode // oacode_change: don't try to use non-existent modes
 
-	details += `\n\n# Current Mode\n`
+	details += `\n\n# Current Agent\n`
 	details += `<slug>${currentMode}</slug>\n`
 	details += `<name>${modeDetails.name}</name>\n`
 	details += `<model>${modelId}</model>\n`

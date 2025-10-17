@@ -24,12 +24,6 @@ import { getSwitchModeDescription } from "./switch-mode"
 import { getNewTaskDescription } from "./new-task"
 import { getCodebaseSearchDescription } from "./codebase-search"
 import { getUpdateTodoListDescription } from "./update-todo-list"
-// oacode_change
-import { getUploadTemplateDescription } from "./upload-template"
-import { getListTemplatesDescription } from "./list-templates"
-import { getActivateTemplateDescription } from "./activate-template"
-import { getDeactivateTemplateDescription } from "./deactivate-template"
-import { getDeleteTemplateDescription } from "./delete-template"
 import { getExitPlanModeDescription } from "./exit-plan-mode"
 import { CodeIndexManager } from "../../../services/code-index/manager"
 
@@ -56,12 +50,6 @@ const toolDescriptionMap: Record<string, (args: ToolArgs) => string | undefined>
 	apply_diff: (args) =>
 		args.diffStrategy ? args.diffStrategy.getToolDescription({ cwd: args.cwd, toolOptions: args.toolOptions }) : "",
 	update_todo_list: (args) => getUpdateTodoListDescription(args),
-	// oacode_change - template tools
-	upload_template: () => getUploadTemplateDescription(),
-	list_templates: () => getListTemplatesDescription(),
-	activate_template: () => getActivateTemplateDescription(),
-	deactivate_template: () => getDeactivateTemplateDescription(),
-	delete_template: () => getDeleteTemplateDescription(),
 	// Plan Mode tools
 	exit_plan_mode: () => getExitPlanModeDescription(),
 }
@@ -175,11 +163,5 @@ export {
 	getSearchAndReplaceDescription,
 	getEditFileDescription, // oacode_change: Morph fast apply
 	getCodebaseSearchDescription,
-	// oacode_change - template tools
-	getUploadTemplateDescription,
-	getListTemplatesDescription,
-	getActivateTemplateDescription,
-	getDeactivateTemplateDescription,
-	getDeleteTemplateDescription,
 	getExitPlanModeDescription,
 }

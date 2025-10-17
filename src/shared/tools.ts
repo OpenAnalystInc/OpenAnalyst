@@ -224,12 +224,7 @@ export const TOOL_DISPLAY_NAMES: Record<ToolName, string> = {
 	condense: "condense the current context window", // oacode_change
 	codebase_search: "codebase search",
 	update_todo_list: "update todo list",
-	upload_template: "upload template", // oacode_change: Template system
-	list_templates: "list templates", // oacode_change: Template system
-	activate_template: "activate template", // oacode_change: Template system
 	exit_plan_mode: "present plan for approval", // Plan Mode system
-	deactivate_template: "deactivate template", // oacode_change: Template system
-	delete_template: "delete template", // oacode_change: Template system
 } as const
 
 // Define available tool groups.
@@ -267,10 +262,6 @@ export const TOOL_GROUPS: Record<ToolGroup, ToolGroupConfig> = {
 		tools: ["switch_mode", "new_task"],
 		alwaysAvailable: true,
 	},
-	templates: {
-		tools: ["upload_template", "list_templates", "activate_template", "deactivate_template", "delete_template"],
-		alwaysAvailable: true,
-	},
 }
 
 // Tools that are always available to all modes.
@@ -282,14 +273,8 @@ export const ALWAYS_AVAILABLE_TOOLS: ToolName[] = [
 	"report_bug",
 	"condense", // oacode_Change
 	"update_todo_list",
-	// oacode_change - template management tools
-	"upload_template",
-	"list_templates",
-	"activate_template",
-	"deactivate_template",
 	// Plan Mode tools
 	"exit_plan_mode", // MUST be available for AI to present plans
-	"delete_template",
 ] as const
 
 export type DiffResult =

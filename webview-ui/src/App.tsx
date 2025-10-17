@@ -31,6 +31,9 @@ import { TooltipProvider } from "./components/ui/tooltip"
 import { STANDARD_TOOLTIP_DELAY } from "./components/ui/standard-tooltip"
 import { useOaIdentity } from "./utils/oacode/useOaIdentity"
 
+// Preload Chart.js for zero-latency first chart render (performance optimization)
+import { chartJSLoader } from "./adapters/chartjs/ChartJSLoader"
+
 type Tab = "settings" | "history" | "mcp" | "modes" | "chat" | "marketplace" | "account" | "profile" // oacode_change: add "profile"
 
 interface HumanRelayDialogState {
@@ -228,6 +231,12 @@ const App = () => {
 		if (process.env.NODE_ENV === "production") {
 			exposeSourceMapsForDebugging()
 		}
+
+		// Preload Chart.js in background for zero-latency first chart render
+		// This is non-blocking and will not delay UI initialization
+		setTimeout(() => {
+			chartJSLoader.preload()
+		}, 0)
 
 		// Log initialization for debugging
 		console.debug("App initialized with source map support")

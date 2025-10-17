@@ -118,7 +118,7 @@
 			"description": "Specialized personas with their own behaviors and assigned models"
 		}
 	},
-	"selectMode": "Select agent for interaction",
+	"selectAgent": "Select agent for interaction",
 	"selectApiConfig": "Select API configuration",
 	"selectModelConfig": "Select model",
 	"enhancePrompt": "Enhance prompt with additional context",
@@ -143,8 +143,8 @@
 	"noValidImages": "No valid images were processed",
 	"separator": "Separator",
 	"edit": "Edit...",
-	"forNextMode": "for next agent",
-	"forPreviousMode": "for previous agent",
+	"forNextAgent": "for next agent",
+	"forPreviousAgent": "for previous agent",
 	"apiRequest": {
 		"title": "API Request",
 		"failed": "API Request Failed",
