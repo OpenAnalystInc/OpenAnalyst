@@ -51,6 +51,9 @@
 		"onLanguage",
 		"onStartupFinished"
 	],
+	"extensionDependencies": [
+		"openanalyst-team.open-analyst"
+	],
 	"main": "./dist/extension.js",
 	"contributes": {
 		"walkthroughs": [

@@ -25,6 +25,12 @@ import { getNewTaskDescription } from "./new-task"
 import { getCodebaseSearchDescription } from "./codebase-search"
 import { getUpdateTodoListDescription } from "./update-todo-list"
 import { getExitPlanModeDescription } from "./exit-plan-mode"
+// BigQuery tools
+import { getExecuteSqlDescription } from "./execute-sql"
+import { getListBigqueryConnectionsDescription } from "./list-bigquery-connections"
+import { getListDatasetsDescription } from "./list-datasets"
+import { getListTablesDescription } from "./list-tables"
+import { getGetTableSchemaDescription } from "./get-table-schema"
 import { CodeIndexManager } from "../../../services/code-index/manager"
 
 // Map of tool names to their description functions
@@ -52,6 +58,12 @@ const toolDescriptionMap: Record<string, (args: ToolArgs) => string | undefined>
 	update_todo_list: (args) => getUpdateTodoListDescription(args),
 	// Plan Mode tools
 	exit_plan_mode: () => getExitPlanModeDescription(),
+	// BigQuery tools
+	execute_sql: (args) => getExecuteSqlDescription(args),
+	list_bigquery_connections: (args) => getListBigqueryConnectionsDescription(args),
+	list_datasets: (args) => getListDatasetsDescription(args),
+	list_tables: (args) => getListTablesDescription(args),
+	get_table_schema: (args) => getGetTableSchemaDescription(args),
 }
 
 export function getToolDescriptionsForMode(
@@ -164,4 +176,10 @@ export {
 	getEditFileDescription, // oacode_change: Morph fast apply
 	getCodebaseSearchDescription,
 	getExitPlanModeDescription,
+	// BigQuery tools
+	getExecuteSqlDescription,
+	getListBigqueryConnectionsDescription,
+	getListDatasetsDescription,
+	getListTablesDescription,
+	getGetTableSchemaDescription,
 }

@@ -4,7 +4,7 @@ import { z } from "zod"
  * ToolGroup
  */
 
-export const toolGroups = ["read", "edit", "browser", "command", "mcp", "modes"] as const
+export const toolGroups = ["read", "edit", "browser", "command", "mcp", "modes", "bigquery"] as const
 
 export const toolGroupsSchema = z.enum(toolGroups)
 
@@ -42,6 +42,12 @@ export const toolNames = [
 	"update_todo_list",
 	// Plan Mode tools
 	"exit_plan_mode",
+	// BigQuery tools
+	"execute_sql",
+	"list_bigquery_connections",
+	"list_datasets",
+	"list_tables",
+	"get_table_schema",
 ] as const
 
 export const toolNamesSchema = z.enum(toolNames)

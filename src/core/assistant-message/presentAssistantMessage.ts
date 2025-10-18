@@ -19,6 +19,12 @@ import { listCodeDefinitionNamesTool } from "../tools/listCodeDefinitionNamesToo
 import { searchFilesTool } from "../tools/searchFilesTool"
 import { browserActionTool } from "../tools/browserActionTool"
 import { executeCommandTool } from "../tools/executeCommandTool"
+// BigQuery tools
+import { executeSqlTool } from "../tools/executeSqlTool"
+import { listBigqueryConnectionsTool } from "../tools/listBigqueryConnectionsTool"
+import { listDatasetsTool } from "../tools/listDatasetsTool"
+import { listTablesTool } from "../tools/listTablesTool"
+import { getTableSchemaTool } from "../tools/getTableSchemaTool"
 import { useMcpToolTool } from "../tools/useMcpToolTool"
 import { accessMcpResourceTool } from "../tools/accessMcpResourceTool"
 import { askFollowupQuestionTool } from "../tools/askFollowupQuestionTool"
@@ -169,6 +175,16 @@ export async function presentAssistantMessage(cline: Task, recursionDepth: numbe
 				switch (block.name) {
 					case "execute_command":
 						return `[${block.name} for '${block.params.command}']`
+					case "execute_sql":
+						return `[${block.name}]`
+					case "list_bigquery_connections":
+						return `[${block.name}]`
+					case "list_datasets":
+						return `[${block.name}${block.params.connection_id ? ` for connection '${block.params.connection_id}'` : ""}]`
+					case "list_tables":
+						return `[${block.name} for dataset '${block.params.dataset_id}']`
+					case "get_table_schema":
+						return `[${block.name} for table '${block.params.table_id}']`
 					case "read_file":
 						return getReadFileToolDescription(block.name, block.params)
 					case "fetch_instructions":
@@ -568,6 +584,28 @@ export async function presentAssistantMessage(cline: Task, recursionDepth: numbe
 					break
 				case "execute_command":
 					await executeCommandTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+					break
+				case "execute_sql":
+					await executeSqlTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+					break
+				case "list_bigquery_connections":
+					await listBigqueryConnectionsTool(
+						cline,
+						block,
+						askApproval,
+						handleError,
+						pushToolResult,
+						removeClosingTag,
+					)
+					break
+				case "list_datasets":
+					await listDatasetsTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+					break
+				case "list_tables":
+					await listTablesTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+					break
+				case "get_table_schema":
+					await getTableSchemaTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
 					break
 				case "use_mcp_tool":
 					await useMcpToolTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)

@@ -78,6 +78,11 @@ export const toolParamNames = [
 	"template_name",
 	// Plan Mode parameters
 	"plan",
+	// BigQuery parameters
+	"connection_id",
+	"dataset_id",
+	"table_id",
+	"limit_rows",
 ] as const
 
 export type ToolParamName = (typeof toolParamNames)[number]
@@ -225,6 +230,12 @@ export const TOOL_DISPLAY_NAMES: Record<ToolName, string> = {
 	codebase_search: "codebase search",
 	update_todo_list: "update todo list",
 	exit_plan_mode: "present plan for approval", // Plan Mode system
+	// BigQuery tools
+	execute_sql: "execute SQL queries",
+	list_bigquery_connections: "list BigQuery connections",
+	list_datasets: "list datasets",
+	list_tables: "list tables",
+	get_table_schema: "get table schema",
 } as const
 
 // Define available tool groups.
@@ -261,6 +272,9 @@ export const TOOL_GROUPS: Record<ToolGroup, ToolGroupConfig> = {
 	modes: {
 		tools: ["switch_mode", "new_task"],
 		alwaysAvailable: true,
+	},
+	bigquery: {
+		tools: ["list_bigquery_connections", "list_datasets", "list_tables", "get_table_schema", "execute_sql"],
 	},
 }
 
