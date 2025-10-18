@@ -11,7 +11,7 @@
  * - Supports category-based styling and icons
  * - Compact and expanded display modes
  * - Loading states for activation process
- * 
+ *
  * Enhancements:
  * - Edit/Delete buttons for custom prompts only (source !== "defaults")
  * - Global/Workspace source badges for custom prompts
@@ -20,17 +20,17 @@
  */
 
 import { cn } from "@/lib/utils"
-import { 
-	MessageSquare, 
-	BarChart3, 
-	FileText, 
-	Settings, 
-	CheckCircle2, 
+import {
+	MessageSquare,
+	BarChart3,
+	FileText,
+	Settings,
+	CheckCircle2,
 	Loader2,
 	Edit,
 	Trash2,
 	Building,
-	Globe
+	Globe,
 } from "lucide-react"
 import { PromptBlockInfo, isPromptBlockEditable, getSourceDisplayName } from "@/utils/prompt-blocks"
 import { usePromptBlocks } from "@/context/PromptBlocksContext"
@@ -48,13 +48,13 @@ interface PromptBlockCardProps {
 	onPreview?: (block: PromptBlockInfo) => void
 	/** Callback when favorite is toggled */
 	onToggleFavorite?: (blockName: string, isFavorite: boolean) => void
-	
+
 	// New callbacks for edit/delete functionality
 	/** Callback when edit operation starts (for parent component state management) */
 	onEditStart?: () => void
 	/** Callback when delete operation starts (for parent component state management) */
 	onDeleteStart?: () => void
-	
+
 	/** Whether to show in compact mode */
 	compact?: boolean
 	/** Additional CSS classes */
@@ -114,10 +114,10 @@ const getCategoryColors = (category: string) => {
 			}
 		default:
 			return {
-				bg: "bg-gray-500/10",
-				border: "border-gray-500/30",
-				text: "text-gray-400",
-				icon: "text-gray-400",
+				bg: "bg-yellow-700/10",
+				border: "border-yellow-500/30",
+				text: "text-yellow-400",
+				icon: "text-yellow-400",
 			}
 	}
 }
@@ -160,24 +160,24 @@ export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
 	const activationState = getActivationState(promptBlock.name)
 	const isProcessing = activationState !== "idle"
 	const conflictInfo = getConflictInfo(promptBlock.name)
-	
+
 	// Check if this is a custom prompt for visual differentiation
 	const isCustomPrompt = isPromptBlockEditable(promptBlock)
-	
+
 	// Get custom prompt styling classes
 	const getCustomPromptStyles = () => {
 		if (!isCustomPrompt) return {}
-		
+
 		return {
 			// Subtle background gradient for custom prompts
-			background: isActive 
+			background: isActive
 				? "bg-gradient-to-r from-vscode-editor-background via-vscode-editor-background to-vscode-editor-background/50"
 				: "bg-gradient-to-r from-vscode-editor-background/80 via-vscode-editor-background to-vscode-editor-background/90",
 			// Enhanced hover effect for custom prompts
-			hover: "hover:from-vscode-list-hoverBackground/90 hover:via-vscode-list-hoverBackground hover:to-vscode-list-hoverBackground/80"
+			hover: "hover:from-vscode-list-hoverBackground/90 hover:via-vscode-list-hoverBackground hover:to-vscode-list-hoverBackground/80",
 		}
 	}
-	
+
 	const customStyles = getCustomPromptStyles()
 
 	// ============================
@@ -190,17 +190,15 @@ export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
 	 */
 	const handleDeleteClick = (e: React.MouseEvent) => {
 		e.stopPropagation() // Prevent card activation
-		
+
 		// Send message to VSCode extension to delete prompt file
 		// Backend will handle confirmation dialog (same as rules)
 		// Note: Don't call onDeleteStart since user might cancel the operation
 		vscode.postMessage({
 			type: "deletePromptFile",
 			promptName: promptBlock.name,
-			promptSource: promptBlock.source as "workspace" | "global" // Safe since delete is only available for custom prompts
+			promptSource: promptBlock.source as "workspace" | "global", // Safe since delete is only available for custom prompts
 		})
-		
-		console.log(`[PromptBlockCard] Delete requested for prompt: ${promptBlock.name}`)
 	}
 
 	/**
@@ -209,18 +207,16 @@ export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
 	 */
 	const handleEditClick = (e: React.MouseEvent) => {
 		e.stopPropagation() // Prevent card activation
-		
+
 		// Notify parent component that edit operation is starting
 		onEditStart?.()
-		
+
 		// Send message to VSCode extension to open prompt file for editing
 		vscode.postMessage({
 			type: "editPromptBlock",
 			promptName: promptBlock.name,
-			promptSource: promptBlock.source as "workspace" | "global" // Safe since edit is only available for custom prompts
+			promptSource: promptBlock.source as "workspace" | "global", // Safe since edit is only available for custom prompts
 		})
-		
-		console.log(`[PromptBlockCard] Edit requested for prompt: ${promptBlock.name}`)
 	}
 
 	/**
@@ -256,24 +252,12 @@ export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
 			)
 
 			if (result.success) {
-				console.log(`[PromptBlockCard] ${result.userMessage}`)
 				onSelect?.(promptBlock)
-
-				// Log detailed activation information
-				if (result.wasReplacement && result.categoryConflict) {
-					console.log(
-						`[PromptBlockCard] Category conflict resolved: replaced '${result.categoryConflict.existingBlock.block.name}' with '${promptBlock.name}' in category '${result.categoryConflict.category}'`,
-					)
-				}
-
-				// Success notification is now handled automatically by UnifiedPromptActivationHandler
-			} else {
-				console.error(`[PromptBlockCard] ${result.error}`)
-				// Error notification is now handled automatically by UnifiedPromptActivationHandler
+				// Success notification is handled automatically by UnifiedPromptActivationHandler
 			}
+			// Error notification is handled automatically by UnifiedPromptActivationHandler
 		} catch (error) {
-			console.error(`[PromptBlockCard] Unified activation handler failed:`, error)
-			// Critical error - this shouldn't happen but if it does, the handler shows notifications
+			// Critical error - handler shows notifications
 		}
 	}
 
@@ -299,16 +283,16 @@ export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
 			)}
 			onClick={handleActivate}
 			title={`${promptBlock.name} - ${promptBlock.description || "No description"}`}>
-
 			<div className="flex items-start gap-3">
 				{/* Category Icon */}
-				<div className={cn(
-					"flex-shrink-0 p-2 rounded", 
-					categoryColors.bg, 
-					categoryColors.border,
-					// Styling for custom prompts
-					isCustomPrompt && "ring-1 ring-white/10"
-				)}>
+				<div
+					className={cn(
+						"flex-shrink-0 p-2 rounded",
+						categoryColors.bg,
+						categoryColors.border,
+						// Styling for custom prompts
+						isCustomPrompt && "ring-1 ring-white/10",
+					)}>
 					<CategoryIcon className={cn("w-3 h-3", categoryColors.icon)} />
 				</div>
 
@@ -342,7 +326,7 @@ export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
 								)}
 							</div>
 						)}
-						
+
 						{/* Edit/Delete buttons for custom prompts */}
 						{isPromptBlockEditable(promptBlock) && (
 							<div className="flex items-center gap-1">
@@ -354,7 +338,7 @@ export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
 									aria-label={`Edit ${promptBlock.name} prompt`}>
 									<Edit className="w-3 h-3" />
 								</button>
-								
+
 								{/* Delete Button */}
 								<button
 									onClick={handleDeleteClick}
@@ -370,42 +354,42 @@ export const PromptBlockCard: React.FC<PromptBlockCardProps> = ({
 					{/* Category Badge and Source Information */}
 					<div className="flex items-center gap-2">
 						{/* Category Badge */}
-						<span className={cn(
-							"text-xs px-2 py-0.5 rounded-full font-medium capitalize",
-							categoryColors.bg,
-							categoryColors.text,
-							categoryColors.border,
-							"border"
-						)}>
+						<span
+							className={cn(
+								"text-xs px-2 py-0.5 rounded-full font-medium capitalize",
+								categoryColors.bg,
+								categoryColors.text,
+								categoryColors.border,
+								"border",
+							)}>
 							{promptBlock.category}
 						</span>
-						
+
 						{/* Processing state */}
 						{isProcessing && (
 							<span className="text-xs text-orange-400">
 								{activationState === "activating" ? "Activating..." : "Deactivating..."}
 							</span>
 						)}
-
 					</div>
 
-						{/* Conflict info */}
-						<div className="flex items-center gap-2 mt-4">
-							{conflictInfo && !isActive && (
-								<span
-									className="text-xs text-yellow-400 mb-2"
-									title={`Will replace ${conflictInfo.existingBlock.block.name} in ${conflictInfo.category} category`}>
-									Will replace "{conflictInfo.existingBlock.block.name}"
-								</span>
-							)}
+					{/* Conflict info */}
+					<div className="flex items-center gap-2 mt-4">
+						{conflictInfo && !isActive && (
+							<span
+								className="text-xs text-yellow-400 mb-2"
+								title={`Will replace ${conflictInfo.existingBlock.block.name} in ${conflictInfo.category} category`}>
+								Will replace "{conflictInfo.existingBlock.block.name}"
+							</span>
+						)}
 
-							{/* Active Indicator */}
-							{isActive && (
-								<div className="absolute top-20 right-3">
-									<CheckCircle2 className={cn("w-4 h-4", categoryColors.icon)} />
-								</div>
-							)}
-						</div>
+						{/* Active Indicator */}
+						{isActive && (
+							<div className="absolute top-20 right-3">
+								<CheckCircle2 className={cn("w-4 h-4", categoryColors.icon)} />
+							</div>
+						)}
+					</div>
 
 					{/* Variables Info */}
 					{!compact && promptBlock.variables && Object.keys(promptBlock.variables).length > 0 && (

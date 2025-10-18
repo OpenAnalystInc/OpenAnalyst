@@ -8,12 +8,12 @@ import { getWorkspacePath } from "../../utils/path"
 
 /**
  * Custom prompt file operations for the Create Prompt functionality
- * 
+ *
  * This module provides backend support for:
  * - Creating new custom prompt YAML files
  * - Deleting existing custom prompt files
  * - Opening prompt files for editing in VSCode
- * 
+ *
  * Custom prompts are stored in:
  * - Workspace: {workspace}/.oacode/prompts/
  * - Global: ~/.oacode/prompts/
@@ -46,28 +46,30 @@ function getPromptFilePath(promptName: string, isGlobal: boolean): string {
 /**
  * Generate YAML template content for new prompt files
  * @param promptName - Name for the prompt
+ * @param isGlobal - Whether this is a global or workspace prompt
  * @returns YAML content string
  */
-function generatePromptTemplate(promptName: string, category: string): string {
+function generatePromptTemplate(promptName: string, isGlobal: boolean): string {
 	// Remove .yaml extension if present for clean naming
 	const cleanName = promptName.replace(/\.yaml$/, "")
-	
+	const scopeTag = isGlobal ? "global" : "workspace"
+
 	return `name: "${cleanName}"
 description: "Add a brief description of what this prompt does"
 category: "custom"
-tags: ["custom", "prompt"]
+tags: ["custom", "${scopeTag}"]
 priority: 50
 enabled: true
 
 prompt: |
   Add your custom prompt instructions here.
-  
+
   You can use multiple lines and include:
   - Specific guidelines for the AI
   - Output format requirements
   - Context or domain-specific instructions
   - Examples of desired responses
-  
+
   This prompt will be applied when activated in the toolbar.
 `
 }
@@ -78,22 +80,14 @@ prompt: |
  * @param isGlobal - Whether to create in global or workspace scope
  * @param category - Category for the prompt
  */
-export async function createPromptFile(
-	filename: string,
-	isGlobal: boolean,
-	category: string,
-): Promise<void> {
+export async function createPromptFile(filename: string, isGlobal: boolean, category: string): Promise<void> {
 	// Input validation
 	if (!filename || typeof filename !== "string" || filename.trim().length === 0) {
 		throw new Error("Filename is required and must be a non-empty string")
 	}
-	
-	if (!category || typeof category !== "string") {
-		throw new Error("Category is required and must be a valid string")
-	}
-	
-	if (!["analysis", "visualization", "reporting", "methodology"].includes(category)) {
-		throw new Error(`Invalid category "${category}". Must be one of: analysis, visualization, reporting, methodology`)
+
+	if (!category || typeof category !== "string" || category.trim().length === 0) {
+		throw new Error("Category is required and must be a non-empty string")
 	}
 
 	const workspacePath = getWorkspacePath()
@@ -104,7 +98,7 @@ export async function createPromptFile(
 	// Sanitize filename and ensure .yaml extension
 	const sanitizedFilename = filename.trim().replace(/[^a-zA-Z0-9_-]/g, "-")
 	const finalFilename = sanitizedFilename.endsWith(".yaml") ? sanitizedFilename : `${sanitizedFilename}.yaml`
-	
+
 	try {
 		// Create directory if it doesn't exist
 		const promptsDir = getPromptDirectoryPath(isGlobal)
@@ -114,13 +108,17 @@ export async function createPromptFile(
 
 		// Check if file already exists
 		if (await fileExistsAtPath(filePath)) {
-			throw new Error(`Prompt file "${finalFilename}" already exists in ${isGlobal ? "global" : "workspace"} scope`)
+			throw new Error(
+				`Prompt file "${finalFilename}" already exists in ${isGlobal ? "global" : "workspace"} scope`,
+			)
 		}
 	} catch (error) {
 		if (error instanceof Error && error.message.includes("already exists")) {
 			throw error // Re-throw file exists error as-is
 		}
-		throw new Error(`Failed to create prompt directory: ${error instanceof Error ? error.message : "Unknown error"}`)
+		throw new Error(
+			`Failed to create prompt directory: ${error instanceof Error ? error.message : "Unknown error"}`,
+		)
 	}
 
 	try {
@@ -128,12 +126,12 @@ export async function createPromptFile(
 		const promptsDir = getPromptDirectoryPath(isGlobal)
 		const filePath = path.join(promptsDir, finalFilename)
 		const baseFileName = path.basename(finalFilename, ".yaml")
-		const content = generatePromptTemplate(baseFileName, category)
+		const content = generatePromptTemplate(baseFileName, isGlobal)
 
 		// Write file and open in editor
 		await fs.writeFile(filePath, content, "utf8")
 		await openFile(filePath)
-		
+
 		// Show success message
 		const scope = isGlobal ? "global" : "workspace"
 		vscode.window.showInformationMessage(`Created ${scope} prompt: ${finalFilename}`)
@@ -147,22 +145,19 @@ export async function createPromptFile(
  * @param promptName - Name of the prompt to delete
  * @param source - Source scope ("workspace" or "global")
  */
-export async function deletePromptFile(
-	promptName: string,
-	source: "workspace" | "global"
-): Promise<void> {
+export async function deletePromptFile(promptName: string, source: "workspace" | "global"): Promise<void> {
 	// Input validation
 	if (!promptName || typeof promptName !== "string" || promptName.trim().length === 0) {
 		throw new Error("Prompt name is required and must be a non-empty string")
 	}
-	
+
 	if (!source || (source !== "workspace" && source !== "global")) {
 		throw new Error("Source must be either 'workspace' or 'global'")
 	}
 
 	const isGlobal = source === "global"
 	const filePath = getPromptFilePath(promptName.trim(), isGlobal)
-	
+
 	// Check if file exists
 	if (!(await fileExistsAtPath(filePath))) {
 		throw new Error(`Prompt file "${promptName}" not found in ${source} scope`)
@@ -181,10 +176,8 @@ export async function deletePromptFile(
 			await fs.unlink(filePath)
 			const scope = isGlobal ? "global" : "workspace"
 			vscode.window.showInformationMessage(`Deleted ${scope} prompt: ${promptName}`)
-		} else {
-			// User cancelled deletion
-			console.log(`[deletePromptFile] User cancelled deletion of prompt: ${promptName}`)
 		}
+		// User cancelled deletion - no action needed
 	} catch (error) {
 		throw new Error(`Failed to delete prompt file: ${error instanceof Error ? error.message : "Unknown error"}`)
 	}
@@ -195,22 +188,19 @@ export async function deletePromptFile(
  * @param promptName - Name of the prompt to edit
  * @param source - Source scope ("workspace" or "global")
  */
-export async function editPromptBlock(
-	promptName: string,
-	source: "workspace" | "global"
-): Promise<void> {
+export async function editPromptBlock(promptName: string, source: "workspace" | "global"): Promise<void> {
 	// Input validation
 	if (!promptName || typeof promptName !== "string" || promptName.trim().length === 0) {
 		throw new Error("Prompt name is required and must be a non-empty string")
 	}
-	
+
 	if (!source || (source !== "workspace" && source !== "global")) {
 		throw new Error("Source must be either 'workspace' or 'global'")
 	}
 
 	const isGlobal = source === "global"
 	const filePath = getPromptFilePath(promptName.trim(), isGlobal)
-	
+
 	// Check if file exists
 	if (!(await fileExistsAtPath(filePath))) {
 		throw new Error(`Prompt file "${promptName}" not found in ${source} scope`)
@@ -219,8 +209,9 @@ export async function editPromptBlock(
 	try {
 		// Open file in VSCode editor
 		await openFile(filePath)
-		console.log(`[editPromptBlock] Opened prompt file for editing: ${promptName} (${source})`)
 	} catch (error) {
-		throw new Error(`Failed to open prompt file for editing: ${error instanceof Error ? error.message : "Unknown error"}`)
+		throw new Error(
+			`Failed to open prompt file for editing: ${error instanceof Error ? error.message : "Unknown error"}`,
+		)
 	}
 }

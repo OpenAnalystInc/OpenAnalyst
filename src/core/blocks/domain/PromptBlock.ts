@@ -1,7 +1,7 @@
 /**
  * Module: PromptBlock (domain/entity)
  * Purpose: Core domain entity representing a prompt block with validation and template resolution.
- * Responsibilities: 
+ * Responsibilities:
  *  - Encapsulate prompt block data and business rules
  *  - Validate prompt block structure and content
  *  - Provide template variable resolution
@@ -22,15 +22,15 @@ import { PromptCategory, isValidCategory } from "./PromptCategory"
 
 /**
  * Template variable definition for prompt blocks
- * 
+ *
  * Used to define dynamic parameters that can be substituted in prompt templates.
  * Supports validation, default values, and user guidance.
- * 
+ *
  * @example
  * ```yaml
  * variables:
  *   - name: "dataset_name"
- *     description: "Name of the dataset to analyze" 
+ *     description: "Name of the dataset to analyze"
  *     required: true
  *   - name: "analysis_depth"
  *     description: "Depth of analysis (basic|detailed|comprehensive)"
@@ -47,11 +47,11 @@ export interface PromptVariable {
 
 /**
  * Expected output specification for prompt blocks
- * 
+ *
  * Defines the expected format and structure of output generated
  * when the prompt block is used. Helps users understand what
  * kind of response to expect.
- * 
+ *
  * @example
  * ```yaml
  * expectedOutput:
@@ -71,10 +71,10 @@ export interface PromptOutput {
 
 /**
  * Domain validation error for prompt blocks
- * 
+ *
  * Thrown when prompt block data violates domain rules or constraints.
  * Includes field-specific information for precise error reporting.
- * 
+ *
  * @example
  * ```ts
  * throw new PromptBlockValidationError(
@@ -86,11 +86,14 @@ export interface PromptOutput {
 export class PromptBlockValidationError extends Error {
 	/**
 	 * Create a new validation error
-	 * 
+	 *
 	 * @param message - Human-readable error message
 	 * @param field - Optional field name that caused the validation error
 	 */
-	constructor(message: string, public readonly field?: string) {
+	constructor(
+		message: string,
+		public readonly field?: string,
+	) {
 		super(message)
 		this.name = "PromptBlockValidationError"
 	}
@@ -98,10 +101,10 @@ export class PromptBlockValidationError extends Error {
 
 /**
  * Raw prompt block data as loaded from YAML files
- * 
+ *
  * Represents unvalidated data structure before domain validation.
  * Used as input to PromptBlock.create() factory method.
- * 
+ *
  * @example
  * ```yaml
  * name: "eda-analysis"
@@ -130,7 +133,7 @@ export interface PromptBlockData {
 
 /**
  * Immutable prompt block domain model
- * 
+ *
  * Represents a reusable prompt instruction that can be added to the system prompt.
  * Follows Clean Architecture principles with pure domain logic and validation.
  */
@@ -164,19 +167,15 @@ export class PromptBlock {
 			throw new PromptBlockValidationError("Category is required", "category")
 		}
 
-		// Validate category
-		if (!isValidCategory(data.category)) {
-			throw new PromptBlockValidationError(
-				`Invalid category: ${data.category}. Must be one of: analysis, visualization, reporting, methodology`,
-				"category"
-			)
-		}
+		// Category validation: Allow any non-empty string for flexibility
+		// Users can use predefined categories (analysis, visualization, reporting, methodology, custom)
+		// or define their own custom categories
 
 		// Validate name format
 		if (!data.name.match(/^[a-zA-Z0-9_-]+$/)) {
 			throw new PromptBlockValidationError(
 				"Name must contain only letters, numbers, underscores, and hyphens",
-				"name"
+				"name",
 			)
 		}
 
@@ -192,10 +191,7 @@ export class PromptBlock {
 		// Validate priority range
 		const priority = data.priority ?? 50
 		if (priority < 0 || priority > 100) {
-			throw new PromptBlockValidationError(
-				"Priority must be between 0 and 100",
-				"priority"
-			)
+			throw new PromptBlockValidationError("Priority must be between 0 and 100", "priority")
 		}
 
 		return new PromptBlock(
@@ -207,7 +203,7 @@ export class PromptBlock {
 			data.variables ? [...data.variables] : [],
 			data.outputs ? [...data.outputs] : [],
 			priority,
-			data.enabled ?? true
+			data.enabled ?? true,
 		)
 	}
 
@@ -229,7 +225,7 @@ export class PromptBlock {
 	 * Get required variables
 	 */
 	getRequiredVariables(): PromptVariable[] {
-		return this.variables.filter(v => v.required)
+		return this.variables.filter((v) => v.required)
 	}
 
 	/**
@@ -241,7 +237,7 @@ export class PromptBlock {
 		}
 
 		let resolvedPrompt = this.prompt
-		
+
 		for (const variable of this.variables) {
 			const value = variableValues?.[variable.name] || variable.defaultValue || ""
 			const placeholder = `{{${variable.name}}}`
@@ -295,7 +291,7 @@ export class PromptBlock {
 			this.variables,
 			this.outputs,
 			this.priority,
-			enabled
+			enabled,
 		)
 	}
 }

@@ -333,6 +333,47 @@ export class FileSystemPromptBlockRepository implements IPromptBlockRepository {
 			}
 		} catch (error) {
 			const errorMessage = error instanceof Error ? error.message : String(error)
+			const fileName = path.basename(filePath)
+
+			// Show VSCode warning for validation errors to help users fix issues
+			if (errorMessage.includes("Category is required") || errorMessage.includes("category")) {
+				vscode.window
+					.showWarningMessage(
+						`Prompt "${fileName}": Category field is required. Please add a valid category.`,
+						"Open File",
+					)
+					.then((action) => {
+						if (action === "Open File") {
+							vscode.workspace.openTextDocument(filePath).then((doc) => {
+								vscode.window.showTextDocument(doc)
+							})
+						}
+					})
+			} else if (errorMessage.includes("Name is required") || errorMessage.includes("name")) {
+				vscode.window
+					.showWarningMessage(
+						`Prompt "${fileName}": Name field is required. Please add a valid name.`,
+						"Open File",
+					)
+					.then((action) => {
+						if (action === "Open File") {
+							vscode.workspace.openTextDocument(filePath).then((doc) => {
+								vscode.window.showTextDocument(doc)
+							})
+						}
+					})
+			} else {
+				// Generic validation error
+				vscode.window
+					.showWarningMessage(`Prompt "${fileName}": ${errorMessage}`, "Open File")
+					.then((action) => {
+						if (action === "Open File") {
+							vscode.workspace.openTextDocument(filePath).then((doc) => {
+								vscode.window.showTextDocument(doc)
+							})
+						}
+					})
+			}
 
 			return {
 				success: false,

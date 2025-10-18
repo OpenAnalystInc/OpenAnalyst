@@ -47,13 +47,6 @@ interface PromptsPopoverProps {
 }
 
 /**
- * Available YAML prompt categories from domain model
- * These match the categories in PromptCategory.ts: analysis, visualization, reporting, methodology
- */
-const YAML_PROMPT_CATEGORIES = ["analysis", "visualization", "reporting", "methodology"] as const
-type YamlPromptCategory = (typeof YAML_PROMPT_CATEGORIES)[number]
-
-/**
  * Main PromptsPopover component
  */
 export const PromptsPopover: React.FC<PromptsPopoverProps> = ({ onPromptSelect, className }) => {
@@ -65,10 +58,10 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({ onPromptSelect, 
 	const [searchValue, setSearchValue] = useState("")
 	const [activeTab, setActiveTab] = useState<"default" | "custom">("default")
 	const [isLoading, setIsLoading] = useState(false)
-	
+
 	// State for Create Prompt popover functionality
 	const [showCreatePromptPopover, setShowCreatePromptPopover] = useState(false)
-	
+
 	// Focus retention for VSCode operations (similar to rules implementation)
 	const [preventClose, setPreventClose] = useState(false)
 
@@ -125,11 +118,16 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({ onPromptSelect, 
 
 	/**
 	 * Group blocks by category for organized display
+	 * Dynamically groups by actual categories in blocks, not just predefined ones
 	 */
 	const blocksByCategory = useMemo(() => {
-		const grouped: Record<YamlPromptCategory, PromptBlockInfo[]> = {} as any
+		const grouped: Record<string, PromptBlockInfo[]> = {}
 
-		YAML_PROMPT_CATEGORIES.forEach((category) => {
+		// Get all unique categories from filtered blocks
+		const uniqueCategories = Array.from(new Set(filteredBlocks.map((block) => block.category)))
+
+		// Group blocks by their actual category
+		uniqueCategories.forEach((category) => {
 			grouped[category] = filteredBlocks.filter((block) => block.category === category)
 		})
 
@@ -197,7 +195,7 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({ onPromptSelect, 
 	 */
 	const handleEditStart = () => {
 		setPreventClose(true) // Prevent popover from closing during edit
-		console.log('[PromptsPopover] Edit operation started')
+		console.log("[PromptsPopover] Edit operation started")
 		// Allow popover to close after VSCode operation completes
 		setTimeout(() => setPreventClose(false), 2000)
 	}
@@ -208,7 +206,7 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({ onPromptSelect, 
 	 */
 	const handleDeleteStart = () => {
 		setPreventClose(true) // Prevent popover from closing during delete
-		console.log('[PromptsPopover] Delete operation started')
+		console.log("[PromptsPopover] Delete operation started")
 		// Allow popover to close after operation completes
 		setTimeout(() => setPreventClose(false), 2000)
 	}
@@ -250,8 +248,7 @@ export const PromptsPopover: React.FC<PromptsPopoverProps> = ({ onPromptSelect, 
 
 		return (
 			<div className="space-y-4">
-				{YAML_PROMPT_CATEGORIES.map((category) => {
-					const categoryBlocks = blocksByCategory[category]
+				{Object.entries(blocksByCategory).map(([category, categoryBlocks]) => {
 					if (categoryBlocks.length === 0) return null
 
 					return (

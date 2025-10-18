@@ -1,12 +1,12 @@
 import * as yaml from "yaml"
 import { PromptBlockData, PromptBlockValidationError } from "../../core/blocks/domain/PromptBlock"
 import { isValidCategory } from "../../core/blocks/domain/PromptCategory"
-import { 
-	IPromptBlockValidator, 
-	ValidationResult, 
-	ValidationError, 
+import {
+	IPromptBlockValidator,
+	ValidationResult,
+	ValidationError,
 	ValidationWarning,
-	ValidationOptions 
+	ValidationOptions,
 } from "../../core/blocks/ports/IPromptBlockValidator"
 
 /**
@@ -47,7 +47,7 @@ function cleanYamlContent(content: string): string {
 
 /**
  * YAML parser and validator for prompt blocks
- * 
+ *
  * Handles parsing, cleaning, and validation of YAML prompt block files.
  * Implements the IPromptBlockValidator interface.
  */
@@ -61,18 +61,14 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 			const parsed = yaml.parse(cleanedContent)
 
 			if (!parsed || typeof parsed !== "object") {
-				throw new PromptBlockValidationError(
-					"YAML file must contain a valid object"
-				)
+				throw new PromptBlockValidationError("YAML file must contain a valid object")
 			}
 
 			// Validate schema first
 			const schemaValidation = this.validateSchema(parsed)
 			if (!schemaValidation.isValid) {
-				const errorMessages = schemaValidation.errors.map(e => e.message).join("; ")
-				throw new PromptBlockValidationError(
-					`Schema validation failed: ${errorMessages}`
-				)
+				const errorMessages = schemaValidation.errors.map((e) => e.message).join("; ")
+				throw new PromptBlockValidationError(`Schema validation failed: ${errorMessages}`)
 			}
 
 			// Type assertion after validation
@@ -81,10 +77,8 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 			// Additional validation
 			const dataValidation = this.validate(data)
 			if (!dataValidation.isValid) {
-				const errorMessages = dataValidation.errors.map(e => e.message).join("; ")
-				throw new PromptBlockValidationError(
-					`Data validation failed: ${errorMessages}`
-				)
+				const errorMessages = dataValidation.errors.map((e) => e.message).join("; ")
+				throw new PromptBlockValidationError(`Data validation failed: ${errorMessages}`)
 			}
 
 			return data
@@ -92,10 +86,10 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 			if (error instanceof PromptBlockValidationError) {
 				throw error
 			}
-			
+
 			const errorMessage = error instanceof Error ? error.message : String(error)
 			throw new PromptBlockValidationError(
-				`YAML parsing failed${filePath ? ` in ${filePath}` : ""}: ${errorMessage}`
+				`YAML parsing failed${filePath ? ` in ${filePath}` : ""}: ${errorMessage}`,
 			)
 		}
 	}
@@ -113,7 +107,7 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 			errors.push({
 				field: "name",
 				message: "Name is required",
-				code: "REQUIRED_FIELD_MISSING"
+				code: "REQUIRED_FIELD_MISSING",
 			})
 		}
 
@@ -121,7 +115,7 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 			errors.push({
 				field: "prompt",
 				message: "Prompt is required",
-				code: "REQUIRED_FIELD_MISSING"
+				code: "REQUIRED_FIELD_MISSING",
 			})
 		}
 
@@ -129,7 +123,7 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 			errors.push({
 				field: "category",
 				message: "Category is required",
-				code: "REQUIRED_FIELD_MISSING"
+				code: "REQUIRED_FIELD_MISSING",
 			})
 		}
 
@@ -138,18 +132,12 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 			errors.push({
 				field: "name",
 				message: "Name must contain only letters, numbers, underscores, and hyphens",
-				code: "INVALID_NAME_FORMAT"
+				code: "INVALID_NAME_FORMAT",
 			})
 		}
 
-		// Category validation
-		if (data.category && !isValidCategory(data.category)) {
-			errors.push({
-				field: "category",
-				message: `Invalid category: ${data.category}. Must be one of: analysis, visualization, reporting, methodology`,
-				code: "INVALID_CATEGORY"
-			})
-		}
+		// Category validation: Allow any non-empty string for flexibility
+		// Users can use predefined or custom categories
 
 		// Priority validation
 		if (data.priority !== undefined) {
@@ -157,7 +145,7 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 				errors.push({
 					field: "priority",
 					message: "Priority must be a number between 0 and 100",
-					code: "INVALID_PRIORITY_RANGE"
+					code: "INVALID_PRIORITY_RANGE",
 				})
 			}
 		}
@@ -167,7 +155,7 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 			warnings.push({
 				field: "description",
 				message: "Description is recommended for better documentation",
-				suggestion: "Add a brief description of what this prompt block does"
+				suggestion: "Add a brief description of what this prompt block does",
 			})
 		}
 
@@ -175,7 +163,7 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 			warnings.push({
 				field: "tags",
 				message: "Tags help with organization and searchability",
-				suggestion: "Add relevant tags like ['analysis', 'visualization', 'reporting']"
+				suggestion: "Add relevant tags like ['analysis', 'visualization', 'reporting']",
 			})
 		}
 
@@ -185,13 +173,13 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 				errors.push({
 					field: "prompt",
 					message: `Prompt exceeds maximum length of ${opts.maxPromptLength} characters`,
-					code: "PROMPT_TOO_LONG"
+					code: "PROMPT_TOO_LONG",
 				})
 			} else {
 				warnings.push({
 					field: "prompt",
 					message: `Prompt is quite long (${data.prompt.length} characters)`,
-					suggestion: "Consider breaking into smaller, more focused prompts"
+					suggestion: "Consider breaking into smaller, more focused prompts",
 				})
 			}
 		}
@@ -206,7 +194,7 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 		return {
 			isValid: errors.length === 0,
 			errors,
-			warnings
+			warnings,
 		}
 	}
 
@@ -221,7 +209,7 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 			errors.push({
 				field: "root",
 				message: "YAML must contain an object",
-				code: "INVALID_ROOT_TYPE"
+				code: "INVALID_ROOT_TYPE",
 			})
 			return { isValid: false, errors, warnings }
 		}
@@ -235,7 +223,7 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 				errors.push({
 					field,
 					message: `${field} must be a string`,
-					code: "INVALID_FIELD_TYPE"
+					code: "INVALID_FIELD_TYPE",
 				})
 			}
 		}
@@ -247,7 +235,7 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 				errors.push({
 					field,
 					message: `${field} must be a string if provided`,
-					code: "INVALID_FIELD_TYPE"
+					code: "INVALID_FIELD_TYPE",
 				})
 			}
 		}
@@ -258,7 +246,7 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 				errors.push({
 					field: "tags",
 					message: "tags must be an array if provided",
-					code: "INVALID_FIELD_TYPE"
+					code: "INVALID_FIELD_TYPE",
 				})
 			} else {
 				for (const [index, tag] of data.tags.entries()) {
@@ -266,7 +254,7 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 						errors.push({
 							field: `tags[${index}]`,
 							message: "All tags must be strings",
-							code: "INVALID_ARRAY_ITEM_TYPE"
+							code: "INVALID_ARRAY_ITEM_TYPE",
 						})
 					}
 				}
@@ -280,7 +268,7 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 				errors.push({
 					field,
 					message: `${field} must be a boolean if provided`,
-					code: "INVALID_FIELD_TYPE"
+					code: "INVALID_FIELD_TYPE",
 				})
 			}
 		}
@@ -292,7 +280,7 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 				errors.push({
 					field,
 					message: `${field} must be a number if provided`,
-					code: "INVALID_FIELD_TYPE"
+					code: "INVALID_FIELD_TYPE",
 				})
 			}
 		}
@@ -300,7 +288,7 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 		return {
 			isValid: errors.length === 0,
 			errors,
-			warnings
+			warnings,
 		}
 	}
 
@@ -309,52 +297,48 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 	 */
 	validateName(name: string): ValidationResult {
 		const errors: ValidationError[] = []
-		
+
 		if (!name?.trim()) {
 			errors.push({
 				field: "name",
 				message: "Name is required",
-				code: "REQUIRED_FIELD_MISSING"
+				code: "REQUIRED_FIELD_MISSING",
 			})
 		} else if (!name.match(/^[a-zA-Z0-9_-]+$/)) {
 			errors.push({
 				field: "name",
 				message: "Name must contain only letters, numbers, underscores, and hyphens",
-				code: "INVALID_NAME_FORMAT"
+				code: "INVALID_NAME_FORMAT",
 			})
 		}
 
 		return {
 			isValid: errors.length === 0,
 			errors,
-			warnings: []
+			warnings: [],
 		}
 	}
 
 	/**
 	 * Validate category value
+	 * Allows any non-empty string for flexibility
 	 */
 	validateCategory(category: string): ValidationResult {
 		const errors: ValidationError[] = []
-		
+
 		if (!category?.trim()) {
 			errors.push({
 				field: "category",
 				message: "Category is required",
-				code: "REQUIRED_FIELD_MISSING"
-			})
-		} else if (!isValidCategory(category)) {
-			errors.push({
-				field: "category",
-				message: `Invalid category: ${category}. Must be one of: analysis, visualization, reporting, methodology`,
-				code: "INVALID_CATEGORY"
+				code: "REQUIRED_FIELD_MISSING",
 			})
 		}
+		// Allow any non-empty category string - no enum restriction
 
 		return {
 			isValid: errors.length === 0,
 			errors,
-			warnings: []
+			warnings: [],
 		}
 	}
 
@@ -365,12 +349,12 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 		const opts = { ...this.getDefaultOptions(), ...options }
 		const errors: ValidationError[] = []
 		const warnings: ValidationWarning[] = []
-		
+
 		if (!prompt?.trim()) {
 			errors.push({
 				field: "prompt",
 				message: "Prompt is required",
-				code: "REQUIRED_FIELD_MISSING"
+				code: "REQUIRED_FIELD_MISSING",
 			})
 		} else {
 			// Check length
@@ -379,13 +363,13 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 					errors.push({
 						field: "prompt",
 						message: `Prompt exceeds maximum length of ${opts.maxPromptLength} characters`,
-						code: "PROMPT_TOO_LONG"
+						code: "PROMPT_TOO_LONG",
 					})
 				} else {
 					warnings.push({
 						field: "prompt",
 						message: `Prompt is quite long (${prompt.length} characters)`,
-						suggestion: "Consider breaking into smaller, more focused prompts"
+						suggestion: "Consider breaking into smaller, more focused prompts",
 					})
 				}
 			}
@@ -394,7 +378,7 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 		return {
 			isValid: errors.length === 0,
 			errors,
-			warnings
+			warnings,
 		}
 	}
 
@@ -409,7 +393,7 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 			errors.push({
 				field: "variables",
 				message: "variables must be an array if provided",
-				code: "INVALID_FIELD_TYPE"
+				code: "INVALID_FIELD_TYPE",
 			})
 			return { isValid: false, errors, warnings }
 		}
@@ -419,19 +403,19 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 				errors.push({
 					field: `variables[${index}]`,
 					message: "Each variable must be an object",
-					code: "INVALID_ARRAY_ITEM_TYPE"
+					code: "INVALID_ARRAY_ITEM_TYPE",
 				})
 				continue
 			}
 
 			const varObj = variable as Record<string, unknown>
-			
+
 			// Check required fields
 			if (!varObj.name || typeof varObj.name !== "string") {
 				errors.push({
 					field: `variables[${index}].name`,
 					message: "Variable name is required and must be a string",
-					code: "INVALID_VARIABLE_NAME"
+					code: "INVALID_VARIABLE_NAME",
 				})
 			}
 
@@ -440,7 +424,7 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 				errors.push({
 					field: `variables[${index}].description`,
 					message: "Variable description must be a string if provided",
-					code: "INVALID_FIELD_TYPE"
+					code: "INVALID_FIELD_TYPE",
 				})
 			}
 
@@ -448,7 +432,7 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 				errors.push({
 					field: `variables[${index}].required`,
 					message: "Variable required field must be a boolean if provided",
-					code: "INVALID_FIELD_TYPE"
+					code: "INVALID_FIELD_TYPE",
 				})
 			}
 
@@ -456,7 +440,7 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 				errors.push({
 					field: `variables[${index}].defaultValue`,
 					message: "Variable defaultValue must be a string if provided",
-					code: "INVALID_FIELD_TYPE"
+					code: "INVALID_FIELD_TYPE",
 				})
 			}
 		}
@@ -464,7 +448,7 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 		return {
 			isValid: errors.length === 0,
 			errors,
-			warnings
+			warnings,
 		}
 	}
 
@@ -476,7 +460,7 @@ export class YamlPromptBlockParser implements IPromptBlockValidator {
 			strict: false,
 			requireDescription: false,
 			requireTags: false,
-			maxPromptLength: 10000
+			maxPromptLength: 10000,
 		}
 	}
 }
