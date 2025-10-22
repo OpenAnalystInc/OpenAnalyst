@@ -361,6 +361,115 @@ export class SqlExecutor {
 			return `SQL extension unavailable: ${error.message}`
 		}
 	}
+
+	/**
+	 * Create a new SQL worksheet
+	 * @param name - Optional worksheet name
+	 * @param initialSql - Optional initial SQL content
+	 * @returns Worksheet object
+	 */
+	async createWorksheet(name?: string, initialSql?: string): Promise<any> {
+		if (!this.initialized) {
+			await this.initialize()
+		}
+
+		try {
+			return this.sqlExtension.createWorksheet(name, initialSql)
+		} catch (error: any) {
+			throw new Error(`Failed to create worksheet: ${error.message}`)
+		}
+	}
+
+	/**
+	 * List all SQL worksheets
+	 * @returns Array of worksheet objects
+	 */
+	async listWorksheets(): Promise<any[]> {
+		if (!this.initialized) {
+			await this.initialize()
+		}
+
+		try {
+			return this.sqlExtension.listWorksheets()
+		} catch (error: any) {
+			console.error("Failed to list worksheets:", error)
+			return []
+		}
+	}
+
+	/**
+	 * Get worksheet by ID with content
+	 * @param worksheetId - Worksheet ID
+	 * @returns Worksheet object with content
+	 */
+	async getWorksheet(worksheetId: string): Promise<any> {
+		if (!this.initialized) {
+			await this.initialize()
+		}
+
+		try {
+			return this.sqlExtension.getWorksheet(worksheetId)
+		} catch (error: any) {
+			throw new Error(`Failed to get worksheet: ${error.message}`)
+		}
+	}
+
+	/**
+	 * Write content to a worksheet
+	 * @param worksheetId - Worksheet ID
+	 * @param content - SQL content
+	 * @returns Updated worksheet object
+	 */
+	async writeWorksheet(worksheetId: string, content: string): Promise<any> {
+		if (!this.initialized) {
+			await this.initialize()
+		}
+
+		try {
+			return this.sqlExtension.writeWorksheet(worksheetId, content)
+		} catch (error: any) {
+			throw new Error(`Failed to write worksheet: ${error.message}`)
+		}
+	}
+
+	/**
+	 * Delete a worksheet
+	 * @param worksheetId - Worksheet ID
+	 */
+	async deleteWorksheet(worksheetId: string): Promise<void> {
+		if (!this.initialized) {
+			await this.initialize()
+		}
+
+		try {
+			await this.sqlExtension.deleteWorksheet(worksheetId)
+		} catch (error: any) {
+			throw new Error(`Failed to delete worksheet: ${error.message}`)
+		}
+	}
+
+	/**
+	 * Execute SQL from a worksheet
+	 * @param worksheetId - Worksheet ID
+	 * @param connectionId - Optional connection ID
+	 * @returns Execution result with rows
+	 */
+	async executeWorksheet(worksheetId: string, connectionId?: string): Promise<SqlResult & { worksheetName?: string }> {
+		if (!this.initialized) {
+			await this.initialize()
+		}
+
+		try {
+			return await this.sqlExtension.executeWorksheet(worksheetId, connectionId)
+		} catch (error: any) {
+			return {
+				success: false,
+				rows: [],
+				rowCount: 0,
+				error: error.message,
+			}
+		}
+	}
 }
 
 /**

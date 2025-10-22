@@ -83,6 +83,10 @@ export const toolParamNames = [
 	"dataset_id",
 	"table_id",
 	"limit_rows",
+	// Worksheet parameters
+	"worksheet_id",
+	"initial_sql",
+	"sql_content",
 ] as const
 
 export type ToolParamName = (typeof toolParamNames)[number]
@@ -236,6 +240,12 @@ export const TOOL_DISPLAY_NAMES: Record<ToolName, string> = {
 	list_datasets: "list datasets",
 	list_tables: "list tables",
 	get_table_schema: "get table schema",
+	// SQL Worksheet tools
+	create_sql_worksheet: "create SQL worksheet",
+	list_sql_worksheets: "list SQL worksheets",
+	read_sql_worksheet: "read SQL worksheet",
+	write_sql_worksheet: "write SQL worksheet",
+	execute_sql_worksheet: "execute SQL worksheet",
 } as const
 
 // Define available tool groups.
@@ -274,7 +284,18 @@ export const TOOL_GROUPS: Record<ToolGroup, ToolGroupConfig> = {
 		alwaysAvailable: true,
 	},
 	bigquery: {
-		tools: ["list_bigquery_connections", "list_datasets", "list_tables", "get_table_schema", "execute_sql"],
+		tools: [
+			"list_bigquery_connections",
+			"list_datasets",
+			"list_tables",
+			"get_table_schema",
+			"execute_sql",
+			"create_sql_worksheet",
+			"list_sql_worksheets",
+			"read_sql_worksheet",
+			"write_sql_worksheet",
+			"execute_sql_worksheet",
+		],
 	},
 }
 

@@ -25,6 +25,12 @@ import { listBigqueryConnectionsTool } from "../tools/listBigqueryConnectionsToo
 import { listDatasetsTool } from "../tools/listDatasetsTool"
 import { listTablesTool } from "../tools/listTablesTool"
 import { getTableSchemaTool } from "../tools/getTableSchemaTool"
+// SQL Worksheet tools
+import { createSqlWorksheetTool } from "../tools/createSqlWorksheetTool"
+import { listSqlWorksheetsTool } from "../tools/listSqlWorksheetsTool"
+import { readSqlWorksheetTool } from "../tools/readSqlWorksheetTool"
+import { writeSqlWorksheetTool } from "../tools/writeSqlWorksheetTool"
+import { executeSqlWorksheetTool } from "../tools/executeSqlWorksheetTool"
 import { useMcpToolTool } from "../tools/useMcpToolTool"
 import { accessMcpResourceTool } from "../tools/accessMcpResourceTool"
 import { askFollowupQuestionTool } from "../tools/askFollowupQuestionTool"
@@ -185,6 +191,16 @@ export async function presentAssistantMessage(cline: Task, recursionDepth: numbe
 						return `[${block.name} for dataset '${block.params.dataset_id}']`
 					case "get_table_schema":
 						return `[${block.name} for table '${block.params.table_id}']`
+					case "create_sql_worksheet":
+						return `[${block.name}${block.params.name ? ` name '${block.params.name}'` : ""}]`
+					case "list_sql_worksheets":
+						return `[${block.name}]`
+					case "read_sql_worksheet":
+						return `[${block.name} for '${block.params.worksheet_id}']`
+					case "write_sql_worksheet":
+						return `[${block.name} for '${block.params.worksheet_id}']`
+					case "execute_sql_worksheet":
+						return `[${block.name} for '${block.params.worksheet_id}']`
 					case "read_file":
 						return getReadFileToolDescription(block.name, block.params)
 					case "fetch_instructions":
@@ -606,6 +622,21 @@ export async function presentAssistantMessage(cline: Task, recursionDepth: numbe
 					break
 				case "get_table_schema":
 					await getTableSchemaTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+					break
+				case "create_sql_worksheet":
+					await createSqlWorksheetTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+					break
+				case "list_sql_worksheets":
+					await listSqlWorksheetsTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+					break
+				case "read_sql_worksheet":
+					await readSqlWorksheetTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+					break
+				case "write_sql_worksheet":
+					await writeSqlWorksheetTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+					break
+				case "execute_sql_worksheet":
+					await executeSqlWorksheetTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
 					break
 				case "use_mcp_tool":
 					await useMcpToolTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)

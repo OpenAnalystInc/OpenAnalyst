@@ -31,6 +31,12 @@ import { getListBigqueryConnectionsDescription } from "./list-bigquery-connectio
 import { getListDatasetsDescription } from "./list-datasets"
 import { getListTablesDescription } from "./list-tables"
 import { getGetTableSchemaDescription } from "./get-table-schema"
+// SQL Worksheet tools
+import { getCreateSqlWorksheetDescription } from "./create-sql-worksheet"
+import { getListSqlWorksheetsDescription } from "./list-sql-worksheets"
+import { getReadSqlWorksheetDescription } from "./read-sql-worksheet"
+import { getWriteSqlWorksheetDescription } from "./write-sql-worksheet"
+import { getExecuteSqlWorksheetDescription } from "./execute-sql-worksheet"
 import { CodeIndexManager } from "../../../services/code-index/manager"
 
 // Map of tool names to their description functions
@@ -64,6 +70,12 @@ const toolDescriptionMap: Record<string, (args: ToolArgs) => string | undefined>
 	list_datasets: (args) => getListDatasetsDescription(args),
 	list_tables: (args) => getListTablesDescription(args),
 	get_table_schema: (args) => getGetTableSchemaDescription(args),
+	// SQL Worksheet tools
+	create_sql_worksheet: (args) => getCreateSqlWorksheetDescription(args),
+	list_sql_worksheets: (args) => getListSqlWorksheetsDescription(args),
+	read_sql_worksheet: (args) => getReadSqlWorksheetDescription(args),
+	write_sql_worksheet: (args) => getWriteSqlWorksheetDescription(args),
+	execute_sql_worksheet: (args) => getExecuteSqlWorksheetDescription(args),
 }
 
 export function getToolDescriptionsForMode(
@@ -182,4 +194,10 @@ export {
 	getListDatasetsDescription,
 	getListTablesDescription,
 	getGetTableSchemaDescription,
+	// SQL Worksheet tools
+	getCreateSqlWorksheetDescription,
+	getListSqlWorksheetsDescription,
+	getReadSqlWorksheetDescription,
+	getWriteSqlWorksheetDescription,
+	getExecuteSqlWorksheetDescription,
 }

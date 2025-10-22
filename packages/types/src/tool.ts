@@ -48,6 +48,12 @@ export const toolNames = [
 	"list_datasets",
 	"list_tables",
 	"get_table_schema",
+	// SQL Worksheet tools
+	"create_sql_worksheet",
+	"list_sql_worksheets",
+	"read_sql_worksheet",
+	"write_sql_worksheet",
+	"execute_sql_worksheet",
 ] as const
 
 export const toolNamesSchema = z.enum(toolNames)
