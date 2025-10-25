@@ -28,6 +28,9 @@ import { McpServerManager } from "./services/mcp/McpServerManager"
 import { CodeIndexManager } from "./services/code-index/manager"
 import { registerCommitMessageProvider } from "./services/commit-message"
 import { MdmService } from "./services/mdm/MdmService"
+import { ChatsMirrorService } from "./services/mirror/ChatsMirrorService"
+import { ChatsMirrorDetection } from "./services/mirror/ChatsMirrorDetection"
+import { ChatsMirrorMigration } from "./services/mirror/ChatsMirrorMigration"
 import { migrateSettings } from "./utils/migrateSettings"
 import { checkAndRunAutoLaunchingTask as checkAndRunAutoLaunchingTask } from "./utils/autoLaunchingTask"
 import { autoImportSettings } from "./utils/autoImportSettings"
@@ -55,6 +58,173 @@ import { TerminalWelcomeService } from "./services/terminal-welcome/TerminalWelc
 
 let outputChannel: vscode.OutputChannel
 let extensionContext: vscode.ExtensionContext
+
+/**
+ * Perform automatic migration when triggers are detected
+ * Executes the migration process and updates the migration flag upon completion
+ * Handles errors gracefully to prevent blocking extension startup
+ */
+async function performAutomaticMigration(context: vscode.ExtensionContext, outputChannel: vscode.OutputChannel, chatsMirrorService: ChatsMirrorService, detectionService: ChatsMirrorDetection): Promise<void> {
+	try {
+		outputChannel.appendLine("[ChatsMirrorMigration] Starting automatic migration...")
+		
+		// Initialize migration service
+		const migrationService = new ChatsMirrorMigration(context, outputChannel, chatsMirrorService)
+		
+		// Start migration with auto-recovery support
+		const migrationResult = await migrationService.startMigration(false) // Don't force restart, allow recovery
+		
+		// Log migration results and show user notifications
+		if (migrationResult.success) {
+			const successMessage = `Migration completed successfully - ${migrationResult.successCount} chats migrated`
+			outputChannel.appendLine(`[ChatsMirrorMigration] ${successMessage}, ${migrationResult.skipCount} skipped`)
+			
+			// Show success notification to user for large migrations
+			if (migrationResult.successCount > 50) {
+				vscode.window.showInformationMessage(
+					`✅ Chat Mirror Migration Complete: ${migrationResult.successCount} chats successfully migrated to mirror files.`
+				)
+			}
+			
+			// Mark migration as completed in detection service
+			await detectionService.saveMigrationFlag(true, false)
+			outputChannel.appendLine("[ChatsMirrorMigration] Migration flag updated - automatic detection will now pass")
+		} else {
+			const errorMessage = `Migration completed with errors - ${migrationResult.successCount} succeeded, ${migrationResult.failureCount} failed`
+			outputChannel.appendLine(`[ChatsMirrorMigration] ${errorMessage}`)
+			outputChannel.appendLine(`[ChatsMirrorMigration] Error: ${migrationResult.error}`)
+			
+			// Show warning notification to user about partial migration
+			if (migrationResult.successCount > 0) {
+				vscode.window.showWarningMessage(
+					`⚠️ Chat Mirror Migration Partial: ${migrationResult.successCount} succeeded, ${migrationResult.failureCount} failed. Check output channel for details.`
+				)
+			} else {
+				vscode.window.showErrorMessage(
+					`❌ Chat Mirror Migration Failed: ${migrationResult.error}. Check output channel for details.`
+				)
+			}
+			
+			// Don't mark as completed if there were failures - allows retry on next startup
+			outputChannel.appendLine("[ChatsMirrorMigration] Migration flag not updated due to errors - will retry on next startup")
+		}
+		
+		// Clean up migration service
+		migrationService.dispose()
+		
+	} catch (error) {
+		const errorMessage = error instanceof Error ? error.message : String(error)
+		outputChannel.appendLine(`[ChatsMirrorMigration] Automatic migration failed: ${errorMessage}`)
+		
+		// Log additional error details for debugging
+		if (error instanceof Error && error.stack) {
+			outputChannel.appendLine(`[ChatsMirrorMigration] Error stack: ${error.stack}`)
+		}
+		
+		// Don't throw - migration failures should not block extension startup
+		outputChannel.appendLine("[ChatsMirrorMigration] Migration failure will not block extension startup - manual migration may be required")
+	}
+}
+
+/**
+ * Perform smart migration detection to determine if migration is needed
+ * Checks all triggers and logs detection results for debugging
+ * Integrates with migration detection service for comprehensive analysis
+ */
+async function performMigrationDetection(context: vscode.ExtensionContext, outputChannel: vscode.OutputChannel, chatsMirrorService: ChatsMirrorService): Promise<void> {
+	try {
+		outputChannel.appendLine("[ChatsMirrorDetection] Starting smart migration detection...")
+		
+		// Initialize detection service
+		const detectionService = new ChatsMirrorDetection(context, outputChannel, chatsMirrorService)
+		
+		// Perform comprehensive detection analysis
+		const detectionResult = await detectionService.detectMigrationNeed()
+		
+		// Log summary of detection results
+		outputChannel.appendLine(`[ChatsMirrorDetection] Detection completed - migration needed: ${detectionResult.shouldMigrate}`)
+		
+		if (detectionResult.shouldMigrate) {
+			outputChannel.appendLine(`[ChatsMirrorDetection] Migration trigger: ${detectionResult.trigger}`)
+			outputChannel.appendLine(`[ChatsMirrorDetection] All triggers: ${detectionResult.triggers.join(', ')}`)
+			
+			// Automatically trigger migration when detection determines it's needed
+			outputChannel.appendLine("[ChatsMirrorDetection] Triggers detected - starting automatic migration...")
+			await performAutomaticMigration(context, outputChannel, chatsMirrorService, detectionService)
+		} else {
+			outputChannel.appendLine("[ChatsMirrorDetection] No migration needed - all systems are synchronized")
+		}
+		
+	} catch (error) {
+		const errorMessage = error instanceof Error ? error.message : String(error)
+		outputChannel.appendLine(`[ChatsMirrorDetection] Detection failed: ${errorMessage}`)
+		// Non-critical error - don't throw, just log
+	}
+}
+
+/**
+ * Initialize the chat mirror service with configuration validation and error handling
+ * Checks if mirror functionality is enabled before attempting initialization
+ * Provides comprehensive startup logging for debugging and monitoring
+ */
+async function initializeChatsMirrorService(context: vscode.ExtensionContext, outputChannel: vscode.OutputChannel): Promise<void> {
+	try {
+		// Load configuration to check if mirror is enabled
+		const config = vscode.workspace.getConfiguration()
+		const mirrorEnabled = config.get<boolean>("oa-code.chatsMirror.enabled") ?? true
+		const mirrorPath = config.get<string>("oa-code.chatsMirror.folder") ?? ""
+
+		outputChannel.appendLine(`[ChatsMirrorService] Configuration check - enabled: ${mirrorEnabled}, custom path: ${mirrorPath || "default"}`)
+
+		if (!mirrorEnabled) {
+			outputChannel.appendLine("[ChatsMirrorService] Mirror functionality is disabled in configuration, skipping initialization")
+			return
+		}
+
+		// Initialize the chat mirror service singleton
+		outputChannel.appendLine("[ChatsMirrorService] Initializing chat mirror service...")
+		const chatsMirrorService = await ChatsMirrorService.getInstance(context)
+		
+		// Service initialization is handled by getInstance, no need to call initialize() again
+		
+		// Verify service is properly initialized and enabled
+		if (chatsMirrorService.isInitialized() && chatsMirrorService.isMirrorEnabled()) {
+			const mirrorFolderPath = chatsMirrorService.getMirrorFolderPath()
+			outputChannel.appendLine(`[ChatsMirrorService] Successfully initialized - mirror folder: ${mirrorFolderPath}`)
+			
+			// Log queue statistics for monitoring
+			const queueStats = chatsMirrorService.getQueueStatistics()
+			outputChannel.appendLine(`[ChatsMirrorService] Initial queue state - size: ${queueStats.queueSize}, processing: ${queueStats.isProcessing}`)
+
+			// Perform smart migration detection to check if migration is needed
+			await performMigrationDetection(context, outputChannel, chatsMirrorService)
+		} else {
+			outputChannel.appendLine("[ChatsMirrorService] Service initialized but mirror functionality is not available")
+		}
+
+		// Add service to context subscriptions for proper cleanup
+		context.subscriptions.push({
+			dispose: () => {
+				try {
+					chatsMirrorService.dispose()
+					outputChannel.appendLine("[ChatsMirrorService] Disposed successfully")
+				} catch (error) {
+					outputChannel.appendLine(`[ChatsMirrorService] Error during disposal: ${error}`)
+				}
+			}
+		})
+
+	} catch (error) {
+		// Log error but don't throw - mirror service failures should not block extension activation
+		const errorMessage = error instanceof Error ? error.message : String(error)
+		outputChannel.appendLine(`[ChatsMirrorService] Failed to initialize: ${errorMessage}`)
+		
+		// Log additional error details for debugging
+		if (error instanceof Error && error.stack) {
+			outputChannel.appendLine(`[ChatsMirrorService] Error stack: ${error.stack}`)
+		}
+	}
+}
 
 // This method is called when your extension is activated.
 // Your extension is activated the very first time the command is executed.
@@ -154,6 +324,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	const provider = new ClineProvider(context, outputChannel, "sidebar", contextProxy, mdmService)
 	TelemetryService.instance.setProvider(provider)
+
+	// Initialize chat mirror service for syncing task data with file system
+	await initializeChatsMirrorService(context, outputChannel)
 
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider(ClineProvider.sideBarId, provider, {

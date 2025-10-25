@@ -65,6 +65,7 @@ import { BrowserSession } from "../../services/browser/BrowserSession"
 import { McpHub } from "../../services/mcp/McpHub"
 import { McpServerManager } from "../../services/mcp/McpServerManager"
 import { RepoPerTaskCheckpointService } from "../../services/checkpoints"
+import { ChatsMirrorService } from "../../services/mirror/ChatsMirrorService"
 
 // integrations
 import { DiffViewProvider } from "../../integrations/editor/DiffViewProvider"
@@ -236,6 +237,12 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 	// Computer User
 	browserSession: BrowserSession
 
+	// Chat Mirror Service for syncing task data to VSCode editor
+	private chatsMirrorService?: ChatsMirrorService
+	private lastMirrorUpdateTime: number = 0
+	private mirrorUpdateDebounceTimer?: NodeJS.Timeout
+	private pendingMirrorUpdate: boolean = false
+
 	// Editing
 	diffViewProvider: DiffViewProvider
 	diffStrategy?: DiffStrategy
@@ -328,6 +335,10 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 
 		this.urlContentFetcher = new UrlContentFetcher(provider.context)
 		this.browserSession = new BrowserSession(provider.context)
+		
+		// Initialize chat mirror service for syncing task data to editor
+		this.initializeChatsMirrorService(provider.context)
+		
 		this.diffEnabled = enableDiff
 		this.fuzzyMatchThreshold = fuzzyMatchThreshold
 		this.consecutiveMistakeLimit = consecutiveMistakeLimit ?? DEFAULT_CONSECUTIVE_MISTAKE_LIMIT
@@ -427,6 +438,21 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 			// Use the provider's log method for better error visibility
 			const errorMessage = `Failed to initialize task mode: ${error instanceof Error ? error.message : String(error)}`
 			provider.log(errorMessage)
+		}
+	}
+
+	/**
+	 * Initialize the chat mirror service asynchronously with proper error handling
+	 * Ensures the mirror service is available for syncing task data to the editor
+	 */
+	private async initializeChatsMirrorService(context: vscode.ExtensionContext): Promise<void> {
+		try {
+			// Initialize the mirror service asynchronously to avoid blocking task creation
+			this.chatsMirrorService = await ChatsMirrorService.getInstance(context)
+		} catch (error) {
+			// Log error but don't block task creation if mirror service fails
+			console.warn('Failed to initialize ChatsMirrorService for task:', this.taskId, error)
+			this.chatsMirrorService = undefined
 		}
 	}
 
@@ -615,6 +641,9 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 
 	private async saveClineMessages() {
 		try {
+			// Ensure any pending mirror updates are processed before new save
+			this.ensureMirrorSync()
+			
 			await saveTaskMessages({
 				messages: this.clineMessages,
 				taskId: this.taskId,
@@ -632,9 +661,243 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 
 			this.emit(RooCodeEventName.TaskTokenUsageUpdated, this.taskId, tokenUsage)
 
+			// First update the main task history (original persistence mechanism)
 			await this.providerRef.deref()?.updateTaskHistory(historyItem)
+
+			// Then queue the mirror write asynchronously to avoid blocking the main flow
+			this.queueMirrorWrite(historyItem)
 		} catch (error) {
 			console.error("Failed to save messages:", error)
+		}
+	}
+
+	/**
+	 * Queue a mirror write operation for the task history item with enhanced update handling
+	 * Implements debouncing for rapid updates and handles partial message scenarios
+	 * Ensures mirror synchronization without blocking the main task persistence flow
+	 */
+	private queueMirrorWrite(historyItem: HistoryItem): void {
+		// Only proceed if mirror service is available and initialized
+		if (!this.chatsMirrorService) {
+			return
+		}
+
+		try {
+			// Extract timestamp information for update tracking
+			const currentTime = Date.now()
+			const lastUpdatedTimestamp = this.extractLastUpdatedTimestamp()
+			
+			// Enhanced task state detection for better update handling
+			const taskState = this.analyzeTaskState()
+			
+			// Handle different update scenarios based on task state
+			if (taskState.isNewTask) {
+				// Direct write for new tasks - no debouncing needed
+				this.executeMirrorWrite(historyItem, lastUpdatedTimestamp, 'new')
+			} else if (taskState.hasPartialUpdates) {
+				// Debounce partial updates to prevent excessive writes
+				this.debounceMirrorUpdate(historyItem, lastUpdatedTimestamp)
+			} else {
+				// Regular update - moderate debouncing
+				this.debounceMirrorUpdate(historyItem, lastUpdatedTimestamp)
+			}
+			
+			// Update last mirror update time
+			this.lastMirrorUpdateTime = currentTime
+			
+		} catch (error) {
+			// Log error but don't block the main task flow
+			console.warn(`Mirror write failed for task ${this.taskId}:`, error)
+		}
+	}
+
+	/**
+	 * Extract the most recent timestamp from messages for accurate lastUpdated tracking
+	 * Analyzes message timestamps to determine the true last update time
+	 */
+	private extractLastUpdatedTimestamp(): number {
+		if (!this.clineMessages || this.clineMessages.length === 0) {
+			return Date.now()
+		}
+
+		// Find the most recent timestamp from all messages
+		let latestTimestamp = 0
+		
+		for (const message of this.clineMessages) {
+			if (message.ts && typeof message.ts === 'number') {
+				latestTimestamp = Math.max(latestTimestamp, message.ts)
+			}
+		}
+
+		// Fallback to current time if no valid timestamps found
+		return latestTimestamp > 0 ? latestTimestamp : Date.now()
+	}
+
+	/**
+	 * Analyze current task state to determine appropriate mirror update strategy
+	 * Returns comprehensive state information for update decision making
+	 */
+	private analyzeTaskState(): { isNewTask: boolean; hasPartialUpdates: boolean; updateType: string } {
+		const messageCount = this.clineMessages.length
+		
+		// Check for new task indicators
+		const isNewTask = messageCount === 1 || 
+			this.clineMessages.every(msg => 
+				msg.type === 'say' && (
+					msg.say === 'api_req_started' || 
+					msg.say === 'task_started'
+				)
+			)
+
+		// Check for partial updates by examining recent messages
+		const hasPartialUpdates = this.clineMessages.some(msg => 
+			msg.partial === true || 
+			(msg.type === 'say' && msg.say === 'api_req_started' && messageCount > 2)
+		)
+
+		// Determine update type for logging and analytics
+		let updateType = 'regular'
+		if (isNewTask) {
+			updateType = 'new'
+		} else if (hasPartialUpdates) {
+			updateType = 'partial'
+		} else if (messageCount > 10) {
+			updateType = 'extensive'
+		}
+
+		return { isNewTask, hasPartialUpdates, updateType }
+	}
+
+	/**
+	 * Execute mirror write operation with proper error handling and logging
+	 * Handles different types of mirror operations based on task state
+	 */
+	private executeMirrorWrite(historyItem: HistoryItem, lastUpdatedTimestamp: number, operationType: string): void {
+		if (!this.chatsMirrorService) {
+			return
+		}
+
+		try {
+			// Create enhanced history item with accurate timestamp
+			const enhancedHistoryItem = {
+				...historyItem,
+				ts: historyItem.ts || this.extractLastUpdatedTimestamp(),
+				lastUpdated: lastUpdatedTimestamp
+			}
+
+			// Execute appropriate mirror operation
+			if (operationType === 'new') {
+				this.chatsMirrorService.queueWriteChat(enhancedHistoryItem)
+			} else {
+				this.chatsMirrorService.queueUpdateChat(enhancedHistoryItem)
+			}
+
+			// Mark pending update as completed
+			this.pendingMirrorUpdate = false
+
+		} catch (error) {
+			console.warn(`Mirror ${operationType} operation failed for task ${this.taskId}:`, error)
+		}
+	}
+
+	/**
+	 * Debounce mirror updates to handle rapid successive changes efficiently
+	 * Implements intelligent debouncing with different delays for different scenarios
+	 */
+	private debounceMirrorUpdate(historyItem: HistoryItem, lastUpdatedTimestamp: number): void {
+		// Clear existing debounce timer
+		if (this.mirrorUpdateDebounceTimer) {
+			clearTimeout(this.mirrorUpdateDebounceTimer)
+		}
+
+		// Mark that we have a pending update
+		this.pendingMirrorUpdate = true
+
+		// Calculate debounce delay based on update frequency
+		const timeSinceLastUpdate = Date.now() - this.lastMirrorUpdateTime
+		const baseDelay = 500 // Base debounce delay in milliseconds
+		const maxDelay = 2000  // Maximum debounce delay
+		
+		// Adaptive debouncing: longer delays for rapid updates
+		let debounceDelay = baseDelay
+		if (timeSinceLastUpdate < 1000) {
+			debounceDelay = Math.min(baseDelay * 2, maxDelay)
+		}
+
+		// Set debounced update timer
+		this.mirrorUpdateDebounceTimer = setTimeout(() => {
+			this.executeMirrorWrite(historyItem, lastUpdatedTimestamp, 'update')
+			this.mirrorUpdateDebounceTimer = undefined
+		}, debounceDelay)
+	}
+
+	/**
+	 * Force immediate execution of any pending mirror updates
+	 * Useful when task completion or critical state changes require immediate synchronization
+	 */
+	private flushPendingMirrorUpdates(): void {
+		if (this.mirrorUpdateDebounceTimer && this.pendingMirrorUpdate) {
+			// Clear the debounce timer
+			clearTimeout(this.mirrorUpdateDebounceTimer)
+			this.mirrorUpdateDebounceTimer = undefined
+			
+			// Force immediate update if we have the latest history item
+			if (this.chatsMirrorService) {
+				try {
+					// Generate fresh history item for immediate sync
+					const currentTime = Date.now()
+					const historyItem = {
+						id: this.taskId,
+						ts: this.extractLastUpdatedTimestamp(),
+						lastUpdated: currentTime,
+						task: this.getTaskTitle(),
+						workspace: this.cwd,
+						mode: this._taskMode || 'default',
+						// Add other required HistoryItem properties with safe defaults
+						number: this.taskNumber || 0,
+						tokensIn: 0,
+						tokensOut: 0,
+						cacheWrites: 0,
+						cacheReads: 0,
+						totalCost: 0,
+						size: this.clineMessages.length
+					} as HistoryItem
+
+					this.executeMirrorWrite(historyItem, currentTime, 'immediate')
+				} catch (error) {
+					console.warn(`Failed to flush pending mirror update for task ${this.taskId}:`, error)
+				}
+			}
+		}
+	}
+
+	/**
+	 * Get task title from messages for mirror updates
+	 * Extracts meaningful task title from the conversation history
+	 */
+	private getTaskTitle(): string {
+		// Try to find a user message that represents the task
+		for (const message of this.clineMessages) {
+			if (message.type === 'ask' && message.ask === 'request_limit_exceeded_feedback') {
+				continue // Skip technical messages
+			}
+			if (message.type === 'say' && typeof message.say === 'string' && message.say.length > 10) {
+				// Use first substantial message as title
+				return message.say.substring(0, 100).trim()
+			}
+		}
+		
+		// Fallback to task ID if no good title found
+		return `Task ${this.taskId}`
+	}
+
+	/**
+	 * Enhanced saveClineMessages integration point for immediate updates
+	 * Called before critical task operations to ensure mirror is synchronized
+	 */
+	private ensureMirrorSync(): void {
+		if (this.pendingMirrorUpdate) {
+			this.flushPendingMirrorUpdates()
 		}
 	}
 

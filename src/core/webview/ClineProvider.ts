@@ -61,6 +61,7 @@ import { ShadowCheckpointService } from "../../services/checkpoints/ShadowCheckp
 import { CodeIndexManager } from "../../services/code-index/manager"
 import type { IndexProgressUpdate } from "../../services/code-index/interfaces/manager"
 import { MdmService } from "../../services/mdm/MdmService"
+import { ChatsMirrorService } from "../../services/mirror/ChatsMirrorService"
 
 import { fileExistsAtPath } from "../../utils/fs"
 import { setTtsEnabled, setTtsSpeed } from "../../utils/tts"
@@ -123,6 +124,7 @@ export class ClineProvider
 	protected mcpHub?: McpHub // Change from private to protected
 	private marketplaceManager: MarketplaceManager
 	private mdmService?: MdmService
+	private chatsMirrorService?: ChatsMirrorService
 
 	public isViewLaunched = false
 	public settingsImportedAt?: number
@@ -180,6 +182,11 @@ export class ClineProvider
 			})
 
 		this.marketplaceManager = new MarketplaceManager(this.context, this.customModesManager)
+
+		// Initialize chat mirror service for syncing task data with editor
+		this.initializeChatsMirrorService().catch((error) => {
+			this.log(`Failed to initialize chat mirror service: ${error}`)
+		})
 
 		// Initialize Roo Code Cloud profile sync.
 		this.initializeCloudProfileSync().catch((error) => {
@@ -242,6 +249,19 @@ export class ClineProvider
 			}
 		} catch (error) {
 			this.log(`Error in initializeCloudProfileSync: ${error}`)
+		}
+	}
+
+	/**
+	 * Initialize chat mirror service for syncing task data with file system
+	 */
+	private async initializeChatsMirrorService() {
+		try {
+			this.chatsMirrorService = await ChatsMirrorService.getInstance(this.context)
+			this.log("ChatsMirrorService initialized successfully")
+		} catch (error) {
+			this.log(`Failed to initialize ChatsMirrorService: ${error}`)
+			// Non-critical error - don't throw, just log
 		}
 	}
 
@@ -1680,6 +1700,17 @@ export class ClineProvider
 
 			// delete task from the task history state
 			await this.deleteTaskFromState(id)
+
+			// Delete task from chat mirror after main storage deletion
+			try {
+				if (this.chatsMirrorService) {
+					await this.chatsMirrorService.deleteChatMirror(id)
+					this.log(`Successfully deleted chat mirror for task ${id}`)
+				}
+			} catch (error) {
+				// Mirror deletion failure should not block main deletion flow
+				this.log(`Failed to delete chat mirror for task ${id}: ${error}`)
+			}
 
 			// Delete associated shadow repository or branch.
 			// TODO: Store `workspaceDir` in the `HistoryItem` object.

@@ -87,6 +87,8 @@ export const toolParamNames = [
 	"worksheet_id",
 	"initial_sql",
 	"sql_content",
+	// General parameters
+	"name",
 ] as const
 
 export type ToolParamName = (typeof toolParamNames)[number]
