@@ -62,6 +62,7 @@ export const commandIds = [
 	"generateTerminalCommand", // oacode_change
 	"focusPanel",
 	"showProductionStandards", // oacode_change
+	"deleteTaskFromEditor", // Command to delete task from VSCode editor
 ] as const
 
 export type CommandId = (typeof commandIds)[number]

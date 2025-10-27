@@ -299,6 +299,11 @@
 				"command": "oa-code.ghost.goToPreviousSuggestion",
 				"title": "%ghost.commands.goToPreviousSuggestion%",
 				"category": "%configuration.title%"
+			},
+			{
+				"command": "oa-code.deleteTaskFromEditor",
+				"title": "Delete Chat from Editor",
+				"category": "%configuration.title%"
 			}
 		],
 		"keybindings": [
