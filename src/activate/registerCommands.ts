@@ -338,6 +338,34 @@ const getCommandsMap = ({ context, outputChannel }: RegisterCommandOptions): Rec
 			return { success: false, error: errorMessage }
 		}
 	},
+	// Command to open a specific task/chat by its ID in OpenAnalyst
+	showTaskWithId: async (taskId?: string) => {
+		const visibleProvider = getVisibleProviderOrLog(outputChannel)
+
+		if (!visibleProvider) {
+			outputChannel.appendLine("Show task by ID failed: No visible OpenAnalyst instance found")
+			return { success: false, error: "No visible OpenAnalyst instance found" }
+		}
+
+		// Validate taskId parameter
+		if (!taskId || typeof taskId !== "string") {
+			outputChannel.appendLine("Show task by ID failed: Invalid or missing task ID")
+			return { success: false, error: "Invalid or missing task ID" }
+		}
+
+		try {
+			// Call the existing showTaskWithId method on the provider
+			// This method handles loading the task from history and switching to chat view
+			await visibleProvider.showTaskWithId(taskId)
+			
+			outputChannel.appendLine(`Successfully opened task from VSCode activity bar: ${taskId}`)
+			return { success: true }
+		} catch (error) {
+			const errorMessage = error instanceof Error ? error.message : String(error)
+			outputChannel.appendLine(`Failed to open task by ID: ${errorMessage}`)
+			return { success: false, error: errorMessage }
+		}
+	},
 	// oacode_change end
 })
 

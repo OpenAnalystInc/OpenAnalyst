@@ -333,6 +333,12 @@ export class ChatsMirrorService {
 			throw new Error('Invalid history item provided')
 		}
 
+		// Skip saving during placeholder phase (api_req_started)
+		if (this.isPlaceholderTask(historyItem)) {
+			console.log(`ChatsMirrorService: Skipping write for placeholder chat ${historyItem.id}`)
+			return
+		}
+
 		console.log(`ChatsMirrorService: Writing new chat ${historyItem.id}`)
 
 		// Transform history item to mirror format with validation
@@ -355,6 +361,12 @@ export class ChatsMirrorService {
 			throw new Error('Invalid history item provided')
 		}
 
+		// Skip updating during placeholder phase (api_req_started)
+		if (this.isPlaceholderTask(historyItem)) {
+			console.log(`ChatsMirrorService: Skipping update for placeholder chat ${historyItem.id}`)
+			return
+		}
+
 		console.log(`ChatsMirrorService: Updating chat ${historyItem.id}`)
 
 		try {
@@ -364,11 +376,12 @@ export class ChatsMirrorService {
 			// Transform new history item data with validation
 			const newMirrorItem = this.transformToMirrorFormat(historyItem, true)
 			
-			// Merge with existing data, preserving creation timestamp
+			// Merge with existing data, preserving creation timestamp and original title
 			const updatedMirrorItem: ChatMirrorItem = {
 				...existingMirrorItem,
 				...newMirrorItem,
 				ts: existingMirrorItem.ts, // Preserve original creation time
+				title: existingMirrorItem.title, // Keep original title to prevent changes
 				lastUpdated: Date.now() // Update modification time
 			}
 
@@ -431,6 +444,12 @@ export class ChatsMirrorService {
 	 */
 	public queueChatWrite(historyItem: HistoryItem): void {
 		if (!this.isEnabled || !this.isInitialized()) {
+			return
+		}
+
+		// Skip queuing during placeholder phase (api_req_started)
+		if (this.isPlaceholderTask(historyItem)) {
+			console.log(`ChatsMirrorService: Skipping queue write for placeholder chat ${historyItem.id}`)
 			return
 		}
 
@@ -798,6 +817,26 @@ export class ChatsMirrorService {
 	}
 
 	/**
+	 * Check if a history item is in the placeholder phase (api_req_started)
+	 * Returns true if the task should not be saved to mirror yet
+	 */
+	private isPlaceholderTask(historyItem: HistoryItem): boolean {
+		const taskTitle = this.sanitizeDataField(historyItem.task, 'string')
+		
+		// Check for placeholder indicators
+		if (!taskTitle || taskTitle === 'api_req_started' || taskTitle.includes('Loading...')) {
+			return true
+		}
+		
+		// Check if task content looks like a placeholder (very short or API-related)
+		if (taskTitle.length < 3 || taskTitle.match(/^(api|req|request|loading|placeholder)(_|\s|$)/i)) {
+			return true
+		}
+		
+		return false
+	}
+
+	/**
 	 * Extract and sanitize title from history item with intelligent fallbacks
 	 * Creates meaningful titles from available data
 	 */
@@ -960,6 +999,12 @@ export class ChatsMirrorService {
 			return
 		}
 
+		// Skip queuing during placeholder phase (api_req_started)
+		if (this.isPlaceholderTask(historyItem)) {
+			console.log(`ChatsMirrorService: Skipping queue write for placeholder chat ${historyItem.id}`)
+			return
+		}
+
 		console.log(`ChatsMirrorService: Queuing write for new chat ${historyItem.id}`)
 		this.queueChatWrite(historyItem)
 	}
@@ -971,6 +1016,12 @@ export class ChatsMirrorService {
 	public queueUpdateChat(historyItem: HistoryItem): void {
 		if (!this.isEnabled || !this.isInitialized()) {
 			console.warn('ChatsMirrorService: Cannot queue update, service not enabled or initialized')
+			return
+		}
+
+		// Skip queuing during placeholder phase (api_req_started)
+		if (this.isPlaceholderTask(historyItem)) {
+			console.log(`ChatsMirrorService: Skipping queue update for placeholder chat ${historyItem.id}`)
 			return
 		}
 

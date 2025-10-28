@@ -304,6 +304,11 @@
 				"command": "oa-code.deleteTaskFromEditor",
 				"title": "Delete Chat from Editor",
 				"category": "%configuration.title%"
+			},
+			{
+				"command": "oa-code.showTaskWithId",
+				"title": "Show Task by ID",
+				"category": "%configuration.title%"
 			}
 		],
 		"keybindings": [
