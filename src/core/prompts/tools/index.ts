@@ -113,6 +113,13 @@ export function getToolDescriptionsForMode(
 	config.groups.forEach((groupEntry) => {
 		const groupName = getGroupName(groupEntry)
 		const toolGroup = TOOL_GROUPS[groupName]
+
+		// DEBUG: Log group resolution
+		console.log(`[DEBUG] Mode: ${mode}, Group: ${groupName}, Found: ${!!toolGroup}, Tools: ${toolGroup?.tools.length || 0}`)
+		if (!toolGroup) {
+			console.error(`[ERROR] Tool group "${groupName}" not found in TOOL_GROUPS! Available groups:`, Object.keys(TOOL_GROUPS))
+		}
+
 		if (toolGroup) {
 			toolGroup.tools.forEach((tool) => {
 				if (

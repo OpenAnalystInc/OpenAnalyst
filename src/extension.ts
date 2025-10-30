@@ -372,6 +372,14 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	await registerCommands({ context, outputChannel, provider })
 
+	// Register BigQuery tools test command
+	context.subscriptions.push(
+		vscode.commands.registerCommand("oa-code.testBigQueryTools", async () => {
+			const { runBigQueryToolsTest } = await import("./test-runner")
+			await runBigQueryToolsTest()
+		})
+	)
+
 	/**
 	 * We use the text document content provider API to show the left side for diff
 	 * view by creating a virtual document for the original content. This makes it
