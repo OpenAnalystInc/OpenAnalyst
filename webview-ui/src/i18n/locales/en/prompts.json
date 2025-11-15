@@ -84,7 +84,7 @@
 		"title": "System Prompt ({{modeName}} agent)"
 	},
 	"supportPrompts": {
-		"title": "Support Prompts",
+		"title": "Application Prompts",
 		"resetPrompt": "Reset {{promptType}} prompt to default",
 		"prompt": "Prompt",
 		"enhance": {

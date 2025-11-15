@@ -59,16 +59,16 @@ export const OaModeSelector = ({
 					description: mode.description, // oacode_change
 					type: DropdownOptionType.ITEM,
 				})),
-				{
-					value: "sep-1",
-					label: t("chat:separator"),
-					type: DropdownOptionType.SEPARATOR,
-				},
-				{
-					value: "promptsButtonClicked",
-					label: t("chat:edit"),
-					type: DropdownOptionType.ACTION,
-				},
+				// {
+				// 	value: "sep-1",
+				// 	label: t("chat:separator"),
+				// 	type: DropdownOptionType.SEPARATOR,
+				// },
+				// {
+				// 	value: "promptsButtonClicked",
+				// 	label: t("chat:edit"),
+				// 	type: DropdownOptionType.ACTION,
+				// },
 			]}
 			onChange={handleChange}
 			shortcutText={modeShortcutText}

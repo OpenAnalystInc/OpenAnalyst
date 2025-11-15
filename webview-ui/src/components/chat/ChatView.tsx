@@ -2015,7 +2015,8 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 											<a
 												href={buildDocLink("", "welcome")}
 												target="_blank"
-												rel="noopener noreferrer">
+												rel="noopener noreferrer"
+												className="text-[var(--vscode-textLink-foreground)] hover:text-[var(--vscode-textLink-activeForeground)]">
 												the docs
 											</a>
 										),

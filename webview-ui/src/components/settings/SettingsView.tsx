@@ -514,7 +514,7 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone, t
 			{ id: "prompts", icon: MessageSquare },
 			{ id: "experimental", icon: FlaskConical },
 			{ id: "language", icon: Globe },
-			{ id: "mcp", icon: Server },
+			// { id: "mcp", icon: Server },
 			{ id: "about", icon: Info },
 		],
 		[extensionState.experiments?.inlineAssist], // oacode_change
