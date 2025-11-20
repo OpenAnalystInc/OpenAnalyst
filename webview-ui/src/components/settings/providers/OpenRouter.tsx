@@ -70,7 +70,14 @@ export const OpenRouter = ({
 				</div>
 			</VSCodeTextField>
 			<div className="text-sm text-vscode-descriptionForeground -mt-2">
-				{t("settings:providers.apiKeyStorageNotice")}
+				<Trans
+					i18nKey="settings:providers.apiKeyStorageNotice"
+					components={{
+						SecretStorage: (
+							<span className="bg-[#007ACC]/20 text-[var(--vscode-textLink-foreground)] px-1 rounded" />
+						),
+					}}
+				/>
 			</div>
 			{!apiConfiguration?.openRouterApiKey && (
 				<VSCodeButtonLink href={getOpenRouterAuthUrl(uriScheme)} style={{ width: "100%" }} appearance="primary">

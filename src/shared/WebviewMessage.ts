@@ -232,6 +232,9 @@ export interface WebviewMessage {
 		| "toggleRule" // oacode_change
 		| "createRuleFile" // oacode_change
 		| "deleteRuleFile" // oacode_change
+		| "createPromptFile" // Create new custom prompt file
+		| "deletePromptFile" // Delete existing custom prompt file
+		| "editPromptBlock" // Open prompt file for editing
 		| "hasOpenedModeSelector"
 		| "accountButtonClicked"
 		| "rooCloudSignIn"
@@ -289,6 +292,17 @@ export interface WebviewMessage {
 		| "deleteCommand"
 		| "createCommand"
 		| "insertTextIntoTextarea"
+		// Prompt blocks (enhanced for toolbar support in Phase 2)
+		| "loadPromptBlocks" // Request all prompt blocks with categorization
+		| "addActivePromptBlock" // Activate a prompt block (used by slash commands & toolbar)
+		| "removeActivePromptBlock" // Deactivate a prompt block
+		| "getActivePromptBlocks" // Get currently active prompt blocks
+		// Workflow mode
+		| "workflowModeChanged"
+		| "approvePlan"
+		| "rejectPlan"
+		| "modifyPlan"
+		| "updatePlanProgress"
 	text?: string
 	editedMessageContent?: string
 	tab?: "settings" | "history" | "mcp" | "modes" | "chat" | "marketplace" | "account"
@@ -311,17 +325,25 @@ export interface WebviewMessage {
 	mcpId?: string
 	toolNames?: string[]
 	autoApprove?: boolean
+	workflowMode?: string // Plan Mode workflow state
 	workflowPath?: string // oacode_change
 	enabled?: boolean // oacode_change
 	rulePath?: string // oacode_change
 	isGlobal?: boolean // oacode_change
 	filename?: string // oacode_change
 	ruleType?: string // oacode_change
+	// Prompt file operations
+	promptName?: string // Name of the prompt for edit/delete operations
+	promptCategory?: string // Category for new prompt creation
+	promptSource?: "workspace" | "global" // Scope for prompt operations
 	notificationId?: string // oacode_change
 	// oacode_change - template management
 	templateName?: string
 	content?: string
 	// oacode_change end
+	// Prompt block properties (enhanced in Phase 2 for toolbar support)
+	blockName?: string // Name of prompt block to activate/deactivate
+	variables?: Record<string, string> // Optional variables for prompt block templates
 	serverName?: string
 	toolName?: string
 	alwaysAllow?: boolean
@@ -371,6 +393,16 @@ export interface WebviewMessage {
 		codebaseIndexGeminiApiKey?: string
 		codebaseIndexMistralApiKey?: string
 	}
+	// Plan Mode workflow fields
+	planContent?: string // For approvePlan, rejectPlan, modifyPlan
+	estimatedHours?: number // For approvePlan
+	reason?: string // For rejectPlan
+	feedback?: string // For modifyPlan
+	specificChanges?: string[] // For modifyPlan
+	originalPlanContent?: string // For modifyPlan
+	preserveStructure?: boolean // For modifyPlan
+	currentPhase?: number // For updatePlanProgress
+	completedPhases?: string[] // For updatePlanProgress
 }
 
 // oacode_change begin

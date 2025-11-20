@@ -203,6 +203,13 @@
 			"description": "Are you sure you want to delete this {{scope}} mode? This will also delete the associated rules folder at: {{rulesFolderPath}}",
 			"descriptionNoRules": "Are you sure you want to delete this custom mode?",
 			"confirm": "Delete"
+		},
+		"deleteChat": {
+			"title": "Delete Chat",
+			"description": "Are you sure you want to delete this chat? This action cannot be undone.",
+			"dontAskAgain": "Don't ask again",
+			"confirm": "Delete",
+			"cancel": "Cancel"
 		}
 	},
 	"commands": {

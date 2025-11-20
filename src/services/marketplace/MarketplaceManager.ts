@@ -251,13 +251,13 @@ export class MarketplaceManager {
 				return // No workspace, no project installations
 			}
 
-			// Check modes in .roomodes
-			const projectModesPath = path.join(workspaceFolder.uri.fsPath, ".oacodemodes")
+			// Check modes in .oacode/agents.yaml
+			const projectModesPath = path.join(workspaceFolder.uri.fsPath, ".oacode", "agents.yaml")
 			try {
 				const content = await fs.readFile(projectModesPath, "utf-8")
 				const data = yaml.parse(content)
-				if (data?.customModes && Array.isArray(data.customModes)) {
-					for (const mode of data.customModes) {
+				if (data?.Agents && Array.isArray(data.Agents)) {
+					for (const mode of data.Agents) {
 						if (mode.slug) {
 							metadata[mode.slug] = {
 								type: "mode",
@@ -297,12 +297,12 @@ export class MarketplaceManager {
 			const globalSettingsPath = await ensureSettingsDirectoryExists(this.context)
 
 			// Check global modes
-			const globalModesPath = path.join(globalSettingsPath, GlobalFileNames.customModes)
+			const globalModesPath = path.join(globalSettingsPath, GlobalFileNames.agents)
 			try {
 				const content = await fs.readFile(globalModesPath, "utf-8")
 				const data = yaml.parse(content)
-				if (data?.customModes && Array.isArray(data.customModes)) {
-					for (const mode of data.customModes) {
+				if (data?.Agents && Array.isArray(data.Agents)) {
+					for (const mode of data.Agents) {
 						if (mode.slug) {
 							metadata[mode.slug] = {
 								type: "mode",

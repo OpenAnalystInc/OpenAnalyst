@@ -33,6 +33,7 @@ export interface SelectDropdownProps {
 	onChange: (value: string) => void
 	onAction?: (value: string) => void // oacode_change - for action items
 	onDrop?: (files: FileList) => void // oacode_change - for drag & drop
+	onOpen?: () => void // oacode_change - for refresh on open
 	disabled?: boolean
 	initiallyOpen?: boolean // oacode_change
 	title?: string
@@ -58,6 +59,7 @@ export const SelectDropdown = React.memo(
 				onChange,
 				onAction, // oacode_change
 				onDrop, // oacode_change
+				onOpen, // oacode_change
 				disabled = false,
 				initiallyOpen = false, // oacode_change
 				title = "",
@@ -101,12 +103,16 @@ export const SelectDropdown = React.memo(
 			// Reset search value when dropdown closes
 			const onOpenChange = React.useCallback((open: boolean) => {
 				setOpen(open)
+				// Call onOpen callback when dropdown opens
+				if (open && onOpen) {
+					onOpen()
+				}
 				// Clear search when closing - no need for setTimeout
 				if (!open) {
 					// Use requestAnimationFrame instead of setTimeout for better performance
 					requestAnimationFrame(() => setSearchValue(""))
 				}
-			}, [])
+			}, [onOpen])
 
 			// Clear search and focus input
 			const onClearSearch = React.useCallback(() => {

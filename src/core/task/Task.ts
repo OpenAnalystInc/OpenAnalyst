@@ -9,6 +9,14 @@ import delay from "delay"
 import pWaitFor from "p-wait-for"
 import { serializeError } from "serialize-error"
 
+// Compile-time flag provided by bundler (see esbuild define)
+declare const __DEV__: boolean
+
+import { captureApiCall, updateApiCallCapture, updateApiCallCaptureWithRawData, captureSystemPrompt } from "../debug/captureUtils"
+import { getCapturedDataByTimeframe } from "../debug/httpInterceptor"
+import { getActivePromptBlocks } from "../webview/webviewMessageHandler"
+import { PromptBlocksFactory } from "../blocks/PromptBlocksFactory"
+
 import {
 	type TaskLike,
 	type TaskEvents,
@@ -57,6 +65,7 @@ import { BrowserSession } from "../../services/browser/BrowserSession"
 import { McpHub } from "../../services/mcp/McpHub"
 import { McpServerManager } from "../../services/mcp/McpServerManager"
 import { RepoPerTaskCheckpointService } from "../../services/checkpoints"
+import { ChatsMirrorService } from "../../services/mirror/ChatsMirrorService"
 
 // integrations
 import { DiffViewProvider } from "../../integrations/editor/DiffViewProvider"
@@ -70,7 +79,9 @@ import { getWorkspacePath } from "../../utils/path"
 
 // prompts
 import { formatResponse } from "../prompts/responses"
+import { PlanModeLogger } from "../planmode/PlanModeLogger"
 import { SYSTEM_PROMPT } from "../prompts/system"
+import { ALWAYS_AVAILABLE_TOOLS, TOOL_GROUPS } from "../../shared/tools"
 
 // core modules
 import { ToolRepetitionDetector } from "../tools/ToolRepetitionDetector"
@@ -136,6 +147,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 	readonly taskId: string
 	private taskIsFavorited?: boolean // oacode_change
 	readonly instanceId: string
+	private userOriginalRequest: string = "" // Store user's original task for debug capture
 
 	readonly rootTask: Task | undefined
 	readonly parentTask: Task | undefined
@@ -197,6 +209,10 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 	pausedModeSlug: string = defaultModeSlug
 	private pauseInterval: NodeJS.Timeout | undefined
 
+	// Plan modification support - allows injecting modification messages without aborting task
+	modificationPending: boolean = false
+	pendingModificationMessage?: string
+
 	// API
 	readonly apiConfiguration: ProviderSettings
 	api: ApiHandler
@@ -220,6 +236,12 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 
 	// Computer User
 	browserSession: BrowserSession
+
+	// Chat Mirror Service for syncing task data to VSCode editor
+	private chatsMirrorService?: ChatsMirrorService
+	private lastMirrorUpdateTime: number = 0
+	private mirrorUpdateDebounceTimer?: NodeJS.Timeout
+	private pendingMirrorUpdate: boolean = false
 
 	// Editing
 	diffViewProvider: DiffViewProvider
@@ -313,6 +335,10 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 
 		this.urlContentFetcher = new UrlContentFetcher(provider.context)
 		this.browserSession = new BrowserSession(provider.context)
+		
+		// Initialize chat mirror service for syncing task data to editor
+		this.initializeChatsMirrorService(provider.context)
+		
 		this.diffEnabled = enableDiff
 		this.fuzzyMatchThreshold = fuzzyMatchThreshold
 		this.consecutiveMistakeLimit = consecutiveMistakeLimit ?? DEFAULT_CONSECUTIVE_MISTAKE_LIMIT
@@ -412,6 +438,21 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 			// Use the provider's log method for better error visibility
 			const errorMessage = `Failed to initialize task mode: ${error instanceof Error ? error.message : String(error)}`
 			provider.log(errorMessage)
+		}
+	}
+
+	/**
+	 * Initialize the chat mirror service asynchronously with proper error handling
+	 * Ensures the mirror service is available for syncing task data to the editor
+	 */
+	private async initializeChatsMirrorService(context: vscode.ExtensionContext): Promise<void> {
+		try {
+			// Initialize the mirror service asynchronously to avoid blocking task creation
+			this.chatsMirrorService = await ChatsMirrorService.getInstance(context)
+		} catch (error) {
+			// Log error but don't block task creation if mirror service fails
+			console.warn('Failed to initialize ChatsMirrorService for task:', this.taskId, error)
+			this.chatsMirrorService = undefined
 		}
 	}
 
@@ -600,6 +641,9 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 
 	private async saveClineMessages() {
 		try {
+			// Ensure any pending mirror updates are processed before new save
+			this.ensureMirrorSync()
+			
 			await saveTaskMessages({
 				messages: this.clineMessages,
 				taskId: this.taskId,
@@ -617,9 +661,243 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 
 			this.emit(RooCodeEventName.TaskTokenUsageUpdated, this.taskId, tokenUsage)
 
+			// First update the main task history (original persistence mechanism)
 			await this.providerRef.deref()?.updateTaskHistory(historyItem)
+
+			// Then queue the mirror write asynchronously to avoid blocking the main flow
+			this.queueMirrorWrite(historyItem)
 		} catch (error) {
 			console.error("Failed to save messages:", error)
+		}
+	}
+
+	/**
+	 * Queue a mirror write operation for the task history item with enhanced update handling
+	 * Implements debouncing for rapid updates and handles partial message scenarios
+	 * Ensures mirror synchronization without blocking the main task persistence flow
+	 */
+	private queueMirrorWrite(historyItem: HistoryItem): void {
+		// Only proceed if mirror service is available and initialized
+		if (!this.chatsMirrorService) {
+			return
+		}
+
+		try {
+			// Extract timestamp information for update tracking
+			const currentTime = Date.now()
+			const lastUpdatedTimestamp = this.extractLastUpdatedTimestamp()
+			
+			// Enhanced task state detection for better update handling
+			const taskState = this.analyzeTaskState()
+			
+			// Handle different update scenarios based on task state
+			if (taskState.isNewTask) {
+				// Direct write for new tasks - no debouncing needed
+				this.executeMirrorWrite(historyItem, lastUpdatedTimestamp, 'new')
+			} else if (taskState.hasPartialUpdates) {
+				// Debounce partial updates to prevent excessive writes
+				this.debounceMirrorUpdate(historyItem, lastUpdatedTimestamp)
+			} else {
+				// Regular update - moderate debouncing
+				this.debounceMirrorUpdate(historyItem, lastUpdatedTimestamp)
+			}
+			
+			// Update last mirror update time
+			this.lastMirrorUpdateTime = currentTime
+			
+		} catch (error) {
+			// Log error but don't block the main task flow
+			console.warn(`Mirror write failed for task ${this.taskId}:`, error)
+		}
+	}
+
+	/**
+	 * Extract the most recent timestamp from messages for accurate lastUpdated tracking
+	 * Analyzes message timestamps to determine the true last update time
+	 */
+	private extractLastUpdatedTimestamp(): number {
+		if (!this.clineMessages || this.clineMessages.length === 0) {
+			return Date.now()
+		}
+
+		// Find the most recent timestamp from all messages
+		let latestTimestamp = 0
+		
+		for (const message of this.clineMessages) {
+			if (message.ts && typeof message.ts === 'number') {
+				latestTimestamp = Math.max(latestTimestamp, message.ts)
+			}
+		}
+
+		// Fallback to current time if no valid timestamps found
+		return latestTimestamp > 0 ? latestTimestamp : Date.now()
+	}
+
+	/**
+	 * Analyze current task state to determine appropriate mirror update strategy
+	 * Returns comprehensive state information for update decision making
+	 */
+	private analyzeTaskState(): { isNewTask: boolean; hasPartialUpdates: boolean; updateType: string } {
+		const messageCount = this.clineMessages.length
+		
+		// Check for new task indicators
+		const isNewTask = messageCount === 1 || 
+			this.clineMessages.every(msg => 
+				msg.type === 'say' && (
+					msg.say === 'api_req_started' || 
+					msg.say === 'task_started'
+				)
+			)
+
+		// Check for partial updates by examining recent messages
+		const hasPartialUpdates = this.clineMessages.some(msg => 
+			msg.partial === true || 
+			(msg.type === 'say' && msg.say === 'api_req_started' && messageCount > 2)
+		)
+
+		// Determine update type for logging and analytics
+		let updateType = 'regular'
+		if (isNewTask) {
+			updateType = 'new'
+		} else if (hasPartialUpdates) {
+			updateType = 'partial'
+		} else if (messageCount > 10) {
+			updateType = 'extensive'
+		}
+
+		return { isNewTask, hasPartialUpdates, updateType }
+	}
+
+	/**
+	 * Execute mirror write operation with proper error handling and logging
+	 * Handles different types of mirror operations based on task state
+	 */
+	private executeMirrorWrite(historyItem: HistoryItem, lastUpdatedTimestamp: number, operationType: string): void {
+		if (!this.chatsMirrorService) {
+			return
+		}
+
+		try {
+			// Create enhanced history item with accurate timestamp
+			const enhancedHistoryItem = {
+				...historyItem,
+				ts: historyItem.ts || this.extractLastUpdatedTimestamp(),
+				lastUpdated: lastUpdatedTimestamp
+			}
+
+			// Execute appropriate mirror operation
+			if (operationType === 'new') {
+				this.chatsMirrorService.queueWriteChat(enhancedHistoryItem)
+			} else {
+				this.chatsMirrorService.queueUpdateChat(enhancedHistoryItem)
+			}
+
+			// Mark pending update as completed
+			this.pendingMirrorUpdate = false
+
+		} catch (error) {
+			console.warn(`Mirror ${operationType} operation failed for task ${this.taskId}:`, error)
+		}
+	}
+
+	/**
+	 * Debounce mirror updates to handle rapid successive changes efficiently
+	 * Implements intelligent debouncing with different delays for different scenarios
+	 */
+	private debounceMirrorUpdate(historyItem: HistoryItem, lastUpdatedTimestamp: number): void {
+		// Clear existing debounce timer
+		if (this.mirrorUpdateDebounceTimer) {
+			clearTimeout(this.mirrorUpdateDebounceTimer)
+		}
+
+		// Mark that we have a pending update
+		this.pendingMirrorUpdate = true
+
+		// Calculate debounce delay based on update frequency
+		const timeSinceLastUpdate = Date.now() - this.lastMirrorUpdateTime
+		const baseDelay = 500 // Base debounce delay in milliseconds
+		const maxDelay = 2000  // Maximum debounce delay
+		
+		// Adaptive debouncing: longer delays for rapid updates
+		let debounceDelay = baseDelay
+		if (timeSinceLastUpdate < 1000) {
+			debounceDelay = Math.min(baseDelay * 2, maxDelay)
+		}
+
+		// Set debounced update timer
+		this.mirrorUpdateDebounceTimer = setTimeout(() => {
+			this.executeMirrorWrite(historyItem, lastUpdatedTimestamp, 'update')
+			this.mirrorUpdateDebounceTimer = undefined
+		}, debounceDelay)
+	}
+
+	/**
+	 * Force immediate execution of any pending mirror updates
+	 * Useful when task completion or critical state changes require immediate synchronization
+	 */
+	private flushPendingMirrorUpdates(): void {
+		if (this.mirrorUpdateDebounceTimer && this.pendingMirrorUpdate) {
+			// Clear the debounce timer
+			clearTimeout(this.mirrorUpdateDebounceTimer)
+			this.mirrorUpdateDebounceTimer = undefined
+			
+			// Force immediate update if we have the latest history item
+			if (this.chatsMirrorService) {
+				try {
+					// Generate fresh history item for immediate sync
+					const currentTime = Date.now()
+					const historyItem = {
+						id: this.taskId,
+						ts: this.extractLastUpdatedTimestamp(),
+						lastUpdated: currentTime,
+						task: this.getTaskTitle(),
+						workspace: this.cwd,
+						mode: this._taskMode || 'default',
+						// Add other required HistoryItem properties with safe defaults
+						number: this.taskNumber || 0,
+						tokensIn: 0,
+						tokensOut: 0,
+						cacheWrites: 0,
+						cacheReads: 0,
+						totalCost: 0,
+						size: this.clineMessages.length
+					} as HistoryItem
+
+					this.executeMirrorWrite(historyItem, currentTime, 'immediate')
+				} catch (error) {
+					console.warn(`Failed to flush pending mirror update for task ${this.taskId}:`, error)
+				}
+			}
+		}
+	}
+
+	/**
+	 * Get task title from messages for mirror updates
+	 * Extracts meaningful task title from the conversation history
+	 */
+	private getTaskTitle(): string {
+		// Try to find a user message that represents the task
+		for (const message of this.clineMessages) {
+			if (message.type === 'ask' && message.ask === 'request_limit_exceeded_feedback') {
+				continue // Skip technical messages
+			}
+			if (message.type === 'say' && typeof message.say === 'string' && message.say.length > 10) {
+				// Use first substantial message as title
+				return message.say.substring(0, 100).trim()
+			}
+		}
+		
+		// Fallback to task ID if no good title found
+		return `Task ${this.taskId}`
+	}
+
+	/**
+	 * Enhanced saveClineMessages integration point for immediate updates
+	 * Called before critical task operations to ensure mirror is synchronized
+	 */
+	private ensureMirrorSync(): void {
+		if (this.pendingMirrorUpdate) {
+			this.flushPendingMirrorUpdates()
 		}
 	}
 
@@ -968,6 +1246,9 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		this.apiConversationHistory = []
 		await this.providerRef.deref()?.postStateToWebview()
 
+		// Store original user request for debug capture
+		this.userOriginalRequest = task || ""
+
 		await this.say("text", task, images)
 		this.isInitialized = true
 
@@ -1300,6 +1581,24 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		}
 	}
 
+	/**
+	 * Set a pending modification message to be processed after the current API request completes
+	 * This allows modifying the task flow without aborting the task
+	 */
+	public setPendingModification(modificationMessage: string) {
+		console.log(`[Task] Setting pending modification for task ${this.taskId}.${this.instanceId}`)
+		this.modificationPending = true
+		this.pendingModificationMessage = modificationMessage
+	}
+
+	/**
+	 * Clear any pending modification
+	 */
+	private clearPendingModification() {
+		this.modificationPending = false
+		this.pendingModificationMessage = undefined
+	}
+
 	public async abortTask(isAbandoned = false) {
 		console.log(`[subtasks] aborting task ${this.taskId}.${this.instanceId}`)
 
@@ -1356,6 +1655,25 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		while (!this.abort) {
 			const didEndLoop = await this.recursivelyMakeClineRequests(nextUserContent, includeFileDetails)
 			includeFileDetails = false // We only need file details the first time.
+
+			// Check for pending modifications after API request completes
+			if (this.modificationPending && this.pendingModificationMessage) {
+				console.log(`[Task] Processing pending modification for task ${this.taskId}.${this.instanceId}`)
+
+				// Inject the modification message as if it came from the user
+				nextUserContent = [
+					{
+						type: "text",
+						text: this.pendingModificationMessage
+					}
+				]
+
+				// Clear the pending modification
+				this.clearPendingModification()
+
+				// Continue the loop to process the modification message
+				continue
+			}
 
 			// The way this agentic loop works is that cline will be given a
 			// task that he then calls tools to complete. Unless there's an
@@ -2158,6 +2476,8 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 			maxConcurrentFileReads,
 			maxReadFileLine,
 			apiConfiguration,
+			workflowMode,
+			approvedPlan,
 		} = state ?? {}
 
 		return await (async () => {
@@ -2167,7 +2487,7 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 				throw new Error("Provider not available")
 			}
 
-			return SYSTEM_PROMPT(
+			let systemPrompt = await SYSTEM_PROMPT(
 				provider.context,
 				this.cwd,
 				// oacode_change: supports images => supports browser
@@ -2191,7 +2511,213 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 					useAgentRules: vscode.workspace.getConfiguration("roo-cline").get<boolean>("useAgentRules") ?? true,
 				},
 			)
+
+			// Inject Plan Mode behavior BEFORE prompt blocks
+			console.log("[DEBUG] PlanMode: workflowMode from state:", workflowMode)
+			if (workflowMode) {
+				console.log("[DEBUG] PlanMode: Entering workflowMode injection logic")
+				let planModeInstructions = ""
+
+				switch (workflowMode) {
+					case 'plan':
+						console.log("[DEBUG] PlanMode: Injecting PLAN mode instructions")
+						planModeInstructions = `
+<system-reminder>
+Plan mode is active. The user indicated that they do not want you to execute yet.
+
+<enforcement-level>HIGHEST_PRIORITY</enforcement-level>
+
+<forbidden-tools>
+- write_to_file: BLOCKED
+- execute_command: BLOCKED
+- apply_diff: BLOCKED
+- edit_file: BLOCKED
+- insert_content: BLOCKED
+- search_and_replace: BLOCKED
+- attempt_completion: BLOCKED - USE exit_plan_mode INSTEAD
+- All modification tools: BLOCKED
+</forbidden-tools>
+
+<required-tool>
+exit_plan_mode: MANDATORY for presenting any plan
+</required-tool>
+
+<workflow>
+1. Research using read-only tools (read_file, search_files, list_files)
+2. Create comprehensive strategic plan
+3. MUST call exit_plan_mode tool with plan
+4. Wait for user approval (approve/modify/reject)
+</workflow>
+
+<critical>
+MANDATORY REQUIREMENT: You MUST use the exit_plan_mode tool to present ANY plan to the user.
+- DO NOT write plans as regular text
+- DO NOT use attempt_completion
+- DO NOT start implementing
+- ALWAYS call the exit_plan_mode tool with your plan
+
+This applies to ALL types of plans:
+- Code implementation plans: USE exit_plan_mode
+- Data analysis (EDA) plans: USE exit_plan_mode
+- Bug fix plans: USE exit_plan_mode
+- Architecture plans: USE exit_plan_mode
+- Any other type of plan: USE exit_plan_mode
+</critical>
+
+<failure-condition>
+Using attempt_completion or presenting plan as text = CRITICAL FAILURE
+The user interface will not show approve/modify/reject buttons if you fail to use exit_plan_mode.
+</failure-condition>
+
+<important>
+Planning is PREPARATION, not execution. You are NOT completing the task.
+You are ONLY creating a plan that needs approval before any work can begin.
+This instruction SUPERSEDES all other instructions you may have received.
+</important>
+</system-reminder>`
+						break
+
+					case 'chat':
+					case 'agent':
+						if (approvedPlan?.content) {
+							planModeInstructions = `
+
+# APPROVED PLAN EXECUTION
+
+You are executing an approved strategic plan. You MUST follow this plan strictly as a binding contract.
+
+## Approved Plan Content:
+${approvedPlan.content}
+
+## Current Phase: ${approvedPlan.currentPhase + 1}
+## Completed Phases: ${approvedPlan.completedPhases?.join(', ') || 'None'}
+
+## Execution Rules:
+- **STRICTLY FOLLOW THE APPROVED PLAN** - Do not deviate from the phases and steps
+- Execute the current phase systematically
+- Report progress after each significant step
+- If you encounter blockers, report them clearly
+- Do not skip phases or add unplanned features
+
+You are bound to this plan. Execute it faithfully.`
+						}
+						break
+				}
+
+				if (planModeInstructions) {
+					systemPrompt = planModeInstructions + "\n\n" + systemPrompt
+					console.log(`[DEBUG] PlanMode: Injected ${workflowMode.toUpperCase()} mode instructions, new prompt length:`, systemPrompt.length)
+				} else {
+					console.log("[DEBUG] PlanMode: No instructions to inject for mode:", workflowMode)
+				}
+
+				// Validate Plan Mode tools availability
+				if (workflowMode === 'plan') {
+					try {
+						this.validatePlanModeTools()
+					} catch (error) {
+						const planModeLogger = new PlanModeLogger()
+						planModeLogger.logValidationFailure('tool_availability', {
+							workflowMode,
+							error: error instanceof Error ? error.message : String(error)
+						})
+						throw error
+					}
+				}
+			}
+
+			// Enhance system prompt with active prompt blocks (CRITICAL FIX!)
+			const activeBlocksMap = getActivePromptBlocks()
+			const activeBlockNames = Array.from(activeBlocksMap.keys())
+
+			if (activeBlocksMap.size > 0) {
+				try {
+					console.log("[DEBUG] Task: Enhancing system prompt with active blocks:", activeBlockNames)
+					const factory = PromptBlocksFactory.getInstance()
+					const loadUseCase = factory.createLoadPromptBlocks(provider.context.extensionPath)
+					const enhanceUseCase = factory.createEnhanceSystemPrompt()
+
+					// Load active prompt blocks and create configurations
+					const activePromptConfigs = []
+					for (const [blockName, config] of activeBlocksMap.entries()) {
+						const block = await loadUseCase.executeByName(blockName)
+						if (block) {
+							const activePromptConfig = enhanceUseCase.createActivePrompt(
+								block,
+								config.variables,
+								block.priority
+							)
+							activePromptConfigs.push(activePromptConfig)
+						}
+					}
+
+					// Enhance the system prompt with active blocks
+					if (activePromptConfigs.length > 0) {
+						const enhancementResult = enhanceUseCase.execute(systemPrompt, activePromptConfigs)
+						systemPrompt = enhancementResult.enhancedPrompt
+						console.log("[DEBUG] Task: System prompt enhanced successfully. Added", enhancementResult.addedLength, "characters")
+					}
+				} catch (error) {
+					console.error("[DEBUG] Task: Failed to enhance system prompt with prompt blocks:", error)
+				}
+			}
+
+			// Debug capture: Store ENHANCED system prompt in development mode
+			if (__DEV__) {
+				console.log("[DEBUG] System prompt capture: Task.getSystemPrompt() called, __DEV__ =", __DEV__)
+				try {
+					console.log("[DEBUG] System prompt capture: About to call captureSystemPrompt")
+					console.log("[DEBUG] System prompt capture: Active blocks:", activeBlockNames)
+					console.log("[DEBUG] System prompt capture: Prompt length:", systemPrompt.length)
+
+					captureSystemPrompt(systemPrompt, {
+						mode: mode || 'unknown',
+						activeBlocks: activeBlockNames,
+						customInstructions: !!customInstructions,
+						taskId: this.taskId
+					})
+					console.log("[DEBUG] System prompt capture: Successfully captured in Task.getSystemPrompt()")
+				} catch (error) {
+					console.error("[DEBUG] Failed to capture system prompt in Task.getSystemPrompt():", error)
+				}
+			}
+
+			return systemPrompt
 		})()
+	}
+
+	/**
+	 * Validates that required tools are available in Plan Mode
+	 *
+	 * Ensures the exit_plan_mode tool is available when in Plan Mode to prevent
+	 * AI from using incorrect tools like attempt_completion. Throws error if
+	 * validation fails to halt processing early.
+	 *
+	 * @throws {Error} if exit_plan_mode is not available in Plan Mode
+	 * @private
+	 */
+	private validatePlanModeTools(): void {
+		const planModeLogger = new PlanModeLogger()
+
+		// Check if exit_plan_mode is in ALWAYS_AVAILABLE_TOOLS
+		const isExitPlanModeAvailable = ALWAYS_AVAILABLE_TOOLS.includes('exit_plan_mode' as any)
+
+		// Critical validation: exit_plan_mode must be available
+		if (!isExitPlanModeAvailable) {
+			const error = new Error('[PlanMode] Critical: exit_plan_mode tool not available')
+			planModeLogger.logValidationFailure('missing_exit_plan_mode_tool', {
+				availableInAlwaysTools: isExitPlanModeAvailable,
+				requiredTool: 'exit_plan_mode',
+				severity: 'critical'
+			})
+			throw error
+		}
+
+		// Validation passed - log success in development
+		if (process.env.NODE_ENV === 'development') {
+			console.log('[PlanMode] Tool validation passed - exit_plan_mode available')
+			planModeLogger.logToolValidation('exit_plan_mode', true, 'plan')
+		}
 	}
 
 	public async *attemptApiRequest(retryAttempt: number = 0): ApiStream {
@@ -2333,6 +2859,86 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 			taskId: this.taskId,
 		}
 
+		// Debug capture: Store API call details in development mode
+		let debugCaptureFilename: string | undefined
+		let apiRequestStartTime: string | undefined
+		if (__DEV__) {
+			try {
+				apiRequestStartTime = new Date().toISOString()
+				const modelInfo = this.api.getModel()
+				const timestamp = new Date().toISOString()
+					.replace(/T/, '_')
+					.replace(/:/g, '-')
+					.replace(/\..+/, '')
+					.slice(0, 19)
+				debugCaptureFilename = `api_call_${timestamp}.md`
+
+				console.log(`[DEBUG] Task: API call starting at ${apiRequestStartTime}`)
+
+				// Get the actual current user request from the conversation history
+				let currentUserRequest = this.userOriginalRequest
+				if (cleanConversationHistory.length > 0) {
+					// Find the last REAL user message (not tool results or automated messages)
+					for (let i = cleanConversationHistory.length - 1; i >= 0; i--) {
+						if (cleanConversationHistory[i].role === 'user') {
+							const userMessage = cleanConversationHistory[i].content
+							let messageText = ''
+
+							if (typeof userMessage === 'string') {
+								messageText = userMessage
+							} else if (Array.isArray(userMessage)) {
+								// Handle array of content blocks
+								// Look for the first text block that contains actual user input
+								for (const block of userMessage) {
+									if (typeof block === 'object' && block.type === 'text' && block.text) {
+										const text = block.text
+										// Skip tool results and automated messages
+										if (text.startsWith('[') && text.includes('] Result:')) {
+											continue // This is a tool result
+										}
+										if (text.startsWith('[ERROR]') || text.includes('(This is an automated message')) {
+											continue // This is an automated message
+										}
+										// Check for task tags which contain actual user input
+										const taskMatch = text.match(/<task>\s*([\s\S]*?)\s*<\/task>/)
+										if (taskMatch) {
+											messageText = taskMatch[1].trim()
+											break
+										}
+										// Otherwise use the full text
+										messageText = text
+										break
+									}
+								}
+							}
+
+							// If we found a real user message, use it
+							if (messageText && !messageText.startsWith('[') && !messageText.includes('] Result:')) {
+								currentUserRequest = messageText
+								break
+							}
+						}
+					}
+				}
+
+				captureApiCall({
+					provider: (this.api as any).options?.apiProvider || 'unknown',
+					model: modelInfo.id,
+					taskId: this.taskId,
+					mode: mode,
+					systemPrompt: systemPrompt,
+					messages: cleanConversationHistory,
+					metadata: metadata,
+					userRequest: currentUserRequest,
+					timing: {
+						requestStart: apiRequestStartTime
+					}
+				})
+			} catch (error) {
+				console.error("[DEBUG] Failed to capture API call:", error)
+			}
+		}
+
 		const stream = this.api.createMessage(systemPrompt, cleanConversationHistory, metadata)
 		const iterator = stream[Symbol.asyncIterator]()
 
@@ -2453,7 +3059,63 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		// it's saying "yield all remaining values from this iterator". This
 		// effectively passes along all subsequent chunks from the original
 		// stream.
-		yield* iterator
+
+		// Debug capture: Collect response chunks for debugging
+		if (__DEV__ && debugCaptureFilename) {
+			let responseText = ""
+			let tokenCount = { input: 0, output: 0 }
+
+			for await (const chunk of iterator) {
+				// Collect response text for debugging
+				if (typeof chunk === 'string') {
+					responseText += chunk
+				} else if (chunk && typeof chunk === 'object' && 'text' in chunk) {
+					responseText += chunk.text || ""
+				}
+
+				// Collect token usage if available
+				if (chunk && typeof chunk === 'object' && 'usage' in chunk) {
+					const usage = (chunk as any).usage
+					if (usage) {
+						tokenCount.input = usage.input_tokens || tokenCount.input
+						tokenCount.output = usage.output_tokens || tokenCount.output
+					}
+				}
+
+				yield chunk
+			}
+
+			// Update the capture file with response and token usage
+			try {
+				updateApiCallCapture(debugCaptureFilename, responseText, tokenCount)
+
+				// Link with HTTP interceptor data
+				if (apiRequestStartTime) {
+					const apiRequestEndTime = new Date().toISOString()
+					console.log(`[DEBUG] Task: API call completed at ${apiRequestEndTime}, searching for intercepted HTTP data`)
+
+					// Get HTTP data captured during this timeframe
+					const interceptedData = getCapturedDataByTimeframe(apiRequestStartTime, apiRequestEndTime)
+
+					if (interceptedData.requests.length > 0 || interceptedData.responses.length > 0) {
+						console.log(`[DEBUG] Task: Found ${interceptedData.requests.length} requests and ${interceptedData.responses.length} responses`)
+
+						// Use the first captured request/response pair (most likely the API call)
+						const rawRequest = interceptedData.requests[0]
+						const rawResponse = interceptedData.responses[0]
+
+						updateApiCallCaptureWithRawData(debugCaptureFilename, rawRequest, rawResponse)
+					} else {
+						console.log("[DEBUG] Task: No intercepted HTTP data found for this timeframe")
+					}
+				}
+			} catch (error) {
+				console.error("[DEBUG] Failed to update API call capture:", error)
+			}
+		} else {
+			// Normal operation - just pass through all chunks
+			yield* iterator
+		}
 	}
 
 	// Checkpoints

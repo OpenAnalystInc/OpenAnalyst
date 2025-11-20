@@ -1,0 +1,13 @@
+{
+	"strategicPlan": "Strategic Plan",
+	"approvedPlan": "Approved Plan",
+	"approve": "Approve Plan",
+	"reject": "Reject Plan",
+	"modify": "Modify Plan",
+	"rejectPlan": "Reject Plan",
+	"modifyPlan": "Modify Plan",
+	"confirmReject": "Confirm Rejection",
+	"submitModification": "Submit Modification",
+	"rejectReasonPlaceholder": "Please provide a reason for rejecting this plan...",
+	"modifyFeedbackPlaceholder": "Describe what changes you'd like to see in the plan..."
+}

@@ -4,7 +4,7 @@ import { z } from "zod"
  * ToolGroup
  */
 
-export const toolGroups = ["read", "edit", "browser", "command", "mcp", "modes", "templates"] as const
+export const toolGroups = ["read", "edit", "browser", "command", "mcp", "modes", "bigquery"] as const
 
 export const toolGroupsSchema = z.enum(toolGroups)
 
@@ -40,12 +40,20 @@ export const toolNames = [
 	"condense",
 	// oacode_change end
 	"update_todo_list",
-	// oacode_change - template tools
-	"upload_template",
-	"list_templates",
-	"activate_template",
-	"deactivate_template",
-	"delete_template",
+	// Plan Mode tools
+	"exit_plan_mode",
+	// BigQuery tools
+	"execute_sql",
+	"list_bigquery_connections",
+	"list_datasets",
+	"list_tables",
+	"get_table_schema",
+	// SQL Worksheet tools
+	"create_sql_worksheet",
+	"list_sql_worksheets",
+	"read_sql_worksheet",
+	"write_sql_worksheet",
+	"execute_sql_worksheet",
 ] as const
 
 export const toolNamesSchema = z.enum(toolNames)

@@ -28,6 +28,11 @@ async function main() {
 		format: "cjs",
 		sourcesContent: false,
 		platform: "node",
+		define: {
+			// Development flag for conditional debug logging
+			// In production builds, debug logs are eliminated via dead code elimination
+			"__DEV__": production ? "false" : "true",
+		},
 	}
 
 	const srcDir = __dirname
@@ -47,19 +52,19 @@ async function main() {
 			name: "copyFiles",
 			setup(build) {
 				build.onEnd(() => {
-					copyPaths(
-						[
-							["../README.md", "README.md"],
-							["../CHANGELOG.md", "CHANGELOG.md"],
-							["../LICENSE", "LICENSE"],
-							["../.env", ".env", { optional: true }],
-							["node_modules/vscode-material-icons/generated", "assets/vscode-material-icons"],
-							["../webview-ui/audio", "webview-ui/audio"],
-							["../webview-ui/src/components/oacode/assets/icons", "assets/icons"],
-						],
-						srcDir,
-						buildDir,
-					)
+						copyPaths(
+							[
+								["../README.md", "README.md"],
+								["../CHANGELOG.md", "CHANGELOG.md"],
+								["../LICENSE", "LICENSE"],
+								["../.env", ".env", { optional: true }],
+								["node_modules/vscode-material-icons/generated", "assets/vscode-material-icons"],
+								["../webview-ui/audio", "webview-ui/audio"],
+								// ["../webview-ui/src/components/oacode/assets/icons", "assets/icons"], // Removed to prevent overwriting src/assets/icons
+							],
+							srcDir,
+							buildDir,
+						)
 
 					// Copy walkthrough files to dist directory
 					copyPaths([["walkthrough", "walkthrough"]], srcDir, distDir)

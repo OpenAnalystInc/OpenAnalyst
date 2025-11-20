@@ -10,6 +10,7 @@ import { ExtensionMessage } from "@roo/ExtensionMessage"
 import { vscode } from "@/utils/vscode"
 import { useExtensionState } from "@/context/ExtensionStateContext"
 import { useAppTranslation } from "@/i18n/TranslationContext"
+import { usePromptBlocks } from "@/context/PromptBlocksContext"
 import {
 	ContextMenuOptionType,
 	getContextMenuOptions,
@@ -42,6 +43,7 @@ import { IndexingStatusBadge } from "./IndexingStatusBadge"
 import { cn } from "@/lib/utils"
 import { usePromptHistory } from "./hooks/usePromptHistory"
 import { EditModeControls } from "./EditModeControls"
+import { ChatToolbar } from "./toolbar/ChatToolbar"
 
 // oacode_change start: pull slash commands from Cline
 import SlashCommandMenu from "@/components/chat/SlashCommandMenu"
@@ -111,7 +113,20 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 			globalWorkflows, // oacode_change
 			taskHistory,
 			clineMessages,
+			workflowMode,
+			setWorkflowMode,
 		} = useExtensionState()
+
+		// PHASE 5.1 ENHANCED: Import all required methods for unified activation handler
+		const {
+			addActiveBlock,
+			availableBlocks,
+			activeBlocks,
+			isBlockActive,
+			getActivationState,
+			getConflictInfo,
+			toggleActiveBlock,
+		} = usePromptBlocks()
 
 		// Find the ID and display text for the currently selected API configuration
 		const { currentConfigId, displayName } = useMemo(() => {
@@ -417,11 +432,66 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 		)
 
 		// oacode_change start: pull slash commands from Cline
+		/**
+		 * Handle slash command selection from the dropdown menu
+		 *
+		 * This is the main entry point for slash command activation.
+		 * Three types of commands are handled:
+		 * 1. Prompt blocks: Added to active state (affects system prompt)
+		 * 2. Mode switching: Changes AI behavior mode
+		 * 3. Regular commands: Inserted into chat input
+		 *
+		 * IMPORTANT: Prompt blocks use addActiveBlock() - same as toolbar will use
+		 */
 		const handleSlashCommandsSelect = useCallback(
 			(command: SlashCommand) => {
 				setShowSlashCommandsMenu(false)
 
-				// Handle mode switching commands
+				// TYPE 1: Handle prompt block commands (from YAML files)
+				if (command.promptBlock) {
+					// Use unified activation handler for consistent behavior
+					// This ensures slash commands and toolbar use identical activation logic
+					import("@/services/UnifiedPromptActivationHandler").then(({ unifiedPromptActivationHandler }) => {
+						const context = {
+							availableBlocks,
+							activeBlocks,
+							isBlockActive,
+							getActivationState,
+							getConflictInfo,
+							toggleActiveBlock,
+							addActiveBlock,
+						}
+
+						unifiedPromptActivationHandler
+							.activatePromptBlock(command.name, context, "slash-command", {
+								clearInput: true,
+								showFeedback: true,
+							})
+							.then((result) => {
+								if (result.success) {
+									console.log(
+										`[ChatTextArea] Successfully activated prompt block via slash command:`,
+										result.userMessage,
+									)
+									setInputValue("") // Clear the input after successful activation
+									// PHASE 5.3: User feedback notification is now handled automatically by UnifiedPromptActivationHandler
+								} else {
+									console.error(
+										`[ChatTextArea] Failed to activate prompt block ${command.name}:`,
+										result.error,
+									)
+									// PHASE 5.3: Error notification is now handled automatically by UnifiedPromptActivationHandler
+								}
+							})
+							.catch((error) => {
+								console.error(`[ChatTextArea] Unified activation handler failed:`, error)
+							})
+					})
+
+					return
+				}
+
+				// TYPE 2: Handle mode switching commands (data-analyst, code, ask, debug)
 				const modeSwitchCommands = getAllModes(customModes).map((mode) => mode.slug)
 				if (modeSwitchCommands.includes(command.name)) {
 					// Switch to the selected mode
@@ -431,7 +501,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 					return
 				}
 
-				// Handle other slash commands (like newtask)
+				// TYPE 3: Handle other slash commands (like newtask, reportbug)
 				if (textAreaRef.current) {
 					const { newValue, commandIndex } = insertSlashCommand(textAreaRef.current.value, command.name)
 					const newCursorPosition = newValue.indexOf(" ", commandIndex + 1 + command.name.length) + 1
@@ -448,7 +518,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 					}, 0)
 				}
 			},
-			[setInputValue, setMode, customModes],
+			[setInputValue, setMode, customModes, addActiveBlock],
 		)
 		// oacode_change end
 
@@ -470,6 +540,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 								customModes,
 								localWorkflows,
 								globalWorkflows,
+								availableBlocks, // NEW: Include prompt blocks for slash commands
 							) // oacode_change
 
 							if (commands.length === 0) {
@@ -489,6 +560,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 							customModes,
 							localWorkflows,
 							globalWorkflows,
+							availableBlocks, // NEW: Include prompt blocks for slash commands
 						) // oacode_change
 						if (commands.length > 0) {
 							handleSlashCommandsSelect(commands[selectedSlashCommandsIndex])
@@ -1192,9 +1264,9 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 						/>
 						{/* oacode_change end */}
 					</div>
-					
+
 					{/* oacode_change - template selector */}
-					<div className="shrink-0">
+					<div className={cn("shrink min-w-0 max-w-[200px]", { hidden: containerWidth < 300 })}>
 						<TemplateSelector />
 					</div>
 
@@ -1361,7 +1433,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 						"z-[2]",
 						"scrollbar-none",
 						"scrollbar-hide",
-						"pb-16", // oacode_change: Increased padding to prevent overlap with control bar
+						"pb-14.5", // oacode_change: Increased padding to prevent overlap with control bar
 					)}
 					onScroll={() => updateHighlights()}
 				/>
@@ -1571,6 +1643,45 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 									dynamicSearchResults={fileSearchResults}
 								/>
 							</div>
+						)}
+
+						{/* Toolbar */}
+						{!isEditMode && (
+							<ChatToolbar
+								disabled={sendingDisabled}
+								// onModelChange={(modelConfig) => {
+								// 	console.log('Model changed:', modelConfig)
+								// 	// Could integrate with existing model selection logic
+								// 	// setSelectedModel(modelConfig)
+								// }}
+								onRuleToggle={(ruleId, enabled) => {
+									console.log("Rule toggled:", ruleId, enabled)
+									// Could integrate with existing rules context
+									// updateRule(ruleId, { enabled })
+								}}
+								onPromptSelect={(prompt) => {
+									console.log("Prompt selected:", prompt)
+									// Insert prompt template into text area
+									if (textAreaRef.current) {
+										const currentValue = inputValue.trim()
+										const newValue = currentValue
+											? `${currentValue}\n\n${prompt.template}`
+											: prompt.template
+										setInputValue(newValue)
+										textAreaRef.current.focus()
+										// Position cursor at end
+										setTimeout(() => {
+											if (textAreaRef.current) {
+												textAreaRef.current.setSelectionRange(newValue.length, newValue.length)
+											}
+										}, 0)
+									}
+								}}
+								workflowMode={workflowMode || "chat"}
+								onWorkflowModeChange={setWorkflowMode}
+								containerWidth={containerWidth}
+								className="mb-1 mt-2"
+							/>
 						)}
 
 						{renderTextAreaSection()}

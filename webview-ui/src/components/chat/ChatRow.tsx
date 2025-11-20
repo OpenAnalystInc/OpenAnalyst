@@ -54,6 +54,81 @@ import CodebaseSearchResultsDisplay from "./CodebaseSearchResultsDisplay"
 import { cn } from "@/lib/utils"
 import { OaChatRowUserFeedback } from "../oacode/chat/OaChatRowUserFeedback" // oacode_change
 import { StandardTooltip } from "../ui" // oacode_change
+import PlanMessage from "./PlanMessage"
+
+/**
+ * Remove system-reminder blocks from content to hide them from user view
+ *
+ * System reminders are internal instructions for the AI that should not be
+ * displayed to users in the chat interface. This function filters them out
+ * while preserving all other content.
+ *
+ * @param content - Raw message content that may contain system-reminder blocks
+ * @returns Content with system-reminder blocks removed
+ *
+ * @example
+ * ```ts
+ * filterSystemReminders("Hello <system-reminder>internal</system-reminder> world")
+ * // Returns: "Hello  world"
+ * ```
+ */
+function filterSystemReminders(content: string): string {
+	if (!content) return content
+	// Remove system-reminder blocks (case-insensitive, multiline)
+	return content.replace(/<system-reminder[\s\S]*?<\/system-reminder>/gi, '').trim()
+}
+
+/**
+ * Detect if message content contains a strategic plan
+ *
+ * Uses pattern matching to identify strategic plans based on:
+ * - Plan title markers (# Plan:)
+ * - Phase structure (## Phase 1, ## Phase 2, etc.)
+ * - Common planning terminology (strategic plan, implementation plan)
+ * - Content analysis (approach, strategy, deliverable keywords)
+ *
+ * Performance: O(n) where n is content length, regex operations cached
+ * Security: No user input stored, purely analytical function
+ *
+ * @param content - Message text content to analyze
+ * @returns true if content appears to be a strategic plan requiring special UI treatment
+ * @throws Never throws, handles all edge cases gracefully
+ *
+ * @example
+ * ```ts
+ * detectPlanContent("# Plan: Website Redesign\n## Phase 1\n## Phase 2") // true
+ * detectPlanContent("Just a regular message") // false
+ * ```
+ */
+function detectPlanContent(content: string): boolean {
+	const lowerContent = content.toLowerCase()
+
+	// Look for plan indicators - compiled regexes for performance
+	const planMarkers = [
+		/^#\s*plan:/mi,                   // Plan title marker (case-insensitive)
+		/#{2,3}\s*phase\s*\d+/mi,        // Phase headers (## Phase 1, ### Phase 2, case-insensitive)
+		/strategic\s*plan/i,              // "Strategic plan" keyword (case-insensitive)
+		/implementation\s*plan/i,         // "Implementation plan" keyword (case-insensitive)
+		/project\s*plan/i,                // "Project plan" keyword (case-insensitive)
+	]
+
+	// Check for phase structure (at least 2 phases) - O(n) single pass
+	// Security: Regex is bounded to prevent ReDoS attacks
+	const phaseMatches = content.match(/^#{2,3}\s*phase\s*\d+/gmi)
+	const hasMultiplePhases = !!(phaseMatches && phaseMatches.length >= 2)
+
+	// Look for common plan content words - case-insensitive search
+	// Performance: Using includes() which is faster than regex for simple string matching
+	const planWords = ['approach', 'strategy', 'implementation', 'deliverable', 'milestone', 'timeline']
+	const planWordCount = planWords.filter(word => lowerContent.includes(word)).length
+
+	// Business logic: Must have explicit markers OR (multiple phases AND sufficient plan vocabulary)
+	// This prevents false positives from casual mention of planning words
+	const hasMarkers = planMarkers.some(marker => marker.test(content))
+	const hasStructure = hasMultiplePhases && planWordCount >= 2
+
+	return hasMarkers || hasStructure
+}
 
 interface ChatRowProps {
 	message: ClineMessage
@@ -132,7 +207,7 @@ export const ChatRowContent = ({
 	editable,
 }: ChatRowContentProps) => {
 	const { t } = useTranslation()
-	const { mcpServers, alwaysAllowMcp, currentCheckpoint } = useExtensionState()
+	const { mcpServers, alwaysAllowMcp, currentCheckpoint, workflowMode, approvedPlan } = useExtensionState()
 	const [reasoningCollapsed, setReasoningCollapsed] = useState(true)
 	const [isDiffErrorExpanded, setIsDiffErrorExpanded] = useState(false)
 	const [showCopySuccess, setShowCopySuccess] = useState(false)
@@ -754,13 +829,13 @@ export const ChatRowContent = ({
 											<Trans
 												i18nKey="chat:modes.wantsToSwitchWithReason"
 												components={{ code: <code>{tool.mode}</code> }}
-												values={{ mode: tool.mode, reason: tool.reason }}
+												values={{ agent: tool.mode, reason: tool.reason }}
 											/>
 										) : (
 											<Trans
 												i18nKey="chat:modes.wantsToSwitch"
 												components={{ code: <code>{tool.mode}</code> }}
-												values={{ mode: tool.mode }}
+												values={{ agent: tool.mode }}
 											/>
 										)}
 									</>
@@ -770,13 +845,13 @@ export const ChatRowContent = ({
 											<Trans
 												i18nKey="chat:modes.didSwitchWithReason"
 												components={{ code: <code>{tool.mode}</code> }}
-												values={{ mode: tool.mode, reason: tool.reason }}
+												values={{ agent: tool.mode, reason: tool.reason }}
 											/>
 										) : (
 											<Trans
 												i18nKey="chat:modes.didSwitch"
 												components={{ code: <code>{tool.mode}</code> }}
-												values={{ mode: tool.mode }}
+												values={{ agent: tool.mode }}
 											/>
 										)}
 									</>
@@ -1086,9 +1161,35 @@ export const ChatRowContent = ({
 				case "api_req_finished":
 					return null // we should never see this message type
 				case "text":
+					// Filter out system-reminder blocks from display
+					const filteredText = filterSystemReminders(message.text || "")
+
+					// Skip rendering if message only contained system reminders
+					if (!filteredText && message.text && message.text.includes('<system-reminder>')) {
+						return null
+					}
+
+					// Check if this message contains a strategic plan
+					const isPlanContent = filteredText && detectPlanContent(filteredText)
+					if (isPlanContent) {
+						// Check if this plan content matches an already approved plan
+						const isCurrentPlanApproved = approvedPlan &&
+							approvedPlan.content.trim() === filteredText.trim()
+
+						return (
+							<div>
+								<PlanMessage
+									content={filteredText}
+									isApproved={!!isCurrentPlanApproved}
+									approvedPlan={approvedPlan}
+									workflowMode={workflowMode}
+								/>
+							</div>
+						)
+					}
 					return (
 						<div>
-							<Markdown markdown={message.text} partial={message.partial} />
+							<Markdown markdown={filteredText} partial={message.partial} />
 						</div>
 					)
 				case "user_feedback":
@@ -1119,7 +1220,9 @@ export const ChatRowContent = ({
 									{title}
 								</div>
 							)}
-							<p style={{ ...pStyle, color: "var(--vscode-errorForeground)" }}>{message.text}</p>
+							<p style={{ ...pStyle, color: "var(--vscode-errorForeground)" }}>
+								{filterSystemReminders(message.text || "")}
+							</p>
 						</>
 					)
 				case "completion_result":
@@ -1130,7 +1233,7 @@ export const ChatRowContent = ({
 								{title}
 							</div>
 							<div style={{ color: "var(--vscode-charts-green)", paddingTop: 10 }}>
-								<Markdown markdown={message.text} />
+								<Markdown markdown={filterSystemReminders(message.text || "")} />
 							</div>
 						</>
 					)
@@ -1210,7 +1313,7 @@ export const ChatRowContent = ({
 									⚠️ Browser action result not properly grouped - this is a bug in the message
 									grouping logic
 								</div>
-								<Markdown markdown={message.text} partial={message.partial} />
+								<Markdown markdown={filterSystemReminders(message.text || "")} partial={message.partial} />
 							</div>
 						</>
 					)
@@ -1227,7 +1330,7 @@ export const ChatRowContent = ({
 								</div>
 							)}
 							<div style={{ paddingTop: 10 }}>
-								<Markdown markdown={message.text} partial={message.partial} />
+								<Markdown markdown={filterSystemReminders(message.text || "")} partial={message.partial} />
 							</div>
 						</>
 					)
@@ -1241,7 +1344,9 @@ export const ChatRowContent = ({
 								{icon}
 								{title}
 							</div>
-							<p style={{ ...pStyle, color: "var(--vscode-errorForeground)" }}>{message.text}</p>
+							<p style={{ ...pStyle, color: "var(--vscode-errorForeground)" }}>
+								{filterSystemReminders(message.text || "")}
+							</p>
 						</>
 					)
 				case "command":
@@ -1321,7 +1426,7 @@ export const ChatRowContent = ({
 									{title}
 								</div>
 								<div style={{ color: "var(--vscode-charts-green)", paddingTop: 10 }}>
-									<Markdown markdown={message.text} partial={message.partial} />
+									<Markdown markdown={filterSystemReminders(message.text || "")} partial={message.partial} />
 								</div>
 							</div>
 						)

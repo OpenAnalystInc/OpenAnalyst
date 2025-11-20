@@ -76,27 +76,109 @@ export const modeConfigSchema = z.object({
 export type ModeConfig = z.infer<typeof modeConfigSchema>
 
 /**
- * CustomModesSettings
+ * TemplatePromptBlock
+ * Purpose: Schema for prompt blocks within templates
+ * Invariants: Name must be unique within template
+ */
+
+export const templatePromptBlockSchema = z.object({
+	name: z.string().min(1, "Name is required"),
+	category: z.enum(["analysis", "visualization", "reporting", "methodology"]),
+	content: z.string().min(1, "Content is required"),
+	description: z.string().optional(),
+	variables: z.array(z.string()).optional(),
+	priority: z.number().optional(),
+})
+
+export type TemplatePromptBlock = z.infer<typeof templatePromptBlockSchema>
+
+/**
+ * TemplateRule
+ * Purpose: Schema for rules within templates
+ * Invariants: Name must be unique within template
+ */
+
+export const templateRuleSchema = z.object({
+	name: z.string().min(1, "Name is required"),
+	content: z.string().min(1, "Content is required"),
+	enabled: z.boolean().default(true),
+	description: z.string().optional(),
+})
+
+export type TemplateRule = z.infer<typeof templateRuleSchema>
+
+/**
+ * CustomModesSettings (Extended)
+ * Purpose: Full template configuration with agents, prompts, and rules
+ * Backwards compatible: All sections are optional
  */
 
 export const customModesSettingsSchema = z.object({
-	customModes: z.array(modeConfigSchema).refine(
-		(modes) => {
-			const slugs = new Set()
+	Agents: z
+		.array(modeConfigSchema)
+		.refine(
+			(modes) => {
+				const slugs = new Set()
 
-			return modes.every((mode) => {
-				if (slugs.has(mode.slug)) {
-					return false
-				}
+				return modes.every((mode) => {
+					if (slugs.has(mode.slug)) {
+						return false
+					}
 
-				slugs.add(mode.slug)
-				return true
-			})
-		},
-		{
-			message: "Duplicate mode slugs are not allowed",
-		},
-	),
+					slugs.add(mode.slug)
+					return true
+				})
+			},
+			{
+				message: "Duplicate agent slugs are not allowed",
+			},
+		)
+		.optional()
+		.default([]), // Made optional for backwards compatibility
+
+	// NEW: Prompts section
+	Prompts: z
+		.array(templatePromptBlockSchema)
+		.refine(
+			(prompts) => {
+				const names = new Set()
+
+				return prompts.every((prompt) => {
+					if (names.has(prompt.name)) {
+						return false
+					}
+
+					names.add(prompt.name)
+					return true
+				})
+			},
+			{
+				message: "Duplicate prompt names are not allowed",
+			},
+		)
+		.optional(),
+
+	// NEW: Rules section
+	Rules: z
+		.array(templateRuleSchema)
+		.refine(
+			(rules) => {
+				const names = new Set()
+
+				return rules.every((rule) => {
+					if (names.has(rule.name)) {
+						return false
+					}
+
+					names.add(rule.name)
+					return true
+				})
+			},
+			{
+				message: "Duplicate rule names are not allowed",
+			},
+		)
+		.optional(),
 })
 
 export type CustomModesSettings = z.infer<typeof customModesSettingsSchema>
@@ -152,14 +234,15 @@ export const DEFAULT_MODES: readonly ModeConfig[] = [
 				"edit",
 				{
 					fileRegex: "\\.md$",
-					description: "Markdown files only"
-				}
+					description: "Markdown files only",
+				},
 			],
 			"browser",
-			"mcp"
+			"mcp",
+			"bigquery",
 		],
 		customInstructions:
-			"1. Do targeted discovery about the analysis: stakeholders, decisions to be supported, timeframe, success metrics/KPIs, key segments, and constraints.\n\n2. Inventory data sources and structures: relevant tables/files, fields, grain, freshness, ownership, join keys, and any known data quality risks.\n\n3. Define metrics precisely: formulas, filters, windows, and dimensions. Capture assumptions and edge cases explicitly to avoid ambiguity.\n\n4. Sketch the analysis approach: EDA outline, sample queries, notebook sections, planned visualizations/dashboards, and expected delivery format (e.g., report, dashboard, notebook, CSV).\n\n5. Break work into a stepwise TODO list that the Code mode can execute. Prefer small, verifiable steps (e.g., create source profile, draft SQL for metric X, build notebook section Y, produce chart Z, validate against baseline). Use the `update_todo_list` tool.\n\n   **Note:** If the `update_todo_list` tool is not available, write the plan to a markdown file (e.g., `plan.md` or `todo.md`) instead.\n\n6. Keep the TODO list in sync as understanding evolves.\n\n7. Ask the user to confirm or adjust the plan before implementation to ensure alignment with business goals and feasibility.\n\n8. Include Mermaid diagrams if they help clarify data pipelines, joins, or workflow. Please avoid using double quotes (\"\") and parentheses () inside square brackets ([]) in Mermaid diagrams, as this can cause parsing errors.\n\n9. Use the switch_mode tool to request moving to another mode (e.g., Code or Orchestrator) to implement the solution.\n\n**IMPORTANT: Focus on creating clear, actionable TODO lists rather than lengthy markdown documents. Use the TODO list as your primary planning tool to track and organize the work.**",
+			'1. Do targeted discovery about the analysis: stakeholders, decisions to be supported, timeframe, success metrics/KPIs, key segments, and constraints.\n\n2. Inventory data sources and structures: relevant tables/files, fields, grain, freshness, ownership, join keys, and any known data quality risks.\n\n3. Define metrics precisely: formulas, filters, windows, and dimensions. Capture assumptions and edge cases explicitly to avoid ambiguity.\n\n4. Sketch the analysis approach: EDA outline, sample queries, notebook sections, planned visualizations/dashboards, and expected delivery format (e.g., report, dashboard, notebook, CSV).\n\n5. Break work into a stepwise TODO list that the Code mode can execute. Prefer small, verifiable steps (e.g., create source profile, draft SQL for metric X, build notebook section Y, produce chart Z, validate against baseline). Use the `update_todo_list` tool.\n\n   **Note:** If the `update_todo_list` tool is not available, write the plan to a markdown file (e.g., `plan.md` or `todo.md`) instead.\n\n6. Keep the TODO list in sync as understanding evolves.\n\n7. Ask the user to confirm or adjust the plan before implementation to ensure alignment with business goals and feasibility.\n\n8. Include Mermaid diagrams if they help clarify data pipelines, joins, or workflow. Please avoid using double quotes ("") and parentheses () inside square brackets ([]) in Mermaid diagrams, as this can cause parsing errors.\n\n9. Use the switch_mode tool to request moving to another mode (e.g., Code or Orchestrator) to implement the solution.\n\n**IMPORTANT: Focus on creating clear, actionable TODO lists rather than lengthy markdown documents. Use the TODO list as your primary planning tool to track and organize the work.**',
 	},
 	{
 		slug: "code",

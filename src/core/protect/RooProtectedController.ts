@@ -14,7 +14,6 @@ export class RooProtectedController {
 	// Predefined list of protected Roo configuration patterns
 	private static readonly PROTECTED_PATTERNS = [
 		".oacodeignore",
-		".oacodemodes",
 		".oacoderules",
 		".oacode/**",
 		".oacodeprotected",

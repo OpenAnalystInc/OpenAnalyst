@@ -6,6 +6,14 @@ import { vscode } from "@src/utils/vscode"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 
+/**
+ * Filter out system-reminder blocks from content
+ */
+function filterSystemReminders(content: string): string {
+	if (!content) return content
+	return content.replace(/<system-reminder[\s\S]*?<\/system-reminder>/gi, '').trim()
+}
+
 interface OaChatRowUserFeedbackProps {
 	message: ClineMessage
 	isStreaming: boolean
@@ -15,10 +23,10 @@ interface OaChatRowUserFeedbackProps {
 export const OaChatRowUserFeedback = ({ message, isStreaming, onChatReset }: OaChatRowUserFeedbackProps) => {
 	const { t } = useTranslation()
 	const [isEditing, setIsEditing] = useState(false)
-	const [editedText, setEditedText] = useState(message.text)
+	const [editedText, setEditedText] = useState(filterSystemReminders(message.text || ""))
 
 	const handleCancel = () => {
-		setEditedText(message.text)
+		setEditedText(filterSystemReminders(message.text || ""))
 		setIsEditing(false)
 	}
 
@@ -71,7 +79,7 @@ export const OaChatRowUserFeedback = ({ message, isStreaming, onChatReset }: OaC
 		<div className="bg-vscode-editor-background border rounded-xs p-1 overflow-hidden whitespace-pre-wrap">
 			<div className="flex justify-between">
 				<div className="flex-grow px-2 py-1 wrap-anywhere">
-					<Mention text={message.text} withShadow />
+					<Mention text={filterSystemReminders(message.text || "")} withShadow />
 				</div>
 				<div className="flex">
 					<Button

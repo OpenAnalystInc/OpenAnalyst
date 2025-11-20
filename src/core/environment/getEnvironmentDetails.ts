@@ -41,7 +41,7 @@ export async function getEnvironmentDetails(cline: Task, includeFileDetails: boo
 
 	// It could be useful for cline to know if the user went from one or no
 	// file to another between messages, so we always include this context.
-	details += "\n\n# VSCode Visible Files"
+	details += "\n\n# OpenAnalyst Visible Files"
 
 	const visibleFilePaths = vscode.window.visibleTextEditors
 		?.map((editor) => editor.document?.uri?.fsPath)
@@ -60,7 +60,7 @@ export async function getEnvironmentDetails(cline: Task, includeFileDetails: boo
 		details += "\n(No visible files)"
 	}
 
-	details += "\n\n# VSCode Open Tabs"
+	details += "\n\n# OpenAnalyst Open Tabs"
 	const { maxOpenTabsContext } = state ?? {}
 	const maxTabs = maxOpenTabsContext ?? 20
 	const openTabPaths = vscode.window.tabGroups.all
@@ -248,7 +248,7 @@ export async function getEnvironmentDetails(cline: Task, includeFileDetails: boo
 
 	const currentMode = modeDetails.slug ?? mode // oacode_change: don't try to use non-existent modes
 
-	details += `\n\n# Current Mode\n`
+	details += `\n\n# Current Agent\n`
 	details += `<slug>${currentMode}</slug>\n`
 	details += `<name>${modeDetails.name}</name>\n`
 	details += `<model>${modelId}</model>\n`

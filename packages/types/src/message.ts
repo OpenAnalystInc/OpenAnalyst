@@ -41,6 +41,7 @@ export const clineAsks = [
 	"payment_required_prompt", // oacode_change: Added for the low credits dialog
 	"report_bug", // oacode_change
 	"condense", // oacode_change
+	"request_limit_exceeded_feedback", // oacode_change: Added for request limit feedback
 ] as const
 
 export const clineAskSchema = z.enum(clineAsks)
@@ -130,6 +131,7 @@ export const clineSays = [
 	"condense_context_error",
 	"codebase_search_result",
 	"user_edit_todos",
+	"task_started", // oacode_change: Added for task initialization
 ] as const
 
 export const clineSaySchema = z.enum(clineSays)

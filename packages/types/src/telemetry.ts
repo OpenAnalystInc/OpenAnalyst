@@ -40,6 +40,17 @@ export enum TelemetryEventName {
 	MODE_SELECTOR_OPENED = "Mode Selector Opened",
 	TOOL_USED = "Tool Used",
 
+	// Plan Mode events
+	PLAN_MODE_ENTERED = "Plan Mode Entered",
+	PLAN_MODE_EXITED = "Plan Mode Exited",
+	PLAN_MODE_TOOL_INTERCEPTED = "Plan Mode Tool Intercepted",
+	PLAN_MODE_TOOL_BLOCKED = "Plan Mode Tool Blocked",
+	PLAN_MODE_VALIDATION_FAILED = "Plan Mode Validation Failed",
+	PLAN_MODE_PLAN_PRESENTED = "Plan Mode Plan Presented",
+	PLAN_MODE_PLAN_APPROVED = "Plan Mode Plan Approved",
+	PLAN_MODE_PLAN_MODIFIED = "Plan Mode Plan Modified",
+	PLAN_MODE_PLAN_REJECTED = "Plan Mode Plan Rejected",
+
 	CHECKPOINT_CREATED = "Checkpoint Created",
 	CHECKPOINT_RESTORED = "Checkpoint Restored",
 	CHECKPOINT_DIFFED = "Checkpoint Diffed",

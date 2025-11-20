@@ -14,6 +14,7 @@ import {
 	type ClineMessage,
 	TelemetryEventName,
 	ghostServiceSettingsSchema, // oacode_change
+	customModesSettingsSchema,
 } from "@roo-code/types"
 import { CloudService } from "@roo-code/cloud"
 import { TelemetryService } from "@roo-code/telemetry"
@@ -55,10 +56,90 @@ import { GetModelsOptions } from "../../shared/api"
 import { generateSystemPrompt } from "./generateSystemPrompt"
 import { getCommand } from "../../utils/commands"
 import { toggleWorkflow, toggleRule, createRuleFile, deleteRuleFile } from "./oarules"
+import { createPromptFile, deletePromptFile, editPromptBlock } from "./oaprompts"
 import { mermaidFixPrompt } from "../prompts/utilities/mermaid" // oacode_change
 import { editMessageHandler, fetchOacodeNotificationsHandler } from "../oacode/webview/webviewMessageHandlerUtils" // oacode_change
+import { PromptBlocksFactory } from "../blocks"
 
 const ALLOWED_VSCODE_SETTINGS = new Set(["terminal.integrated.inheritEnv"])
+
+// Active prompt blocks
+const activePromptBlocks = new Map<string, Record<string, any>>()
+
+/**
+ * Helper function to refresh and send prompt blocks to webview
+ */
+async function refreshPromptBlocks(provider: ClineProvider): Promise<void> {
+	try {
+		const factory = PromptBlocksFactory.getInstance()
+		const repository = factory.createRepository(provider.context.extensionPath)
+
+		// Load all blocks with source information
+		const blocksWithSourceInfo = await repository.loadAllWithSource()
+		const blocksWithSource = []
+
+		// Process blocks with preserved source information
+		for (const { block, source } of blocksWithSourceInfo) {
+			// Only include enabled blocks
+			if (!block.isEnabled()) {
+				continue
+			}
+
+			// Categorize based on "custom" tag: if tags include "custom", it goes to Custom tab
+			// This allows users to edit the category field while still appearing in Custom tab
+			const hasCustomTag = Array.isArray(block.tags) && block.tags.includes("custom")
+			const sourceCategory = hasCustomTag ? "custom" : "default"
+
+			blocksWithSource.push({
+				name: block.name,
+				description: block.description,
+				category: block.category, // This is the prompt category (analysis, visualization, etc.) - user editable
+				tags: block.tags,
+				priority: block.priority,
+				enabled: block.enabled,
+				source: source, // Source path info (workspace/global/defaults)
+				sourceCategory: sourceCategory, // Categorization for toolbar (default/custom) - based on "custom" tag
+			})
+		}
+
+		// Categorize blocks for toolbar support
+		const defaultBlocks = blocksWithSource.filter((block) => block.sourceCategory === "default")
+		const customBlocks = blocksWithSource.filter((block) => block.sourceCategory === "custom")
+
+		// Send categorized response for toolbar functionality
+		await provider.postMessageToWebview({
+			type: "promptBlocksLoaded",
+			blocks: blocksWithSource,
+			defaultBlocks,
+			customBlocks,
+			totalCount: blocksWithSource.length,
+			defaultCount: defaultBlocks.length,
+			customCount: customBlocks.length,
+		})
+	} catch (error) {
+		console.error("Error refreshing prompt blocks:", error)
+		// Send empty response on error to prevent UI hanging
+		await provider.postMessageToWebview({
+			type: "promptBlocksLoaded",
+			blocks: [],
+			defaultBlocks: [],
+			customBlocks: [],
+			totalCount: 0,
+			defaultCount: 0,
+			customCount: 0,
+			error: error instanceof Error ? error.message : String(error),
+			loadFailed: true,
+		})
+	}
+}
+
+/**
+ * Get current active prompt blocks for system prompt generation
+ * @returns Map of active prompt blocks
+ */
+export function getActivePromptBlocks(): Map<string, Record<string, any>> {
+	return activePromptBlocks
+}
 
 import { MarketplaceManager, MarketplaceItemType } from "../../services/marketplace"
 import { setPendingTodoList } from "../tools/updateTodoListTool"
@@ -298,12 +379,97 @@ export const webviewMessageHandler = async (
 
 			provider.isViewLaunched = true
 			break
-		case "newTask":
+		case "newTask": {
 			// Initializing new instance of Cline will make sure that any
 			// agentically running promises in old instance don't affect our new
 			// task. This essentially creates a fresh slate for the new task.
-			await provider.initClineWithTask(message.text, message.images)
+
+			// Debug: Check current workflowMode when task starts
+			const currentState = await provider.getState()
+			console.log("[DEBUG] PlanMode: newTask starting with stored workflowMode:", currentState.workflowMode)
+			console.log("[DEBUG] PlanMode: newTask message workflowMode:", message.workflowMode)
+
+			// Use workflowMode from message if provided (to avoid race conditions)
+			if (message.workflowMode && ["plan", "chat", "agent"].includes(message.workflowMode)) {
+				console.log("[DEBUG] PlanMode: Updating workflowMode from newTask message:", message.workflowMode)
+				await updateGlobalState("workflowMode", message.workflowMode as "plan" | "chat" | "agent")
+			}
+
+			let processedText = message.text || ""
+
+			// Check for prompt block slash commands
+			const slashCommandRegex = /^\/([a-zA-Z0-9_-]+)(\s|$)/
+			const match = processedText.match(slashCommandRegex)
+
+			if (match) {
+				const commandName = match[1]
+
+				try {
+					// Check if this is a prompt block command
+					const factory = PromptBlocksFactory.getInstance()
+					const loadUseCase = factory.createLoadPromptBlocks(provider.context.extensionPath)
+
+					const block = await loadUseCase.executeByName(commandName)
+
+					if (block) {
+						// This is a prompt block - activate it and remove from text
+						processedText = processedText.replace(slashCommandRegex, "").trim()
+
+						// Use structured logging for development debugging
+						import("../infrastructure/Logger")
+							.then(({ promptBlocksLogger }) => {
+								promptBlocksLogger.debug("Prompt block activated via slash command", {
+									blockName: block.name,
+									category: block.category,
+									originalText: message.text,
+									processedText: processedText,
+								})
+							})
+							.catch(() => {
+								// Logger import failed, continue silently
+							})
+
+						// TODO: Store in conversation state when available
+						// For now, just enhance the current prompt
+						const enhanceUseCase = factory.createEnhanceSystemPrompt()
+						const activePrompts = [
+							{
+								name: block.name,
+								variables: {}, // Could extract from command parameters later
+							},
+						]
+
+						// Initialize task with the enhanced prompt context
+						await provider.initClineWithTask(processedText, message.images)
+						return
+					}
+				} catch (error) {
+					// Use structured logging for error handling
+					import("../infrastructure/Logger")
+						.then(({ promptBlocksLogger }) => {
+							import("../infrastructure/errors").then(({ normalizeError }) => {
+								const typedError = normalizeError(error, "SLASH_COMMAND_CHECK_FAILED", {
+									commandName,
+									operation: "checkPromptBlock",
+								})
+								promptBlocksLogger.warn(
+									"Failed to check if slash command is prompt block",
+									typedError.toLogObject(),
+								)
+							})
+						})
+						.catch(() => {
+							// Fallback to console logging
+							console.warn(`Error checking prompt block ${commandName}:`, error)
+						})
+					// Continue with normal processing - this is recoverable
+				}
+			}
+
+			// Initialize task with processed text
+			await provider.initClineWithTask(processedText, message.images)
 			break
+		}
 		// oacode_change start
 		case "condense":
 			provider.getCurrentCline()?.handleWebviewAskResponse("yesButtonClicked")
@@ -1554,11 +1720,11 @@ export const webviewMessageHandler = async (
 			)
 
 			if (answer === githubIssuesText) {
-				await vscode.env.openExternal(vscode.Uri.parse("https://github.com/Oa-Org/oacode/issues"))
+				await vscode.env.openExternal(vscode.Uri.parse("https://github.com/OpenAnalystInc/OpenAnalyst/issues"))
 			} else if (answer === discordText) {
-				await vscode.env.openExternal(vscode.Uri.parse("https://discord.gg/fxrhCFGhkP"))
+				await vscode.env.openExternal(vscode.Uri.parse("https://discord.gg/chfCZBXS2x"))
 			} else if (answer === customerSupport) {
-				await vscode.env.openExternal(vscode.Uri.parse("https://oacode.ai/support"))
+				await vscode.env.openExternal(vscode.Uri.parse("https://openanalyst.com"))
 			}
 			break
 		}
@@ -2105,7 +2271,9 @@ export const webviewMessageHandler = async (
 				}
 
 				// Import JWT token utilities
-				const { extractUserFromToken, isTokenExpired, getTokenExpiration } = await import('../../utils/oacode-token')
+				const { extractUserFromToken, isTokenExpired, getTokenExpiration } = await import(
+					"../../utils/oacode-token"
+				)
 
 				// Extract user info from JWT token as fallback
 				const tokenUserInfo = extractUserFromToken(oacodeToken)
@@ -2117,10 +2285,10 @@ export const webviewMessageHandler = async (
 					provider.log("OaCode token has expired.")
 					provider.postMessageToWebview({
 						type: "profileDataResponse",
-						payload: { 
-							success: false, 
+						payload: {
+							success: false,
 							error: "Authentication token has expired. Please sign in again.",
-							tokenExpired: true 
+							tokenExpired: true,
 						},
 					})
 					break
@@ -2128,62 +2296,63 @@ export const webviewMessageHandler = async (
 
 				// Try to fetch fresh profile data from backend
 				try {
-					const baseUrl = 'https://app.openanalyst.com'
+					const baseUrl = "https://app.openanalyst.com"
 					const response = await axios.get(`${baseUrl}/api/auth/extension/profile`, {
 						headers: {
 							Authorization: `Bearer ${oacodeToken}`,
 							"Content-Type": "application/json",
 						},
-						timeout: 5000 // 5 second timeout
+						timeout: 5000, // 5 second timeout
 					})
 
 					// Merge backend data with token data
 					provider.postMessageToWebview({
 						type: "profileDataResponse",
-						payload: { 
-							success: true, 
-							data: { 
+						payload: {
+							success: true,
+							data: {
 								oacodeToken,
 								user: {
 									// Prefer backend data, fallback to token data
 									...tokenUserInfo,
 									...response.data.user,
-									name: response.data.user?.name || `${tokenUserInfo?.email?.split('@')[0]}` || 'User',
+									name:
+										response.data.user?.name || `${tokenUserInfo?.email?.split("@")[0]}` || "User",
 									email: response.data.user?.email || tokenUserInfo?.email,
-									image: response.data.user?.image || null
+									image: response.data.user?.image || null,
 								},
-								...response.data
-							}
+								...response.data,
+							},
 						},
 					})
-
 				} catch (backendError: any) {
 					// Backend failed, use token data as fallback
 					provider.log(`Backend profile fetch failed: ${backendError.message}. Using token data.`)
-					
+
 					if (tokenUserInfo) {
 						provider.postMessageToWebview({
 							type: "profileDataResponse",
-							payload: { 
-								success: true, 
-								data: { 
+							payload: {
+								success: true,
+								data: {
 									oacodeToken,
 									user: {
-										name: tokenUserInfo.firstName 
-											? `${tokenUserInfo.firstName}${tokenUserInfo.lastName ? ' ' + tokenUserInfo.lastName : ''}`
-											: tokenUserInfo.email?.split('@')[0] || 'User',
+										name: tokenUserInfo.firstName
+											? `${tokenUserInfo.firstName}${tokenUserInfo.lastName ? " " + tokenUserInfo.lastName : ""}`
+											: tokenUserInfo.email?.split("@")[0] || "User",
 										email: tokenUserInfo.email,
-										image: null // No image available from token
+										image: null, // No image available from token
 									},
-									source: 'token', // Indicate this came from token parsing
-									expiresAt: tokenExpiration?.toISOString()
-								}
+									source: "token", // Indicate this came from token parsing
+									expiresAt: tokenExpiration?.toISOString(),
+								},
 							},
 						})
 					} else {
 						// Both backend and token parsing failed
-						const errorMessage = backendError.response?.data?.message || 
-							backendError.message || 
+						const errorMessage =
+							backendError.response?.data?.message ||
+							backendError.message ||
 							"Failed to fetch profile data from backend."
 						provider.log(`Profile fetch error: ${errorMessage}`)
 						provider.postMessageToWebview({
@@ -2192,7 +2361,6 @@ export const webviewMessageHandler = async (
 						})
 					}
 				}
-
 			} catch (error: any) {
 				const errorMessage =
 					error.response?.data?.message ||
@@ -2219,8 +2387,8 @@ export const webviewMessageHandler = async (
 					break
 				}
 
-				// Import JWT token utilities  
-				const { extractUserFromToken, isTokenExpired } = await import('../../utils/oacode-token')
+				// Import JWT token utilities
+				const { extractUserFromToken, isTokenExpired } = await import("../../utils/oacode-token")
 
 				// Extract balance from JWT token as fallback
 				const tokenUserInfo = extractUserFromToken(oacodeToken)
@@ -2231,10 +2399,10 @@ export const webviewMessageHandler = async (
 					provider.log("OaCode token has expired for balance request.")
 					provider.postMessageToWebview({
 						type: "balanceDataResponse",
-						payload: { 
-							success: false, 
+						payload: {
+							success: false,
 							error: "Authentication token has expired. Please sign in again.",
-							tokenExpired: true 
+							tokenExpired: true,
 						},
 					})
 					break
@@ -2242,39 +2410,39 @@ export const webviewMessageHandler = async (
 
 				// Try to fetch fresh balance data from backend
 				try {
-					const baseUrl = 'https://app.openanalyst.com'
+					const baseUrl = "https://app.openanalyst.com"
 					const response = await axios.get(`${baseUrl}/api/auth/extension/profile`, {
 						headers: {
 							Authorization: `Bearer ${oacodeToken}`,
 							"Content-Type": "application/json",
 						},
-						timeout: 5000 // 5 second timeout
+						timeout: 5000, // 5 second timeout
 					})
 
 					provider.postMessageToWebview({
 						type: "balanceDataResponse",
 						payload: { success: true, data: response.data },
 					})
-
 				} catch (backendError: any) {
 					// Backend failed, use token balance as fallback
 					provider.log(`Backend balance fetch failed: ${backendError.message}. Using token balance.`)
-					
+
 					if (tokenUserInfo?.balance !== undefined) {
 						provider.postMessageToWebview({
 							type: "balanceDataResponse",
-							payload: { 
-								success: true, 
-								data: { 
+							payload: {
+								success: true,
+								data: {
 									balance: tokenUserInfo.balance,
-									source: 'token' // Indicate this came from token
-								}
+									source: "token", // Indicate this came from token
+								},
 							},
 						})
 					} else {
 						// Both backend and token parsing failed
-						const errorMessage = backendError.response?.data?.message || 
-							backendError.message || 
+						const errorMessage =
+							backendError.response?.data?.message ||
+							backendError.message ||
 							"Failed to fetch balance data from backend."
 						provider.log(`Balance fetch error: ${errorMessage}`)
 						provider.postMessageToWebview({
@@ -2283,7 +2451,6 @@ export const webviewMessageHandler = async (
 						})
 					}
 				}
-
 			} catch (error: any) {
 				const errorMessage =
 					error.response?.data?.message || error.message || "Failed to fetch balance data from backend."
@@ -2409,6 +2576,116 @@ export const webviewMessageHandler = async (
 					vscode.window.showErrorMessage(t("oacode:rules.errors.failedToDeleteRuleFile"))
 				}
 				await provider.postRulesDataToWebview()
+			}
+			break
+		}
+
+		/**
+		 * Create new custom prompt file
+		 * Validates input parameters and creates YAML prompt file with template content
+		 * All user-created prompts use "custom" category
+		 */
+		case "createPromptFile": {
+			// Simplified parameter validation - category is no longer required from UI
+			if (
+				message.filename &&
+				typeof message.filename === "string" &&
+				message.filename.trim().length > 0 &&
+				typeof message.isGlobal === "boolean"
+			) {
+				try {
+					// Always use "custom" category for user-created prompts
+					await createPromptFile(message.filename.trim(), message.isGlobal, "custom")
+					// Refresh prompt blocks to show the new file
+					await refreshPromptBlocks(provider)
+				} catch (error) {
+					console.error("Error creating prompt file:", error)
+					// Extract error message for user feedback
+					const errorMessage = error instanceof Error ? error.message : "Unknown error occurred"
+					vscode.window.showErrorMessage(`Failed to create prompt file: ${errorMessage}`)
+					// Still refresh in case of partial success or to show current state
+					await refreshPromptBlocks(provider)
+				}
+			} else {
+				// Invalid parameters - log and show error
+				console.error("Invalid parameters for createPromptFile:", {
+					filename: message.filename,
+					isGlobal: message.isGlobal,
+				})
+				vscode.window.showErrorMessage("Invalid prompt creation parameters. Please check the filename.")
+			}
+			break
+		}
+
+		/**
+		 * Delete existing custom prompt file
+		 * Shows confirmation dialog and removes file from filesystem
+		 */
+		case "deletePromptFile": {
+			// Enhanced parameter validation
+			if (
+				message.promptName &&
+				typeof message.promptName === "string" &&
+				message.promptName.trim().length > 0 &&
+				message.promptSource &&
+				(message.promptSource === "workspace" || message.promptSource === "global")
+			) {
+				try {
+					await deletePromptFile(message.promptName.trim(), message.promptSource)
+					// Refresh prompt blocks to reflect the deletion
+					await refreshPromptBlocks(provider)
+				} catch (error) {
+					console.error("Error deleting prompt file:", error)
+					// Extract error message for user feedback
+					const errorMessage = error instanceof Error ? error.message : "Unknown error occurred"
+					vscode.window.showErrorMessage(`Failed to delete prompt file: ${errorMessage}`)
+					// Refresh to show current state even after error
+					await refreshPromptBlocks(provider)
+				}
+			} else {
+				// Invalid parameters - log and show error
+				console.error("Invalid parameters for deletePromptFile:", {
+					promptName: message.promptName,
+					promptSource: message.promptSource,
+				})
+				vscode.window.showErrorMessage(
+					"Invalid prompt deletion parameters. Please specify a valid prompt name and source.",
+				)
+			}
+			break
+		}
+
+		/**
+		 * Open existing prompt file for editing in VSCode
+		 * Locates the prompt file and opens it in the editor
+		 */
+		case "editPromptBlock": {
+			// Enhanced parameter validation
+			if (
+				message.promptName &&
+				typeof message.promptName === "string" &&
+				message.promptName.trim().length > 0 &&
+				message.promptSource &&
+				(message.promptSource === "workspace" || message.promptSource === "global")
+			) {
+				try {
+					await editPromptBlock(message.promptName.trim(), message.promptSource)
+				} catch (error) {
+					console.error("Error editing prompt file:", error)
+					// Extract error message for user feedback
+					const errorMessage = error instanceof Error ? error.message : "Unknown error occurred"
+					vscode.window.showErrorMessage(`Failed to open prompt file for editing: ${errorMessage}`)
+				}
+				// No need to refresh prompt blocks for edit operation
+			} else {
+				// Invalid parameters - log and show error
+				console.error("Invalid parameters for editPromptBlock:", {
+					promptName: message.promptName,
+					promptSource: message.promptSource,
+				})
+				vscode.window.showErrorMessage(
+					"Invalid prompt edit parameters. Please specify a valid prompt name and source.",
+				)
 			}
 			break
 		}
@@ -3151,16 +3428,18 @@ export const webviewMessageHandler = async (
 			try {
 				const templates = await provider.templateManager.getAvailableTemplates()
 				const activeTemplate = provider.templateManager.getActiveTemplateName()
-				
+
 				await provider.postMessageToWebview({
 					type: "templateList",
 					payload: {
 						templates,
-						activeTemplate
-					}
+						activeTemplate,
+					},
 				})
 			} catch (error) {
-				provider.log(`Error getting template list: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`)
+				provider.log(
+					`Error getting template list: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`,
+				)
 			}
 			break
 		}
@@ -3172,17 +3451,21 @@ export const webviewMessageHandler = async (
 					// Refresh template list
 					const templates = await provider.templateManager.getAvailableTemplates()
 					const activeTemplate = provider.templateManager.getActiveTemplateName()
-					
+
 					await provider.postMessageToWebview({
 						type: "templateList",
 						payload: {
 							templates,
-							activeTemplate
-						}
+							activeTemplate,
+						},
 					})
 				} catch (error) {
-					provider.log(`Error activating template: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`)
-					vscode.window.showErrorMessage(`Failed to activate template: ${error instanceof Error ? error.message : String(error)}`)
+					provider.log(
+						`Error activating template: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`,
+					)
+					vscode.window.showErrorMessage(
+						`Failed to activate template: ${error instanceof Error ? error.message : String(error)}`,
+					)
 				}
 			}
 			break
@@ -3194,17 +3477,21 @@ export const webviewMessageHandler = async (
 				// Refresh template list
 				const templates = await provider.templateManager.getAvailableTemplates()
 				const activeTemplate = provider.templateManager.getActiveTemplateName()
-				
+
 				await provider.postMessageToWebview({
 					type: "templateList",
 					payload: {
 						templates,
-						activeTemplate
-					}
+						activeTemplate,
+					},
 				})
 			} catch (error) {
-				provider.log(`Error deactivating template: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`)
-				vscode.window.showErrorMessage(`Failed to deactivate template: ${error instanceof Error ? error.message : String(error)}`)
+				provider.log(
+					`Error deactivating template: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`,
+				)
+				vscode.window.showErrorMessage(
+					`Failed to deactivate template: ${error instanceof Error ? error.message : String(error)}`,
+				)
 			}
 			break
 		}
@@ -3216,17 +3503,21 @@ export const webviewMessageHandler = async (
 					// Refresh template list
 					const templates = await provider.templateManager.getAvailableTemplates()
 					const activeTemplate = provider.templateManager.getActiveTemplateName()
-					
+
 					await provider.postMessageToWebview({
 						type: "templateList",
 						payload: {
 							templates,
-							activeTemplate
-						}
+							activeTemplate,
+						},
 					})
 				} catch (error) {
-					provider.log(`Error deleting template: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`)
-					vscode.window.showErrorMessage(`Failed to delete template: ${error instanceof Error ? error.message : String(error)}`)
+					provider.log(
+						`Error deleting template: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`,
+					)
+					vscode.window.showErrorMessage(
+						`Failed to delete template: ${error instanceof Error ? error.message : String(error)}`,
+					)
 				}
 			}
 			break
@@ -3236,14 +3527,9 @@ export const webviewMessageHandler = async (
 			if (message.filename && message.content) {
 				try {
 					// Directly use the TemplateManager for cleaner upload handling
-					const path = require("path")
-					const fs = require("fs/promises")
-					const yaml = require("yaml")
-					const { customModesSettingsSchema } = require("@roo-code/types")
-					const { getWorkspacePath } = require("../../utils/path")
-					
+
 					// Validate filename extension
-					if (!message.filename.endsWith('.yaml') && !message.filename.endsWith('.yml')) {
+					if (!message.filename.endsWith(".yaml") && !message.filename.endsWith(".yml")) {
 						vscode.window.showErrorMessage(`Template files must have .yaml or .yml extension`)
 						return
 					}
@@ -3251,7 +3537,9 @@ export const webviewMessageHandler = async (
 					// Get workspace path
 					const workspacePath = getWorkspacePath()
 					if (!workspacePath) {
-						vscode.window.showErrorMessage(`No workspace found. Please open a workspace to upload templates.`)
+						vscode.window.showErrorMessage(
+							`No workspace found. Please open a workspace to upload templates.`,
+						)
 						return
 					}
 
@@ -3260,7 +3548,9 @@ export const webviewMessageHandler = async (
 					try {
 						parsedContent = yaml.parse(message.content)
 					} catch (yamlError: any) {
-						vscode.window.showErrorMessage(`Invalid YAML format: ${yamlError.message || 'Failed to parse YAML'}`)
+						vscode.window.showErrorMessage(
+							`Invalid YAML format: ${yamlError.message || "Failed to parse YAML"}`,
+						)
 						return
 					}
 
@@ -3283,8 +3573,8 @@ export const webviewMessageHandler = async (
 					await fs.writeFile(filePath, message.content, "utf-8")
 
 					// Count modes in the template
-					const modeCount = validationResult.data.customModes?.length || 0
-					const modeNames = validationResult.data.customModes?.map((m: any) => m.name || m.slug).join(", ") || ""
+					const modeCount = validationResult.data.Agents?.length || 0
+					const modeNames = validationResult.data.Agents?.map((m: any) => m.name || m.slug).join(", ") || ""
 
 					// Automatically activate the uploaded template
 					const templateName = path.basename(message.filename, path.extname(message.filename))
@@ -3292,25 +3582,580 @@ export const webviewMessageHandler = async (
 
 					// Show success message
 					vscode.window.showInformationMessage(
-						`Template "${message.filename}" uploaded and activated successfully! Contains ${modeCount} mode(s): ${modeNames}`
+						`Template "${message.filename}" uploaded and activated successfully! Contains ${modeCount} mode(s): ${modeNames}`,
 					)
 
 					// Refresh template list
 					const templates = await provider.templateManager.getAvailableTemplates()
 					const activeTemplate = provider.templateManager.getActiveTemplateName()
-					
+
 					await provider.postMessageToWebview({
 						type: "templateList",
 						payload: {
 							templates,
-							activeTemplate
-						}
+							activeTemplate,
+						},
 					})
-
 				} catch (error) {
 					console.error(`Error uploading template:`, error)
-					vscode.window.showErrorMessage(`Failed to upload template: ${error instanceof Error ? error.message : String(error)}`)
+					vscode.window.showErrorMessage(
+						`Failed to upload template: ${error instanceof Error ? error.message : String(error)}`,
+					)
 				}
+			}
+			break
+		}
+
+		/**
+		 * Enhanced loadPromptBlocks handler for toolbar support
+		 *
+		 * IMPORTANT: This preserves 100% compatibility with existing slash commands
+		 * while adding categorization support for the new toolbar interface.
+		 *
+		 * New features:
+		 * - Categorizes prompts as "default" vs "custom" based on source
+		 * - Provides source information for each prompt block
+		 * - Maintains existing "promptBlocksLoaded" message format
+		 */
+		case "loadPromptBlocks": {
+			try {
+				const factory = PromptBlocksFactory.getInstance()
+
+				// Get repository to access source information directly
+				const repository = factory.createRepository(provider.context.extensionPath)
+
+				// FIX: Load all blocks with source information in one call
+				// This prevents the cache inconsistency and race conditions that caused
+				// blocks to be incorrectly categorized as "custom"
+				const blocksWithSourceInfo = await repository.loadAllWithSource()
+				const blocksWithSource = []
+
+				// Process blocks with preserved source information
+				for (const { block, source } of blocksWithSourceInfo) {
+					// Only include enabled blocks (filter like LoadPromptBlocks use case)
+					if (!block.isEnabled()) {
+						continue
+					}
+
+					// Categorize based on "custom" tag: if tags include "custom", it goes to Custom tab
+					// This allows users to edit the category field while still appearing in Custom tab
+					const hasCustomTag = Array.isArray(block.tags) && block.tags.includes("custom")
+					const sourceCategory = hasCustomTag ? "custom" : "default"
+
+					blocksWithSource.push({
+						name: block.name,
+						description: block.description,
+						category: block.category, // This is the prompt category (analysis, visualization, etc.) - user editable
+						tags: block.tags,
+						priority: block.priority,
+						enabled: block.enabled,
+						source: source, // Source path info (workspace/global/defaults)
+						sourceCategory: sourceCategory, // Categorization for toolbar (default/custom) - based on "custom" tag
+					})
+				}
+
+				// Separate blocks by source category for toolbar
+				const defaultBlocks = blocksWithSource.filter((b) => b.sourceCategory === "default")
+				const customBlocks = blocksWithSource.filter((b) => b.sourceCategory === "custom")
+
+				// Send categorized response for new toolbar functionality
+				await provider.postMessageToWebview({
+					type: "promptBlocksLoaded",
+					blocks: blocksWithSource, // Full compatibility with existing system
+					defaultBlocks, // New: For toolbar default tab
+					customBlocks, // New: For toolbar custom tab
+					totalCount: blocksWithSource.length,
+					defaultCount: defaultBlocks.length,
+					customCount: customBlocks.length,
+				})
+			} catch (error) {
+				/**
+				 * Enhanced error handling for prompt block loading
+				 *
+				 * Handles various failure scenarios:
+				 * 1. YAML parsing errors
+				 * 2. File system access issues
+				 * 3. Repository initialization failures
+				 * 4. Individual block loading failures
+				 *
+				 * Always sends a response to prevent webview from hanging
+				 */
+
+				// Use structured logging for error reporting
+				import("../infrastructure/Logger")
+					.then(({ promptBlocksLogger }) => {
+						import("../infrastructure/errors").then(({ normalizeError }) => {
+							const typedError = normalizeError(error, "LOAD_BLOCKS_FAILED", {
+								operation: "loadPromptBlocks",
+								errorType: error?.constructor?.name || "Unknown",
+								errorMessage: error instanceof Error ? error.message : String(error),
+							})
+							promptBlocksLogger.error(
+								"Failed to load prompt blocks for webview",
+								typedError.toLogObject(),
+							)
+						})
+					})
+					.catch(() => {
+						// Fallback to console logging if structured logging fails
+						console.error("[PromptBlocks] Failed to load prompt blocks:", error)
+						console.error("[PromptBlocks] Error details:", {
+							name: error?.constructor?.name,
+							message: error instanceof Error ? error.message : String(error),
+							stack: error instanceof Error ? error.stack : undefined,
+						})
+					})
+
+				// Always send a response to prevent UI hanging
+				// Send empty arrays but indicate error occurred
+				await provider.postMessageToWebview({
+					type: "promptBlocksLoaded",
+					blocks: [], // Maintain compatibility with existing slash commands
+					defaultBlocks: [], // Empty for toolbar
+					customBlocks: [], // Empty for toolbar
+					totalCount: 0,
+					defaultCount: 0,
+					customCount: 0,
+					error: error instanceof Error ? error.message : String(error),
+					loadFailed: true, // Flag to indicate loading failure
+				})
+			}
+			break
+		}
+
+		/**
+		 * Handle prompt block activation from webview
+		 *
+		 * This message is sent when a prompt block is activated via:
+		 * 1. Slash commands (e.g., /chart-visualization)
+		 * 2. Toolbar prompt selection (future implementation)
+		 *
+		 * Flow:
+		 * 1. Store block in active state
+		 * 2. Load block details from YAML files
+		 * 3. Send updated active blocks back to webview
+		 * 4. System prompt gets enhanced automatically on next AI call
+		 */
+		case "addActivePromptBlock": {
+			try {
+				if (!message.blockName) {
+					throw new Error("Block name is required for addActivePromptBlock")
+				}
+
+				// Load the factory and use case to access block data
+				const factory = PromptBlocksFactory.getInstance()
+				const loadUseCase = factory.createLoadPromptBlocks(provider.context.extensionPath)
+
+				// Load the new block to get its category for conflict resolution
+				const newBlock = await loadUseCase.executeByName(message.blockName)
+				if (!newBlock) {
+					throw new Error(`Prompt block '${message.blockName}' not found`)
+				}
+
+				// Remove any existing blocks in the same category to maintain one prompt per category
+				for (const [existingBlockName, _] of activePromptBlocks.entries()) {
+					const existingBlock = await loadUseCase.executeByName(existingBlockName)
+					if (existingBlock && existingBlock.category === newBlock.category) {
+						activePromptBlocks.delete(existingBlockName)
+					}
+				}
+
+				// Add the new block to temporary storage (maintains active blocks across extension session)
+				activePromptBlocks.set(message.blockName, {
+					variables: message.variables || {},
+				})
+
+				// Build active blocks list with full block data
+				const activeBlocks = []
+				for (const [blockName, config] of activePromptBlocks.entries()) {
+					const block = await loadUseCase.executeByName(blockName)
+					if (block) {
+						activeBlocks.push({
+							block: {
+								name: block.name,
+								description: block.description,
+								category: block.category,
+								tags: [...block.tags],
+								priority: block.priority,
+								enabled: block.enabled,
+							},
+							variables: config.variables,
+							priority: block.priority,
+						})
+					}
+				}
+
+				// Send updated active blocks back to webview for UI updates
+				await provider.postMessageToWebview({
+					type: "activePromptBlocksUpdated",
+					activeBlocks,
+				})
+			} catch (error) {
+				// Use structured logging for error reporting
+				import("../infrastructure/Logger")
+					.then(({ promptBlocksLogger }) => {
+						import("../infrastructure/errors").then(({ normalizeError }) => {
+							const typedError = normalizeError(error, "ADD_PROMPT_BLOCK_FAILED", {
+								operation: "addActivePromptBlock",
+								blockName: message.blockName,
+							})
+							promptBlocksLogger.error("Failed to add active prompt block", typedError.toLogObject())
+						})
+					})
+					.catch(() => {
+						console.error("Failed to add active prompt block:", error)
+					})
+			}
+			break
+		}
+
+		case "removeActivePromptBlock": {
+			try {
+				if (!message.blockName) {
+					throw new Error("Block name is required for removeActivePromptBlock")
+				}
+
+				// Remove from temporary storage
+				activePromptBlocks.delete(message.blockName)
+
+				// Load updated active list
+				const factory = PromptBlocksFactory.getInstance()
+				const loadUseCase = factory.createLoadPromptBlocks(provider.context.extensionPath)
+
+				const activeBlocks = []
+				for (const [blockName, config] of activePromptBlocks.entries()) {
+					const block = await loadUseCase.executeByName(blockName)
+					if (block) {
+						activeBlocks.push({
+							block: {
+								name: block.name,
+								description: block.description,
+								category: block.category,
+								tags: [...block.tags],
+								priority: block.priority,
+								enabled: block.enabled,
+							},
+							variables: config.variables,
+							priority: block.priority,
+						})
+					}
+				}
+
+				await provider.postMessageToWebview({
+					type: "activePromptBlocksUpdated",
+					activeBlocks,
+				})
+			} catch (error) {
+				// Use structured logging for error reporting
+				import("../infrastructure/Logger")
+					.then(({ promptBlocksLogger }) => {
+						import("../infrastructure/errors").then(({ normalizeError }) => {
+							const typedError = normalizeError(error, "REMOVE_PROMPT_BLOCK_FAILED", {
+								operation: "removeActivePromptBlock",
+								blockName: message.blockName,
+							})
+							promptBlocksLogger.error("Failed to remove active prompt block", typedError.toLogObject())
+						})
+					})
+					.catch(() => {
+						console.error("Failed to remove active prompt block:", error)
+					})
+			}
+			break
+		}
+
+		case "getActivePromptBlocks": {
+			try {
+				// Load active blocks from temporary storage
+				const factory = PromptBlocksFactory.getInstance()
+				const loadUseCase = factory.createLoadPromptBlocks(provider.context.extensionPath)
+
+				const activeBlocks = []
+				for (const [blockName, config] of activePromptBlocks.entries()) {
+					const block = await loadUseCase.executeByName(blockName)
+					if (block) {
+						activeBlocks.push({
+							block: {
+								name: block.name,
+								description: block.description,
+								category: block.category,
+								tags: [...block.tags],
+								priority: block.priority,
+								enabled: block.enabled,
+							},
+							variables: config.variables,
+							priority: block.priority,
+						})
+					}
+				}
+
+				await provider.postMessageToWebview({
+					type: "activePromptBlocksLoaded",
+					activeBlocks,
+				})
+			} catch (error) {
+				// Use structured logging for error reporting
+				import("../infrastructure/Logger")
+					.then(({ promptBlocksLogger }) => {
+						import("../infrastructure/errors").then(({ normalizeError }) => {
+							const typedError = normalizeError(error, "GET_PROMPT_BLOCKS_FAILED", {
+								operation: "getActivePromptBlocks",
+							})
+							promptBlocksLogger.error("Failed to get active prompt blocks", typedError.toLogObject())
+						})
+					})
+					.catch(() => {
+						console.error("Failed to get active prompt blocks:", error)
+					})
+
+				await provider.postMessageToWebview({
+					type: "activePromptBlocksLoaded",
+					activeBlocks: [],
+				})
+			}
+			break
+		}
+
+		// Plan Mode workflow message handlers
+		case "workflowModeChanged": {
+			const { workflowMode } = message
+			console.log("[DEBUG] PlanMode: workflowModeChanged received:", workflowMode)
+			if (workflowMode && ["plan", "chat", "agent"].includes(workflowMode)) {
+				await updateGlobalState("workflowMode", workflowMode as "plan" | "chat" | "agent")
+				console.log("[DEBUG] PlanMode: workflowMode saved to globalState:", workflowMode)
+				await provider.postStateToWebview()
+			}
+			break
+		}
+
+		case "approvePlan": {
+			try {
+				const { planContent, estimatedHours } = message
+
+				if (!planContent) {
+					await provider.postMessageToWebview({
+						type: "showSystemNotification",
+						notificationOptions: {
+							message: "No plan content provided",
+						},
+					})
+					break
+				}
+
+				// Import and use the ApprovePlan use case
+				const { VSCodePlanRepository } = await import("../../adapters/planmode/VSCodePlanRepository")
+				const { FileSystemPlanBlockStorage } = await import(
+					"../../adapters/planmode/FileSystemPlanBlockStorage"
+				)
+				const { ApprovePlan } = await import("../planmode/usecases/ApprovePlan")
+
+				const planRepository = new VSCodePlanRepository(provider.context)
+				const planBlockStorage = new FileSystemPlanBlockStorage()
+				const approvePlan = new ApprovePlan(planRepository, planBlockStorage)
+
+				const result = await approvePlan.execute({
+					planContent,
+					estimatedHours,
+				})
+
+				if (result.success) {
+					// Update global state with approved plan
+					await updateGlobalState("approvedPlan", {
+						content: planContent,
+						approvedAt: result.approvedPlan.approvedAt,
+						currentPhase: result.approvedPlan.currentPhase,
+						completedPhases: [...result.approvedPlan.completedPhases],
+						estimatedHours: result.approvedPlan.estimatedHours,
+						planBlockId: result.approvedPlan.planBlockId,
+					})
+
+					// Transition to execution mode
+					await updateGlobalState("workflowMode", result.newMode)
+					await provider.postStateToWebview()
+
+					await provider.postMessageToWebview({
+						type: "showSystemNotification",
+						notificationOptions: {
+							message: "Plan approved and execution started",
+						},
+					})
+
+					// Start a new task to execute the approved plan
+					const executionPrompt = `Execute the approved plan. The plan details are in the system prompt. Begin with Phase 1 and follow the plan systematically.`
+					await provider.initClineWithTask(executionPrompt)
+				}
+			} catch (error) {
+				console.error("Failed to approve plan:", error)
+				await provider.postMessageToWebview({
+					type: "showSystemNotification",
+					notificationOptions: {
+						message: `Failed to approve plan: ${error instanceof Error ? error.message : "Unknown error"}`,
+					},
+				})
+			}
+			break
+		}
+
+		case "rejectPlan": {
+			try {
+				const { reason, planContent } = message
+
+				// Import and use the RejectPlan use case
+				const { VSCodePlanRepository } = await import("../../adapters/planmode/VSCodePlanRepository")
+				const { RejectPlan } = await import("../planmode/usecases/RejectPlan")
+
+				const planRepository = new VSCodePlanRepository(provider.context)
+				const rejectPlan = new RejectPlan(planRepository)
+
+				const result = await rejectPlan.execute({
+					reason,
+					planContent,
+				})
+
+				if (result.success) {
+					// Clear any approved plan and stay in plan mode
+					await updateGlobalState("approvedPlan", undefined)
+					await updateGlobalState("workflowMode", result.currentMode)
+					await provider.postStateToWebview()
+
+					await provider.postMessageToWebview({
+						type: "showSystemNotification",
+						notificationOptions: {
+							message: "Plan rejected. Please create a new plan.",
+						},
+					})
+				}
+			} catch (error) {
+				console.error("Failed to reject plan:", error)
+				await provider.postMessageToWebview({
+					type: "showSystemNotification",
+					notificationOptions: {
+						message: `Failed to reject plan: ${error instanceof Error ? error.message : "Unknown error"}`,
+					},
+				})
+			}
+			break
+		}
+
+		case "modifyPlan": {
+			try {
+				const { feedback, specificChanges, originalPlanContent, preserveStructure } = message
+
+				// Import and use the ModifyPlan use case
+				const { VSCodePlanRepository } = await import("../../adapters/planmode/VSCodePlanRepository")
+				const { ModifyPlan } = await import("../planmode/usecases/ModifyPlan")
+
+				const planRepository = new VSCodePlanRepository(provider.context)
+				const modifyPlan = new ModifyPlan(planRepository)
+
+				const result = await modifyPlan.execute({
+					feedback,
+					specificChanges,
+					originalPlanContent,
+					preserveStructure,
+				})
+
+				if (result.success) {
+					// Clear approved plan and return to plan mode
+					await updateGlobalState("approvedPlan", undefined)
+					await updateGlobalState("workflowMode", result.currentMode)
+					await provider.postStateToWebview()
+
+					// Send modification guidance as a user message to continue the conversation
+					const modificationMessage = `<system-reminder>
+<enforcement-level>HIGHEST_PRIORITY</enforcement-level>
+
+PLAN MODIFICATION REQUEST
+
+User feedback requiring changes:
+${result.modificationGuidance?.join("\n") || feedback || "General modifications requested"}
+
+<required-actions>
+1. Analyze the feedback thoroughly
+2. Create revised plan addressing all points
+3. MUST use exit_plan_mode tool with revised plan
+</required-actions>
+
+<forbidden>
+- No code execution
+- No file modifications
+- No attempt_completion tool
+- No plain text plan presentation
+- All modification tools are BLOCKED
+</forbidden>
+
+<critical>
+MANDATORY: You MUST use the exit_plan_mode tool to present the modified plan.
+DO NOT write the plan as regular text.
+DO NOT use attempt_completion.
+ALWAYS call exit_plan_mode with the revised plan.
+</critical>
+
+<validation>
+If exit_plan_mode is not used, the UI buttons will not appear and the workflow will break.
+The user will not be able to approve/modify/reject the plan.
+</validation>
+
+<important>
+This is a modification request, not an execution request.
+You are still in PLAN MODE - no execution is allowed.
+</important>
+</system-reminder>`
+
+					// Add the modification request as a user message to continue the conversation
+					const currentCline = provider.getCurrentCline()
+					if (currentCline) {
+						// Set pending modification instead of aborting the task
+						// This allows the current API request to complete naturally
+						// and inject the modification message at a safe point
+						currentCline.setPendingModification(modificationMessage)
+					}
+
+					await provider.postMessageToWebview({
+						type: "showSystemNotification",
+						notificationOptions: {
+							message: "Plan modification requested. Creating updated plan...",
+						},
+					})
+				}
+			} catch (error) {
+				console.error("Failed to modify plan:", error)
+				await provider.postMessageToWebview({
+					type: "showSystemNotification",
+					notificationOptions: {
+						message: `Failed to modify plan: ${error instanceof Error ? error.message : "Unknown error"}`,
+					},
+				})
+			}
+			break
+		}
+
+		case "updatePlanProgress": {
+			try {
+				const { currentPhase, completedPhases } = message
+
+				if (typeof currentPhase !== "number" || !Array.isArray(completedPhases)) {
+					break
+				}
+
+				// Import and use the VSCodePlanRepository
+				const { VSCodePlanRepository } = await import("../../adapters/planmode/VSCodePlanRepository")
+				const planRepository = new VSCodePlanRepository(provider.context)
+
+				await planRepository.updatePlanProgress(currentPhase, completedPhases)
+
+				// Update local state
+				const currentApprovedPlan = getGlobalState("approvedPlan")
+				if (currentApprovedPlan) {
+					await updateGlobalState("approvedPlan", {
+						...currentApprovedPlan,
+						currentPhase,
+						completedPhases,
+					})
+					await provider.postStateToWebview()
+				}
+			} catch (error) {
+				console.error("Failed to update plan progress:", error)
 			}
 			break
 		}

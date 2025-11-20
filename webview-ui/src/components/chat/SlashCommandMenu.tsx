@@ -1,6 +1,8 @@
 import React, { useCallback, useRef, useEffect } from "react"
 import { SlashCommand, getMatchingSlashCommands } from "@/utils/slash-commands"
 import { useExtensionState } from "@/context/ExtensionStateContext" // oacode_change
+import { usePromptBlocks } from "@/context/PromptBlocksContext"
+import { getCategoryDisplayName } from "@/utils/prompt-blocks"
 
 interface SlashCommandMenuProps {
 	onSelect: (command: SlashCommand) => void
@@ -20,6 +22,13 @@ const SlashCommandMenu: React.FC<SlashCommandMenuProps> = ({
 	customModes,
 }) => {
 	const { localWorkflows, globalWorkflows } = useExtensionState() // oacode_change
+	const { availableBlocks } = usePromptBlocks()
+
+	// Debug: Test with fake blocks to verify the conversion works
+	const testBlocks = __DEV__ ? [
+		{ name: "test-eda", description: "Test EDA block", category: "analysis" as const, tags: [], priority: 80, enabled: true }
+	] : []
+	const blocksToUse = availableBlocks.length > 0 ? availableBlocks : testBlocks
 	const menuRef = useRef<HTMLDivElement>(null)
 
 	const handleClick = useCallback(
@@ -47,7 +56,13 @@ const SlashCommandMenu: React.FC<SlashCommandMenuProps> = ({
 	}, [selectedIndex])
 
 	// Filter commands based on query
-	const filteredCommands = getMatchingSlashCommands(query, customModes, localWorkflows, globalWorkflows) // oacode_change
+	const filteredCommands = getMatchingSlashCommands(query, customModes, localWorkflows, globalWorkflows, blocksToUse) // oacode_change
+
+	// Debug logging (only in development)
+	if (__DEV__) {
+		console.log("[SlashCommands] Available blocks:", blocksToUse?.length || 0, blocksToUse?.map(b => b.name))
+		console.log("[SlashCommands] Filtered commands:", filteredCommands.length, filteredCommands.map(c => `${c.name}${c.section === 'prompts' ? ' (prompt)' : ''}`))
+	}
 
 	return (
 		<div
@@ -69,8 +84,13 @@ const SlashCommandMenu: React.FC<SlashCommandMenuProps> = ({
 							} hover:bg-[var(--vscode-list-hoverBackground)]`}
 							onClick={() => handleClick(command)}
 							onMouseEnter={() => setSelectedIndex(index)}>
-							<div className="font-bold whitespace-nowrap overflow-hidden text-ellipsis">
+							<div className="font-bold whitespace-nowrap overflow-hidden text-ellipsis flex items-center gap-2">
 								/{command.name}
+								{command.section === "prompts" && command.category && (
+									<span className="text-xs text-[var(--vscode-descriptionForeground)]">
+										{getCategoryDisplayName(command.category)}
+									</span>
+								)}
 							</div>
 							<div className="text-[0.85em] text-[var(--vscode-descriptionForeground)] whitespace-normal overflow-hidden text-ellipsis">
 								{command.description}

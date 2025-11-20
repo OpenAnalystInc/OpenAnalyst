@@ -171,6 +171,9 @@ export interface ExtensionStateContextType extends ExtensionState {
 	setMaxDiagnosticMessages: (value: number) => void
 	includeTaskHistoryInEnhance?: boolean
 	setIncludeTaskHistoryInEnhance: (value: boolean) => void
+	// Workflow mode state
+	workflowMode?: 'plan' | 'chat' | 'agent'
+	setWorkflowMode: (value: 'plan' | 'chat' | 'agent') => void
 }
 
 export const ExtensionStateContext = createContext<ExtensionStateContextType | undefined>(undefined)
@@ -279,6 +282,7 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 		alwaysAllowUpdateTodoList: true,
 		includeDiagnosticMessages: true,
 		maxDiagnosticMessages: 50,
+		// workflowMode will be set by user or come from extension state
 	})
 
 	const [didHydrateState, setDidHydrateState] = useState(false)
@@ -353,7 +357,10 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 					if ((newState as any).dynamicModes !== undefined) {
 						const { setDynamicModes } = require("@roo/modes")
 						setDynamicModes((newState as any).dynamicModes)
-						console.log("[ExtensionStateContext] Updated dynamic modes from extension", (newState as any).dynamicModes)
+						console.log(
+							"[ExtensionStateContext] Updated dynamic modes from extension",
+							(newState as any).dynamicModes,
+						)
 					}
 					break
 				}
@@ -605,6 +612,8 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 		},
 		includeTaskHistoryInEnhance,
 		setIncludeTaskHistoryInEnhance,
+		workflowMode: state.workflowMode,
+		setWorkflowMode: (value: 'plan' | 'chat' | 'agent') => setState((prevState) => ({ ...prevState, workflowMode: value })),
 	}
 
 	return <ExtensionStateContext.Provider value={contextValue}>{children}</ExtensionStateContext.Provider>

@@ -1,0 +1,60 @@
+name: "chart-visualization"
+description: "Chart.js focused visualization with immediate display priority"
+category: "visualization"
+tags: ["charts", "visualization", "chartjs", "display"]
+priority: 90
+enabled: true
+
+prompt: |
+  For all data visualizations, ALWAYS prioritize Chart.js with ```chart code blocks for immediate display in OpenAnalyst chat:
+
+  **Chart.js Implementation Priority:**
+  1. Use Chart.js ```chart code blocks as the primary visualization method
+  2. Ensure charts render immediately in the chat interface
+  3. Include responsive design and interactive features
+  4. Use professional color schemes and accessibility-friendly palettes
+
+  **Chart Selection Guidelines:**
+  - **Bar Charts**: Categorical comparisons, rankings
+  - **Line Charts**: Time series, trends, continuous data
+  - **Scatter Plots**: Relationships, correlations, outlier detection
+  - **Pie/Doughnut**: Proportions, percentages (use sparingly)
+  - **Radar Charts**: Multi-dimensional comparisons
+  - **Bubble Charts**: Three-dimensional relationships
+
+  **Chart.js Code Template:**
+  ```chart
+  {
+    "type": "CHART_TYPE",
+    "data": {
+      "labels": ["Label1", "Label2", "Label3"],
+      "datasets": [{
+        "label": "Dataset Label",
+        "data": [value1, value2, value3],
+        "backgroundColor": ["#FF6384", "#36A2EB", "#FFCE56"],
+        "borderColor": ["#FF6384", "#36A2EB", "#FFCE56"],
+        "borderWidth": 1
+      }]
+    },
+    "options": {
+      "responsive": true,
+      "maintainAspectRatio": false,
+      "plugins": {
+        "title": {"display": true, "text": "Chart Title"},
+        "legend": {"display": true, "position": "top"}
+      },
+      "scales": {
+        "y": {"beginAtZero": true}
+      }
+    }
+  }
+  ```
+
+  **Design Principles:**
+  5. Always include clear titles, labels, and legends
+  6. Use consistent color schemes across related charts
+  7. Ensure readability with appropriate font sizes
+  8. Add interactivity (hover effects, click events) when beneficial
+  9. Optimize for both light and dark themes
+
+  Only use matplotlib/seaborn as a secondary option if Chart.js cannot meet specific requirements.

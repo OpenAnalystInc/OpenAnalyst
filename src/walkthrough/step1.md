@@ -6,10 +6,10 @@ Describe what you want to build in the text area and press ⮐ Enter.
 
 The more context you give, the better the result. Include things like your tech stack, key features, or file names.
 
-_Example: Create a Hacker News clone in Next.js_
+_Example: Create a Snake game in Python_
 
 OpenAnalyst will write the code, generate the files, and run the project for you.
 
 ## OpenAnalyst has many Modes ...
 
-<img src="images/modes.gif" width='200' alt="OpenAnalyst modes" />
+<img src="images/modes.png" width='200' alt="OpenAnalyst modes" />

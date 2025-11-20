@@ -1,243 +1,215 @@
+/**
+ * Module: ChartBlock (presentation)
+ * Purpose: React component for rendering chart code blocks
+ * Responsibilities:
+ *  - Parse chart JSON with debouncing
+ *  - Delegate rendering to IChartRenderer adapter
+ *  - Handle errors with actionable UX
+ *  - Provide export and copy actions
+ * Invariants:
+ *  - Never executes user code (only parses JSON)
+ *  - Debounces parsing to avoid jank (500ms)
+ *  - Cleans up chart on unmount
+ * Dependencies: IChartRenderer port, ChartConfiguration domain
+ * Risks: Large JSON could slow parsing (debounced)
+ * Performance: 500ms debounce, lazy Chart.js load (first render +50-100ms)
+ * Security: JSON.parse only - no eval; errors don't leak file paths
+ */
+
 import { useEffect, useRef, useState } from "react"
 import styled from "styled-components"
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend,
-  ChartConfiguration,
-  ChartData,
-  ChartOptions,
-} from "chart.js"
-import { Chart } from "react-chartjs-2"
 import { useDebounceEffect } from "@src/utils/useDebounceEffect"
 import { vscode } from "@src/utils/vscode"
 import { useAppTranslation } from "@src/i18n/TranslationContext"
 import { useCopyToClipboard } from "@src/utils/clipboard"
 import CodeBlock from "./CodeBlock"
 
-// Register Chart.js components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend
-)
+// Clean Architecture imports
+import {
+  parseChartConfig,
+  ChartValidationError,
+  type ChartConfiguration
+} from "@src/core/domain/ChartConfiguration"
+import type { IChartRenderer } from "@src/core/ports/IChartRenderer"
+import { ChartJSRenderer } from "@src/adapters/chartjs/ChartJSRenderer.adapter"
 
-// VS Code theme-compatible colors
-const VS_CODE_THEME_COLORS = {
-  primary: "#007ACC",
-  secondary: "#00BCF2", 
-  success: "#89D185",
-  warning: "#E9A700",
-  error: "#F85149",
-  info: "#A5A5A5",
-  chartColors: [
-    "#007ACC", "#00BCF2", "#89D185", "#E9A700", 
-    "#F85149", "#A5A5A5", "#C586C0", "#D7BA7D"
-  ]
-}
+// Development flag from vite define
+declare const __DEV__: boolean
+
+// Singleton renderer instance (composition root)
+// In a larger app, this would be injected via DI container
+const chartRenderer: IChartRenderer = new ChartJSRenderer()
 
 interface ChartBlockProps {
   code: string
 }
 
-interface ChartConfig extends ChartConfiguration {
-  // Allow for flexible data structure
-  data: ChartData<any>
-  options?: ChartOptions<any>
-}
-
+/**
+ * Render a chart from a code block containing JSON configuration.
+ * Uses Clean Architecture to separate concerns.
+ * @param code - Raw JSON string from ```chart block
+ * @example
+ * <ChartBlock code='{"type":"bar","data":{...}}' />
+ */
 export default function ChartBlock({ code: originalCode }: ChartBlockProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const cleanupRef = useRef<(() => void) | null>(null)
+
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [errorDetails, setErrorDetails] = useState<string | null>(null)
   const [isErrorExpanded, setIsErrorExpanded] = useState(false)
-  const [chartConfig, setChartConfig] = useState<ChartConfig | null>(null)
   const [code, setCode] = useState("")
+  const [parsedConfig, setParsedConfig] = useState<ChartConfiguration | null>(null)
+
   const { showCopyFeedback, copyWithFeedback } = useCopyToClipboard()
   const { t } = useAppTranslation()
 
   // Initialize when code changes
   useEffect(() => {
-    setIsLoading(true)
-    setError(null)
     setCode(originalCode)
   }, [originalCode])
 
-  // Debounced chart parsing and rendering
+  // Cleanup chart on unmount (prevents memory leaks)
+  useEffect(() => {
+    return () => {
+      // Guard: Call cleanup if it exists
+      if (cleanupRef.current) {
+        console.log('[ChartBlock] Cleanup called - destroying chart')
+        cleanupRef.current()
+        cleanupRef.current = null
+      }
+    }
+  }, [])
+
+  // Re-render chart when parsedConfig or canvas changes
+  useEffect(() => {
+    if (!parsedConfig || !canvasRef.current) {
+      return
+    }
+
+    console.log('[ChartBlock] Rendering chart with existing config...')
+
+    // Clean up previous chart if exists
+    if (cleanupRef.current) {
+      console.log('[ChartBlock] Cleaning up previous chart')
+      cleanupRef.current()
+      cleanupRef.current = null
+    }
+
+    // Add a small delay to ensure DOM is ready
+    const timeoutId = setTimeout(() => {
+      if (!canvasRef.current || !parsedConfig) {
+        console.warn('[ChartBlock] Canvas or config lost after timeout')
+        setIsLoading(false)
+        return
+      }
+
+      const rect = canvasRef.current.getBoundingClientRect()
+      console.log('[ChartBlock] Canvas rect:', rect.width, 'x', rect.height)
+
+      chartRenderer
+        .render(canvasRef.current, parsedConfig)
+        .then((cleanup) => {
+          cleanupRef.current = cleanup
+          setIsLoading(false)
+          console.log('[ChartBlock] Chart rendered successfully')
+        })
+        .catch((err: unknown) => {
+          const message = err instanceof Error ? err.message : 'Chart rendering failed'
+          console.error('[ChartBlock] Render error:', err)
+          setError(message)
+          setIsLoading(false)
+        })
+    }, 100)
+
+    return () => clearTimeout(timeoutId)
+  }, [parsedConfig, canvasRef.current])
+
+  // Debounced chart parsing (perf: avoid thrashing on rapid edits)
   useDebounceEffect(
     () => {
+      // Guard: Skip empty code
+      if (!code.trim()) {
+        setError(null)
+        setParsedConfig(null)
+        return
+      }
+
       setIsLoading(true)
-      
+      setError(null)
+      setErrorDetails(null)
+
       try {
-        // Parse JSON configuration
-        const config = JSON.parse(code) as ChartConfig
-        
-        // Validate required properties
-        if (!config.type) {
-          throw new Error("Chart type is required")
-        }
-        
-        if (!config.data) {
-          throw new Error("Chart data is required")
+        // Parse and validate chart configuration (domain logic)
+        console.log('[ChartBlock] Parsing chart config...')
+        const config = parseChartConfig(code)
+        console.log('[ChartBlock] Config parsed successfully:', {
+          type: config.type,
+          hasLabels: 'labels' in config.data,
+          datasetCount: config.data.datasets.length
+        })
+        setParsedConfig(config)
+        // Rendering will be handled by useEffect hook
+      } catch (err: unknown) {
+        // Guard: Handle validation errors with actionable messages
+        if (err instanceof ChartValidationError) {
+          setError(err.message)
+          setErrorDetails(`Error code: ${err.code}`)
+
+          // Log context for debugging (not shown to user)
+          if (__DEV__) {
+            console.error('[ChartBlock] Validation error:', err.code, err.context)
+          }
+        } else if (err instanceof Error) {
+          setError(err.message)
+          if (__DEV__) console.error('[ChartBlock] Parse error:', err)
+        } else {
+          setError(t("common:chart.parse_error") || "Invalid chart configuration")
         }
 
-        // Apply VS Code theme colors if not specified
-        const themedConfig = applyVSCodeTheme(config)
-        
-        setChartConfig(themedConfig)
-        setError(null)
-      } catch (err) {
-        console.warn("Chart JSON parse/validation failed:", err)
-        const errorMessage = err instanceof Error ? err.message : t("common:chart.parse_error")
-        setError(errorMessage)
-        setChartConfig(null)
-      } finally {
+        setParsedConfig(null)
         setIsLoading(false)
       }
     },
-    500, // 500ms debounce
-    [code, t]
+    500, // 500ms debounce (perf: batch rapid typing)
+    [code]
   )
 
-  // Apply VS Code theme colors to chart configuration
-  const applyVSCodeTheme = (config: ChartConfig): ChartConfig => {
-    const themedConfig = { ...config }
-    
-    // Apply default colors to datasets if not specified
-    if (themedConfig.data?.datasets) {
-      themedConfig.data.datasets = themedConfig.data.datasets.map((dataset, index) => {
-        const colorIndex = index % VS_CODE_THEME_COLORS.chartColors.length
-        const color = VS_CODE_THEME_COLORS.chartColors[colorIndex]
-        
-        return {
-          ...dataset,
-          backgroundColor: dataset.backgroundColor || (config.type === 'pie' || config.type === 'doughnut' 
-            ? VS_CODE_THEME_COLORS.chartColors.slice(0, dataset.data?.length || 1)
-            : color + '80'), // Add transparency for area charts
-          borderColor: dataset.borderColor || color,
-          borderWidth: dataset.borderWidth || 2,
-        }
-      })
-    }
-
-    // Apply VS Code theme to options
-    const defaultOptions: ChartOptions<any> = {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          labels: {
-            color: 'var(--vscode-editor-foreground)',
-            font: {
-              family: 'var(--vscode-font-family)',
-              size: 12
-            }
-          }
-        },
-        tooltip: {
-          backgroundColor: 'var(--vscode-dropdown-background)',
-          titleColor: 'var(--vscode-editor-foreground)',
-          bodyColor: 'var(--vscode-editor-foreground)',
-          borderColor: 'var(--vscode-dropdown-border)',
-          borderWidth: 1
-        }
-      },
-      scales: config.type !== 'pie' && config.type !== 'doughnut' ? {
-        x: {
-          ticks: {
-            color: 'var(--vscode-editor-foreground)',
-            font: {
-              family: 'var(--vscode-font-family)',
-              size: 11
-            }
-          },
-          grid: {
-            color: 'var(--vscode-panel-border)'
-          }
-        },
-        y: {
-          ticks: {
-            color: 'var(--vscode-editor-foreground)', 
-            font: {
-              family: 'var(--vscode-font-family)',
-              size: 11
-            }
-          },
-          grid: {
-            color: 'var(--vscode-panel-border)'
-          }
-        }
-      } : undefined
-    }
-
-    // Merge with user-provided options
-    themedConfig.options = {
-      ...defaultOptions,
-      ...themedConfig.options,
-      plugins: {
-        ...defaultOptions.plugins,
-        ...themedConfig.options?.plugins
-      }
-    }
-
-    return themedConfig
-  }
-
   // Auto-fix common JSON issues
-  const autoFixChartStructure = (brokenJson: string): string => {
+  const handleSyntaxFix = () => {
     try {
       // Common fixes for malformed JSON
-      const fixed = brokenJson
+      const fixed = code
         .replace(/([{,]\s*)(\w+):/g, '$1"$2":') // Add quotes around keys
         .replace(/,(\s*[}\]])/g, '$1') // Remove trailing commas
         .replace(/'/g, '"') // Replace single quotes with double quotes
-        
+
       // Try to parse and add missing required fields
       const parsed = JSON.parse(fixed)
-      
+
       if (!parsed.type) {
         parsed.type = "bar" // Default chart type
       }
-      
+
       if (!parsed.data) {
         parsed.data = {
           labels: ["Sample"],
           datasets: [{ label: "Data", data: [0] }]
         }
       }
-      
-      return JSON.stringify(parsed, null, 2)
-    } catch {
-      // If auto-fix fails, return original
-      return brokenJson
-    }
-  }
 
-  const handleSyntaxFix = () => {
-    const fixedCode = autoFixChartStructure(code)
-    if (fixedCode !== code) {
-      setCode(fixedCode)
+      setCode(JSON.stringify(parsed, null, 2))
+    } catch {
+      // If auto-fix fails, keep original
+      // User will see validation error
     }
   }
 
   // Export chart as PNG
   const handleExportChart = () => {
-    if (!containerRef.current) return
-    
-    const canvas = containerRef.current.querySelector('canvas')
+    const canvas = canvasRef.current
     if (!canvas) return
 
     try {
@@ -247,18 +219,20 @@ export default function ChartBlock({ code: originalCode }: ChartBlockProps) {
         text: pngDataUrl,
       })
     } catch (err) {
-      console.error("Error exporting chart:", err)
+      console.error("[ChartBlock] Error exporting chart:", err)
     }
   }
 
   return (
     <ChartBlockContainer>
+      {/* Loading indicator */}
       {isLoading && (
         <LoadingMessage>
-          {t("common:chart.loading")}
+          {t("common:chart.loading") || "Loading chart..."}
         </LoadingMessage>
       )}
 
+      {/* Error display with expandable details */}
       {error ? (
         <div style={{ marginTop: "0px", overflow: "hidden", marginBottom: "8px" }}>
           <div
@@ -288,7 +262,9 @@ export default function ChartBlock({ code: originalCode }: ChartBlockProps) {
                   fontSize: 16,
                   marginBottom: "-1.5px",
                 }}></span>
-              <span style={{ fontWeight: "bold" }}>{t("common:chart.parse_error")}</span>
+              <span style={{ fontWeight: "bold" }}>
+                {t("common:chart.parse_error") || "Chart Error"}
+              </span>
             </div>
             <div style={{ display: "flex", alignItems: "center" }}>
               <FixButton
@@ -296,13 +272,13 @@ export default function ChartBlock({ code: originalCode }: ChartBlockProps) {
                   e.stopPropagation()
                   handleSyntaxFix()
                 }}
-                title={t("common:chart.fix_syntax")}>
+                title={t("common:chart.fix_syntax") || "Try to fix syntax"}>
                 <span className="codicon codicon-wand"></span>
               </FixButton>
               <CopyButton
                 onClick={(e) => {
                   e.stopPropagation()
-                  const combinedContent = `Error: ${error}\n\n\`\`\`chart\n${code}\n\`\`\``
+                  const combinedContent = `Error: ${error}\n${errorDetails || ''}\n\n\`\`\`chart\n${code}\n\`\`\``
                   copyWithFeedback(combinedContent, e)
                 }}>
                 <span className={`codicon codicon-${showCopyFeedback ? "check" : "copy"}`}></span>
@@ -319,39 +295,54 @@ export default function ChartBlock({ code: originalCode }: ChartBlockProps) {
               }}>
               <div style={{ marginBottom: "8px", color: "var(--vscode-descriptionForeground)" }}>
                 {error}
+                {errorDetails && (
+                  <div style={{ fontSize: "0.9em", marginTop: "4px", opacity: 0.8 }}>
+                    {errorDetails}
+                  </div>
+                )}
               </div>
               <CodeBlock language="json" source={code} />
             </div>
           )}
         </div>
-      ) : chartConfig ? (
-        <ChartContainer ref={containerRef} $isLoading={isLoading}>
-          <ActionButtons>
-            <ExportButton
-              onClick={handleExportChart}
-              title={t("common:chart.export_png")}>
-              <span className="codicon codicon-device-camera"></span>
-            </ExportButton>
-            <CopyButton
-              onClick={(e) => {
-                const chartJson = JSON.stringify(chartConfig, null, 2)
-                const content = `\`\`\`chart\n${chartJson}\n\`\`\``
-                copyWithFeedback(content, e)
-              }}>
-              <span className={`codicon codicon-${showCopyFeedback ? "check" : "copy"}`}></span>
-            </CopyButton>
-          </ActionButtons>
-          <Chart
-            type={chartConfig.type as any}
-            data={chartConfig.data}
-            options={chartConfig.options}
-          />
-        </ChartContainer>
-      ) : null}
+      ) : (
+        // Always render container if we have parsed config OR are loading
+        (parsedConfig || isLoading) && (
+          <ChartContainer ref={containerRef} $isLoading={isLoading}>
+            <ActionButtons>
+              <ExportButton
+                onClick={handleExportChart}
+                title={t("common:chart.export_png") || "Export as PNG"}>
+                <span className="codicon codicon-device-camera"></span>
+              </ExportButton>
+              <CopyButton
+                onClick={(e) => {
+                  const chartJson = parsedConfig ? JSON.stringify(parsedConfig, null, 2) : code
+                  const content = `\`\`\`chart\n${chartJson}\n\`\`\``
+                  copyWithFeedback(content, e)
+                }}
+                title="Copy chart configuration">
+                <span className={`codicon codicon-${showCopyFeedback ? "check" : "copy"}`}></span>
+              </CopyButton>
+            </ActionButtons>
+            {/* Canvas element for chart rendering - always render to maintain ref */}
+            <canvas
+              ref={canvasRef}
+              style={{
+                width: '100%',
+                height: '100%',
+                maxHeight: '368px', // Account for padding
+                display: parsedConfig ? 'block' : 'none' // Hide if no config
+              }}
+            />
+          </ChartContainer>
+        )
+      )}
     </ChartBlockContainer>
   )
 }
 
+// Styled components (unchanged from original)
 const ChartBlockContainer = styled.div`
   position: relative;
   margin: 8px 0;
@@ -411,7 +402,7 @@ const CopyButton = styled.button`
 
 const ExportButton = styled(CopyButton)`
   background: var(--vscode-button-secondaryBackground);
-  
+
   &:hover {
     background: var(--vscode-button-secondaryHoverBackground);
   }
@@ -419,7 +410,7 @@ const ExportButton = styled(CopyButton)`
 
 const FixButton = styled(CopyButton)`
   background: var(--vscode-button-secondaryBackground);
-  
+
   &:hover {
     background: var(--vscode-button-secondaryHoverBackground);
   }

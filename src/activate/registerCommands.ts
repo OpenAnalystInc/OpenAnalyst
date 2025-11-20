@@ -19,6 +19,45 @@ import { t } from "../i18n"
 import { generateTerminalCommand } from "../utils/terminalCommandGenerator" // oacode_change
 
 /**
+ * Shows a confirmation dialog for chat deletion with "Don't ask again" option
+ * 
+ * @param context VSCode extension context for storing user preferences
+ * @param chatId The ID of the chat being deleted
+ * @returns Promise resolving to true if user confirmed deletion, false otherwise
+ */
+async function showChatDeletionConfirmation(context: vscode.ExtensionContext, chatId: string): Promise<boolean> {
+	// Build dialog options with hardcoded English text
+	const confirmButton = "Delete"
+	const dontAskAgainButton = "Don't ask again"
+	const cancelButton = "Cancel"
+
+	// Show confirmation dialog with three options
+	const result = await vscode.window.showWarningMessage(
+		"Are you sure you want to delete this chat? This action cannot be undone.",
+		{
+			modal: true,
+			detail: "Delete Chat"
+		},
+		confirmButton,
+		dontAskAgainButton,
+		cancelButton
+	)
+
+	// Handle user selection
+	if (result === confirmButton) {
+		// User clicked confirm
+		return true
+	} else if (result === dontAskAgainButton) {
+		// User clicked "Don't ask again" - store preference and confirm deletion
+		await context.globalState.update("chatDeletion.dontAskAgain", true)
+		return true
+	}
+
+	// User clicked cancel, pressed escape, or clicked outside dialog
+	return false
+}
+
+/**
  * Helper to get the visible ClineProvider instance or log if not found.
  */
 export function getVisibleProviderOrLog(outputChannel: vscode.OutputChannel): ClineProvider | undefined {
@@ -109,6 +148,7 @@ const getCommandsMap = ({ context, outputChannel }: RegisterCommandOptions): Rec
 			return
 		}
 
+		// Telemetry tracking
 		TelemetryService.instance.captureTitleButtonClicked("mcp")
 
 		visibleProvider.postMessageToWebview({ type: "action", action: "mcpButtonClicked" })
@@ -255,6 +295,76 @@ const getCommandsMap = ({ context, outputChannel }: RegisterCommandOptions): Rec
 			providerSettingsManager: visibleProvider.providerSettingsManager,
 			contextProxy: visibleProvider.contextProxy,
 		})
+	},
+	showProductionStandards: () => {
+		// Show production standards information
+		vscode.window.showInformationMessage("Production Standards: This extension follows Clean Architecture, TypeScript best practices, and structured logging.")
+	},
+	// Command to delete a task/chat from VSCode editor integration
+	deleteTaskFromEditor: async (chatId?: string) => {
+		const visibleProvider = getVisibleProviderOrLog(outputChannel)
+
+		if (!visibleProvider) {
+			return { success: false, error: "No visible OpenAnalyst instance found" }
+		}
+
+		// Validate chatId parameter
+		if (!chatId || typeof chatId !== "string") {
+			outputChannel.appendLine("Delete task from editor failed: Invalid or missing chat ID")
+			return { success: false, error: "Invalid or missing chat ID" }
+		}
+
+		try {
+			// Check if user has disabled confirmation dialogs for chat deletion
+			const skipConfirmation = context.globalState.get<boolean>("chatDeletion.dontAskAgain", false)
+			
+			if (!skipConfirmation) {
+				// Show confirmation dialog with "Don't ask again" option
+				const confirmed = await showChatDeletionConfirmation(context, chatId)
+				if (!confirmed) {
+					outputChannel.appendLine(`Chat deletion cancelled by user: ${chatId}`)
+					return { success: false, error: "User cancelled deletion" }
+				}
+			}
+
+			// Call existing deleteTaskWithId method on the provider
+			await visibleProvider.deleteTaskWithId(chatId)
+			
+			outputChannel.appendLine(`Successfully deleted task from editor: ${chatId}`)
+			return { success: true }
+		} catch (error) {
+			const errorMessage = error instanceof Error ? error.message : String(error)
+			outputChannel.appendLine(`Failed to delete task from editor: ${errorMessage}`)
+			return { success: false, error: errorMessage }
+		}
+	},
+	// Command to open a specific task/chat by its ID in OpenAnalyst
+	showTaskWithId: async (taskId?: string) => {
+		const visibleProvider = getVisibleProviderOrLog(outputChannel)
+
+		if (!visibleProvider) {
+			outputChannel.appendLine("Show task by ID failed: No visible OpenAnalyst instance found")
+			return { success: false, error: "No visible OpenAnalyst instance found" }
+		}
+
+		// Validate taskId parameter
+		if (!taskId || typeof taskId !== "string") {
+			outputChannel.appendLine("Show task by ID failed: Invalid or missing task ID")
+			return { success: false, error: "Invalid or missing task ID" }
+		}
+
+		try {
+			// Call the existing showTaskWithId method on the provider
+			// This method handles loading the task from history and switching to chat view
+			await visibleProvider.showTaskWithId(taskId)
+			
+			outputChannel.appendLine(`Successfully opened task from VSCode activity bar: ${taskId}`)
+			return { success: true }
+		} catch (error) {
+			const errorMessage = error instanceof Error ? error.message : String(error)
+			outputChannel.appendLine(`Failed to open task by ID: ${errorMessage}`)
+			return { success: false, error: errorMessage }
+		}
 	},
 	// oacode_change end
 })

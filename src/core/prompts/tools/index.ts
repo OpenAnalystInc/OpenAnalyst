@@ -24,12 +24,19 @@ import { getSwitchModeDescription } from "./switch-mode"
 import { getNewTaskDescription } from "./new-task"
 import { getCodebaseSearchDescription } from "./codebase-search"
 import { getUpdateTodoListDescription } from "./update-todo-list"
-// oacode_change
-import { getUploadTemplateDescription } from "./upload-template"
-import { getListTemplatesDescription } from "./list-templates"
-import { getActivateTemplateDescription } from "./activate-template"
-import { getDeactivateTemplateDescription } from "./deactivate-template"
-import { getDeleteTemplateDescription } from "./delete-template"
+import { getExitPlanModeDescription } from "./exit-plan-mode"
+// BigQuery tools
+import { getExecuteSqlDescription } from "./execute-sql"
+import { getListBigqueryConnectionsDescription } from "./list-bigquery-connections"
+import { getListDatasetsDescription } from "./list-datasets"
+import { getListTablesDescription } from "./list-tables"
+import { getGetTableSchemaDescription } from "./get-table-schema"
+// SQL Worksheet tools
+import { getCreateSqlWorksheetDescription } from "./create-sql-worksheet"
+import { getListSqlWorksheetsDescription } from "./list-sql-worksheets"
+import { getReadSqlWorksheetDescription } from "./read-sql-worksheet"
+import { getWriteSqlWorksheetDescription } from "./write-sql-worksheet"
+import { getExecuteSqlWorksheetDescription } from "./execute-sql-worksheet"
 import { CodeIndexManager } from "../../../services/code-index/manager"
 
 // Map of tool names to their description functions
@@ -55,12 +62,20 @@ const toolDescriptionMap: Record<string, (args: ToolArgs) => string | undefined>
 	apply_diff: (args) =>
 		args.diffStrategy ? args.diffStrategy.getToolDescription({ cwd: args.cwd, toolOptions: args.toolOptions }) : "",
 	update_todo_list: (args) => getUpdateTodoListDescription(args),
-	// oacode_change - template tools
-	upload_template: () => getUploadTemplateDescription(),
-	list_templates: () => getListTemplatesDescription(),
-	activate_template: () => getActivateTemplateDescription(),
-	deactivate_template: () => getDeactivateTemplateDescription(),
-	delete_template: () => getDeleteTemplateDescription(),
+	// Plan Mode tools
+	exit_plan_mode: () => getExitPlanModeDescription(),
+	// BigQuery tools
+	execute_sql: (args) => getExecuteSqlDescription(args),
+	list_bigquery_connections: (args) => getListBigqueryConnectionsDescription(args),
+	list_datasets: (args) => getListDatasetsDescription(args),
+	list_tables: (args) => getListTablesDescription(args),
+	get_table_schema: (args) => getGetTableSchemaDescription(args),
+	// SQL Worksheet tools
+	create_sql_worksheet: (args) => getCreateSqlWorksheetDescription(args),
+	list_sql_worksheets: (args) => getListSqlWorksheetsDescription(args),
+	read_sql_worksheet: (args) => getReadSqlWorksheetDescription(args),
+	write_sql_worksheet: (args) => getWriteSqlWorksheetDescription(args),
+	execute_sql_worksheet: (args) => getExecuteSqlWorksheetDescription(args),
 }
 
 export function getToolDescriptionsForMode(
@@ -98,6 +113,13 @@ export function getToolDescriptionsForMode(
 	config.groups.forEach((groupEntry) => {
 		const groupName = getGroupName(groupEntry)
 		const toolGroup = TOOL_GROUPS[groupName]
+
+		// DEBUG: Log group resolution
+		console.log(`[DEBUG] Mode: ${mode}, Group: ${groupName}, Found: ${!!toolGroup}, Tools: ${toolGroup?.tools.length || 0}`)
+		if (!toolGroup) {
+			console.error(`[ERROR] Tool group "${groupName}" not found in TOOL_GROUPS! Available groups:`, Object.keys(TOOL_GROUPS))
+		}
+
 		if (toolGroup) {
 			toolGroup.tools.forEach((tool) => {
 				if (
@@ -172,10 +194,17 @@ export {
 	getSearchAndReplaceDescription,
 	getEditFileDescription, // oacode_change: Morph fast apply
 	getCodebaseSearchDescription,
-	// oacode_change - template tools
-	getUploadTemplateDescription,
-	getListTemplatesDescription,
-	getActivateTemplateDescription,
-	getDeactivateTemplateDescription,
-	getDeleteTemplateDescription,
+	getExitPlanModeDescription,
+	// BigQuery tools
+	getExecuteSqlDescription,
+	getListBigqueryConnectionsDescription,
+	getListDatasetsDescription,
+	getListTablesDescription,
+	getGetTableSchemaDescription,
+	// SQL Worksheet tools
+	getCreateSqlWorksheetDescription,
+	getListSqlWorksheetsDescription,
+	getReadSqlWorksheetDescription,
+	getWriteSqlWorksheetDescription,
+	getExecuteSqlWorksheetDescription,
 }

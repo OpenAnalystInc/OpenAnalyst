@@ -35,7 +35,7 @@ describe("RemoteConfigLoader", () => {
   - id: "test-mode"
     name: "Test Mode"
     description: "A test mode"
-    content: "customModes:\\n  - slug: test\\n    name: Test"`
+    content: "Agents:\\n  - slug: test\\n    name: Test"`
 
 			const mockMcpsYaml = `items:
   - id: "test-mcp"
@@ -84,7 +84,7 @@ describe("RemoteConfigLoader", () => {
 				id: "test-mode",
 				name: "Test Mode",
 				description: "A test mode",
-				content: "customModes:\n  - slug: test\n    name: Test",
+				content: "Agents:\n  - slug: test\n    name: Test",
 			})
 			expect(items[1]).toEqual({
 				type: "mcp",

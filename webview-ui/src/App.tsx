@@ -11,6 +11,7 @@ import { telemetryClient } from "./utils/TelemetryClient"
 import { TelemetryEventName } from "@roo-code/types"
 import { initializeSourceMaps, exposeSourceMapsForDebugging } from "./utils/sourceMapInitializer"
 import { ExtensionStateContextProvider, useExtensionState } from "./context/ExtensionStateContext"
+import { PromptBlocksProvider } from "./context/PromptBlocksContext"
 import ChatView, { ChatViewRef } from "./components/chat/ChatView"
 import HistoryView from "./components/history/HistoryView"
 import SettingsView, { SettingsViewRef } from "./components/settings/SettingsView"
@@ -29,6 +30,9 @@ import { useAddNonInteractiveClickListener } from "./components/ui/hooks/useNonI
 import { TooltipProvider } from "./components/ui/tooltip"
 import { STANDARD_TOOLTIP_DELAY } from "./components/ui/standard-tooltip"
 import { useOaIdentity } from "./utils/oacode/useOaIdentity"
+
+// Preload Chart.js for zero-latency first chart render (performance optimization)
+import { chartJSLoader } from "./adapters/chartjs/ChartJSLoader"
 
 type Tab = "settings" | "history" | "mcp" | "modes" | "chat" | "marketplace" | "account" | "profile" // oacode_change: add "profile"
 
@@ -228,6 +232,12 @@ const App = () => {
 			exposeSourceMapsForDebugging()
 		}
 
+		// Preload Chart.js in background for zero-latency first chart render
+		// This is non-blocking and will not delay UI initialization
+		setTimeout(() => {
+			chartJSLoader.preload()
+		}, 0)
+
 		// Log initialization for debugging
 		console.debug("App initialized with source map support")
 	}, [])
@@ -328,13 +338,15 @@ const queryClient = new QueryClient()
 const AppWithProviders = () => (
 	<ErrorBoundary>
 		<ExtensionStateContextProvider>
-			<TranslationProvider>
-				<QueryClientProvider client={queryClient}>
-					<TooltipProvider delayDuration={STANDARD_TOOLTIP_DELAY}>
-						<App />
-					</TooltipProvider>
-				</QueryClientProvider>
-			</TranslationProvider>
+			<PromptBlocksProvider>
+				<TranslationProvider>
+					<QueryClientProvider client={queryClient}>
+						<TooltipProvider delayDuration={STANDARD_TOOLTIP_DELAY}>
+							<App />
+						</TooltipProvider>
+					</QueryClientProvider>
+				</TranslationProvider>
+			</PromptBlocksProvider>
 		</ExtensionStateContextProvider>
 	</ErrorBoundary>
 )

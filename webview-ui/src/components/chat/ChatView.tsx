@@ -49,6 +49,7 @@ import Announcement from "./Announcement"
 import BrowserSessionRow from "./BrowserSessionRow"
 import ChatRow from "./ChatRow"
 import ChatTextArea from "./ChatTextArea"
+import { ActivePrompts } from "./ActivePrompts"
 // import TaskHeader from "./TaskHeader"// oacode_change
 import OaTaskHeader from "../oacode/OaTaskHeader" // oacode_change
 import AutoApproveMenu from "./AutoApproveMenu"
@@ -124,6 +125,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 		historyPreviewCollapsed, // Added historyPreviewCollapsed
 		soundEnabled,
 		soundVolume,
+		workflowMode,
 		// cloudIsAuthenticated, // oacode_change
 	} = useExtensionState()
 
@@ -610,7 +612,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 					userRespondedRef.current = true
 
 					if (messagesRef.current.length === 0) {
-						vscode.postMessage({ type: "newTask", text, images })
+						vscode.postMessage({ type: "newTask", text, images, workflowMode })
 					} else if (clineAskRef.current) {
 						if (clineAskRef.current === "followup") {
 							markFollowUpAsAnswered()
@@ -2013,7 +2015,8 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 											<a
 												href={buildDocLink("", "welcome")}
 												target="_blank"
-												rel="noopener noreferrer">
+												rel="noopener noreferrer"
+												className="text-[var(--vscode-textLink-foreground)] hover:text-[var(--vscode-textLink-activeForeground)]">
 												the docs
 											</a>
 										),
@@ -2172,6 +2175,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 					setMessageQueue((prev) => prev.map((msg, i) => (i === index ? { ...msg, text: newText } : msg)))
 				}}
 			/>
+			<ActivePrompts />
 			<ChatTextArea
 				ref={textAreaRef}
 				inputValue={inputValue}

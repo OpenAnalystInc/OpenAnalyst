@@ -139,6 +139,16 @@ export interface ExtensionMessage {
 		| "insertTextIntoTextarea"
 		// oacode_change - template management
 		| "templateList"
+		// oacode_change - prompt blocks
+		| "promptBlocksLoaded"
+		| "activePromptBlocksUpdated"
+		| "activePromptBlocksLoaded"
+		// Plan Mode workflow
+		| "workflowModeChanged"
+		| "approvePlan"
+		| "rejectPlan"
+		| "modifyPlan"
+		| "updatePlanProgress"
 	text?: string
 	payload?: ProfileDataResponsePayload | BalanceDataResponsePayload | TemplateListPayload // oacode_change: Add payload for profile, balance, and template data
 	action?:
@@ -241,6 +251,49 @@ export interface ExtensionMessage {
 	}>
 	// oacode_change end
 	commands?: Command[]
+	// oacode_change - prompt blocks
+	blocks?: Array<{
+		name: string
+		description: string
+		category: string
+		tags: readonly string[]
+		priority: number
+		enabled: boolean
+	}>
+	// PHASE 4.2 NEW: Categorized prompt blocks for toolbar integration
+	defaultBlocks?: Array<{
+		name: string
+		description: string
+		category: string
+		tags: readonly string[]
+		priority: number
+		enabled: boolean
+	}>
+	customBlocks?: Array<{
+		name: string
+		description: string
+		category: string
+		tags: readonly string[]
+		priority: number
+		enabled: boolean
+	}>
+	// Additional metadata for UI feedback
+	totalCount?: number
+	defaultCount?: number
+	customCount?: number
+	// Error handling for prompt block loading (reuses existing error property)
+	loadFailed?: boolean
+	activeBlocks?: Array<{
+		block: {
+			name: string
+			description: string
+			category: string
+			tags: string[]
+			priority: number
+			enabled: boolean
+		}
+		variables?: Record<string, string>
+	}>
 }
 
 export type ExtensionState = Pick<
@@ -328,6 +381,8 @@ export type ExtensionState = Pick<
 	| "systemNotificationsEnabled" // oacode_change
 	| "includeDiagnosticMessages"
 	| "maxDiagnosticMessages"
+	| "workflowMode" // Plan mode integration
+	| "approvedPlan" // Plan mode integration
 > & {
 	version: string
 	clineMessages: ClineMessage[]
@@ -383,6 +438,17 @@ export type ExtensionState = Pick<
 	marketplaceInstalledMetadata?: { project: Record<string, any>; global: Record<string, any> }
 	profileThresholds: Record<string, number>
 	hasOpenedModeSelector: boolean
+
+	// Plan Mode state
+	workflowMode?: "plan" | "chat" | "agent"
+	approvedPlan?: {
+		content: string
+		approvedAt: number
+		currentPhase: number
+		completedPhases: string[]
+		estimatedHours?: number
+		planBlockId?: string
+	}
 }
 
 export interface ClineSayTool {

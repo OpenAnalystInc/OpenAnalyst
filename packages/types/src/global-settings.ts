@@ -162,6 +162,17 @@ export const globalSettingsSchema = z.object({
 	hasOpenedModeSelector: z.boolean().optional(),
 	lastModeExportPath: z.string().optional(),
 	lastModeImportPath: z.string().optional(),
+
+	// Plan Mode integration
+	workflowMode: z.enum(['plan', 'chat', 'agent']).optional(),
+	approvedPlan: z.object({
+		content: z.string(),
+		approvedAt: z.number(),
+		currentPhase: z.number(),
+		completedPhases: z.array(z.string()),
+		estimatedHours: z.number().optional(),
+		planBlockId: z.string().optional(),
+	}).optional(),
 })
 
 export type GlobalSettings = z.infer<typeof globalSettingsSchema>

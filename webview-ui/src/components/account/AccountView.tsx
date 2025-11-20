@@ -19,7 +19,7 @@ export const AccountView = ({ userInfo, isAuthenticated, cloudApiUrl, onDone }: 
 	const { t } = useAppTranslation()
 	const wasAuthenticatedRef = useRef(false)
 
-	const rooLogoUri = (window as any).IMAGES_BASE_URI + "/roo-logo.svg"
+	const rooLogoUri = (window as any).IMAGES_BASE_URI + "/oa-dark.svg"
 
 	// Track authentication state changes to detect successful logout
 	useEffect(() => {

@@ -76,6 +76,19 @@ export const toolParamNames = [
 	"filename",
 	"overwrite",
 	"template_name",
+	// Plan Mode parameters
+	"plan",
+	// BigQuery parameters
+	"connection_id",
+	"dataset_id",
+	"table_id",
+	"limit_rows",
+	// Worksheet parameters
+	"worksheet_id",
+	"initial_sql",
+	"sql_content",
+	// General parameters
+	"name",
 ] as const
 
 export type ToolParamName = (typeof toolParamNames)[number]
@@ -187,6 +200,11 @@ export interface EditFileToolUse extends ToolUse {
 }
 // oacode_change end
 
+export interface ExitPlanModeToolUse extends ToolUse {
+	name: "exit_plan_mode"
+	params: Required<Pick<Record<ToolParamName, string>, "plan">>
+}
+
 // Define tool group configuration
 export type ToolGroupConfig = {
 	tools: readonly string[]
@@ -217,11 +235,19 @@ export const TOOL_DISPLAY_NAMES: Record<ToolName, string> = {
 	condense: "condense the current context window", // oacode_change
 	codebase_search: "codebase search",
 	update_todo_list: "update todo list",
-	upload_template: "upload template", // oacode_change: Template system
-	list_templates: "list templates", // oacode_change: Template system
-	activate_template: "activate template", // oacode_change: Template system
-	deactivate_template: "deactivate template", // oacode_change: Template system
-	delete_template: "delete template", // oacode_change: Template system
+	exit_plan_mode: "present plan for approval", // Plan Mode system
+	// BigQuery tools
+	execute_sql: "execute SQL queries",
+	list_bigquery_connections: "list BigQuery connections",
+	list_datasets: "list datasets",
+	list_tables: "list tables",
+	get_table_schema: "get table schema",
+	// SQL Worksheet tools
+	create_sql_worksheet: "create SQL worksheet",
+	list_sql_worksheets: "list SQL worksheets",
+	read_sql_worksheet: "read SQL worksheet",
+	write_sql_worksheet: "write SQL worksheet",
+	execute_sql_worksheet: "execute SQL worksheet",
 } as const
 
 // Define available tool groups.
@@ -259,9 +285,19 @@ export const TOOL_GROUPS: Record<ToolGroup, ToolGroupConfig> = {
 		tools: ["switch_mode", "new_task"],
 		alwaysAvailable: true,
 	},
-	templates: {
-		tools: ["upload_template", "list_templates", "activate_template", "deactivate_template", "delete_template"],
-		alwaysAvailable: true,
+	bigquery: {
+		tools: [
+			"list_bigquery_connections",
+			"list_datasets",
+			"list_tables",
+			"get_table_schema",
+			"execute_sql",
+			"create_sql_worksheet",
+			"list_sql_worksheets",
+			"read_sql_worksheet",
+			"write_sql_worksheet",
+			"execute_sql_worksheet",
+		],
 	},
 }
 
@@ -274,12 +310,8 @@ export const ALWAYS_AVAILABLE_TOOLS: ToolName[] = [
 	"report_bug",
 	"condense", // oacode_Change
 	"update_todo_list",
-	// oacode_change - template management tools
-	"upload_template",
-	"list_templates",
-	"activate_template",
-	"deactivate_template",
-	"delete_template",
+	// Plan Mode tools
+	"exit_plan_mode", // MUST be available for AI to present plans
 ] as const
 
 export type DiffResult =

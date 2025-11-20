@@ -80,15 +80,15 @@ describe("SimpleInstaller", () => {
 
 			const result = await installer.installItem(mockModeItem, { target: "project" })
 
-			expect(result.filePath).toBe(path.join("/test/workspace", ".oacodemodes"))
+			expect(result.filePath).toBe(path.join("/test/workspace", ".oacode", "agents.yaml"))
 			expect(mockCustomModesManager.importModeWithRules).toHaveBeenCalled()
 
 			// Verify the import was called with correct YAML structure
 			const importCall = (mockCustomModesManager.importModeWithRules as any).mock.calls[0]
 			const importedYaml = importCall[0]
 			const importedData = yaml.parse(importedYaml)
-			expect(importedData.customModes).toHaveLength(1)
-			expect(importedData.customModes[0].slug).toBe("test")
+			expect(importedData.Agents).toHaveLength(1)
+			expect(importedData.Agents[0].slug).toBe("test")
 		})
 
 		it("should handle import failure from CustomModesManager", async () => {
@@ -133,7 +133,7 @@ describe("SimpleInstaller", () => {
 
 			const result = await installerWithoutManager.installItem(mockModeItem, { target: "project" })
 
-			expect(result.filePath).toBe(path.join("/test/workspace", ".oacodemodes"))
+			expect(result.filePath).toBe(path.join("/test/workspace", ".oacode", "agents.yaml"))
 			expect(mockFs.writeFile).toHaveBeenCalled()
 		})
 	})

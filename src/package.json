@@ -3,7 +3,7 @@
 	"displayName": "%extension.displayName%",
 	"description": "%extension.description%",
 	"publisher": "oacode",
-	"version": "4.79.1",
+	"version": "0.0.1",
 	"icon": "assets/icons/logo-outline-black.png",
 	"galleryBanner": {
 		"color": "#FFFFFF",
@@ -18,9 +18,9 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Oa-Org/oacode"
+		"url": "https://github.com/OpenAnalystInc/OpenAnalyst"
 	},
-	"homepage": "https://oacode.ai",
+	"homepage": "https://openanalyst.com",
 	"categories": [
 		"AI",
 		"Chat",
@@ -50,6 +50,9 @@
 	"activationEvents": [
 		"onLanguage",
 		"onStartupFinished"
+	],
+	"extensionDependencies": [
+		"openanalyst-team.open-analyst"
 	],
 	"main": "./dist/extension.js",
 	"contributes": {
@@ -113,7 +116,6 @@
 					"icon": "assets/icons/oa.svg",
 					"darkIcon": "assets/icons/oa-dark.svg",
 					"when": "isMac || isLinux || isWindows"
-					
 				}
 			]
 		},
@@ -259,6 +261,11 @@
 				"category": "%configuration.title%"
 			},
 			{
+				"command": "oa-code.showProductionStandards",
+				"title": "Show Production Standards",
+				"category": "%configuration.title%"
+			},
+			{
 				"command": "oa-code.ghost.generateSuggestions",
 				"title": "%ghost.commands.generateSuggestions%",
 				"category": "%configuration.title%"
@@ -291,6 +298,16 @@
 			{
 				"command": "oa-code.ghost.goToPreviousSuggestion",
 				"title": "%ghost.commands.goToPreviousSuggestion%",
+				"category": "%configuration.title%"
+			},
+			{
+				"command": "oa-code.deleteTaskFromEditor",
+				"title": "Delete Chat from Editor",
+				"category": "%configuration.title%"
+			},
+			{
+				"command": "oa-code.showTaskWithId",
+				"title": "Show Task by ID",
 				"category": "%configuration.title%"
 			}
 		],
@@ -418,11 +435,6 @@
 					"when": "view == oa-code.SidebarProvider"
 				},
 				{
-					"command": "oa-code.mcpButtonClicked",
-					"group": "navigation@2",
-					"when": "view == oa-code.SidebarProvider"
-				},
-				{
 					"command": "oa-code.historyButtonClicked",
 					"group": "navigation@3",
 					"when": "view == oa-code.SidebarProvider"
@@ -452,11 +464,6 @@
 				{
 					"command": "oa-code.plusButtonClicked",
 					"group": "navigation@1",
-					"when": "activeWebviewPanelId == oa-code.TabPanelProvider"
-				},
-				{
-					"command": "oa-code.mcpButtonClicked",
-					"group": "navigation@2",
 					"when": "activeWebviewPanelId == oa-code.TabPanelProvider"
 				},
 				{

@@ -19,6 +19,18 @@ import { listCodeDefinitionNamesTool } from "../tools/listCodeDefinitionNamesToo
 import { searchFilesTool } from "../tools/searchFilesTool"
 import { browserActionTool } from "../tools/browserActionTool"
 import { executeCommandTool } from "../tools/executeCommandTool"
+// BigQuery tools
+import { executeSqlTool } from "../tools/executeSqlTool"
+import { listBigqueryConnectionsTool } from "../tools/listBigqueryConnectionsTool"
+import { listDatasetsTool } from "../tools/listDatasetsTool"
+import { listTablesTool } from "../tools/listTablesTool"
+import { getTableSchemaTool } from "../tools/getTableSchemaTool"
+// SQL Worksheet tools
+import { createSqlWorksheetTool } from "../tools/createSqlWorksheetTool"
+import { listSqlWorksheetsTool } from "../tools/listSqlWorksheetsTool"
+import { readSqlWorksheetTool } from "../tools/readSqlWorksheetTool"
+import { writeSqlWorksheetTool } from "../tools/writeSqlWorksheetTool"
+import { executeSqlWorksheetTool } from "../tools/executeSqlWorksheetTool"
 import { useMcpToolTool } from "../tools/useMcpToolTool"
 import { accessMcpResourceTool } from "../tools/accessMcpResourceTool"
 import { askFollowupQuestionTool } from "../tools/askFollowupQuestionTool"
@@ -27,12 +39,12 @@ import { attemptCompletionTool } from "../tools/attemptCompletionTool"
 import { newTaskTool } from "../tools/newTaskTool"
 
 import { updateTodoListTool } from "../tools/updateTodoListTool"
-// oacode_change - template tools
-import { uploadTemplateTool } from "../tools/uploadTemplateTool"
-import { listTemplatesTool } from "../tools/listTemplatesTool"
-import { activateTemplateTool } from "../tools/activateTemplateTool"
-import { deactivateTemplateTool } from "../tools/deactivateTemplateTool"
-import { deleteTemplateTool } from "../tools/deleteTemplateTool"
+// oacode_change - template tools (temporarily commented out for ExtendedTemplateManager integration)
+// import { uploadTemplateTool } from "../tools/uploadTemplateTool"
+// import { listTemplatesTool } from "../tools/listTemplatesTool"
+// import { activateTemplateTool } from "../tools/activateTemplateTool"
+// import { deactivateTemplateTool } from "../tools/deactivateTemplateTool"
+// import { deleteTemplateTool } from "../tools/deleteTemplateTool"
 
 import { formatResponse } from "../prompts/responses"
 import { validateToolUse } from "../tools/validateToolUse"
@@ -40,6 +52,8 @@ import { Task } from "../task/Task"
 import { newRuleTool } from "../tools/newRuleTool" // oacode_change
 import { reportBugTool } from "../tools/reportBugTool" // oacode_change
 import { condenseTool } from "../tools/condenseTool" // oacode_change
+import { exitPlanModeTool } from "../tools/exitPlanModeTool" // Plan Mode
+import { ToolInterceptor } from "../planmode/ToolInterceptor"
 import { codebaseSearchTool } from "../tools/codebaseSearchTool"
 import { experiments, EXPERIMENT_IDS } from "../../shared/experiments"
 import { applyDiffToolLegacy } from "../tools/applyDiffTool"
@@ -167,6 +181,26 @@ export async function presentAssistantMessage(cline: Task, recursionDepth: numbe
 				switch (block.name) {
 					case "execute_command":
 						return `[${block.name} for '${block.params.command}']`
+					case "execute_sql":
+						return `[${block.name}]`
+					case "list_bigquery_connections":
+						return `[${block.name}]`
+					case "list_datasets":
+						return `[${block.name}${block.params.connection_id ? ` for connection '${block.params.connection_id}'` : ""}]`
+					case "list_tables":
+						return `[${block.name} for dataset '${block.params.dataset_id}']`
+					case "get_table_schema":
+						return `[${block.name} for table '${block.params.table_id}']`
+					case "create_sql_worksheet":
+						return `[${block.name}${block.params.name ? ` name '${block.params.name}'` : ""}]`
+					case "list_sql_worksheets":
+						return `[${block.name}]`
+					case "read_sql_worksheet":
+						return `[${block.name} for '${block.params.worksheet_id}']`
+					case "write_sql_worksheet":
+						return `[${block.name} for '${block.params.worksheet_id}']`
+					case "execute_sql_worksheet":
+						return `[${block.name} for '${block.params.worksheet_id}']`
 					case "read_file":
 						return getReadFileToolDescription(block.name, block.params)
 					case "fetch_instructions":
@@ -238,17 +272,17 @@ export async function presentAssistantMessage(cline: Task, recursionDepth: numbe
 					case "condense":
 						return `[${block.name}]`
 					// oacode_change end
-					// oacode_change start: Template system tools
-					case "upload_template":
-						return `[${block.name} for '${block.params.filename}']`
-					case "list_templates":
-						return `[${block.name}]`
-					case "activate_template":
-						return `[${block.name} for '${block.params.template_name}']`
-					case "deactivate_template":
-						return `[${block.name}]`
-					case "delete_template":
-						return `[${block.name} for '${block.params.template_name}']`
+					// oacode_change start: Template system tools (temporarily commented out for ExtendedTemplateManager integration)
+					// case "upload_template":
+					// 	return `[${block.name} for '${block.params.filename}']`
+					// case "list_templates":
+					// 	return `[${block.name}]`
+					// case "activate_template":
+					// 	return `[${block.name} for '${block.params.template_name}']`
+					// case "deactivate_template":
+					// 	return `[${block.name}]`
+					// case "delete_template":
+					// 	return `[${block.name} for '${block.params.template_name}']`
 					// oacode_change end
 					default:
 						return `[${block.name}]`
@@ -390,7 +424,29 @@ export async function presentAssistantMessage(cline: Task, recursionDepth: numbe
 			}
 
 			// Validate tool use before execution.
-			const { mode, customModes } = (await cline.providerRef.deref()?.getState()) ?? {}
+			const { mode, customModes, workflowMode } = (await cline.providerRef.deref()?.getState()) ?? {}
+
+			// Plan Mode tool interception - redirect incorrect tools
+			const toolInterceptor = new ToolInterceptor()
+			const interceptionResult = toolInterceptor.interceptTool(block.name, workflowMode, block.params)
+
+			// Update block with intercepted values if redirection occurred
+			if (interceptionResult.wasIntercepted) {
+				const originalTool = block.name
+				block.name = interceptionResult.toolName as any // Type assertion needed for dynamic tool redirection
+				block.params = interceptionResult.params
+
+				// Notify user of interception for transparency
+				const interceptionMessage = toolInterceptor.getInterceptionMessage(interceptionResult)
+				if (interceptionMessage) {
+					await cline.say("text", interceptionMessage)
+				}
+
+				// Log interception in development
+				if (process.env.NODE_ENV === "development") {
+					console.log(`[PlanMode] Intercepted ${originalTool} → ${block.name}`)
+				}
+			}
 
 			try {
 				validateToolUse(
@@ -455,22 +511,22 @@ export async function presentAssistantMessage(cline: Task, recursionDepth: numbe
 				case "update_todo_list":
 					await updateTodoListTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
 					break
-				// oacode_change - template management tools
-				case "upload_template":
-					await uploadTemplateTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
-					break
-				case "list_templates":
-					await listTemplatesTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
-					break
-				case "activate_template":
-					await activateTemplateTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
-					break
-				case "deactivate_template":
-					await deactivateTemplateTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
-					break
-				case "delete_template":
-					await deleteTemplateTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
-					break
+				// oacode_change - template management tools (temporarily commented out for ExtendedTemplateManager integration)
+				// case "upload_template":
+				// 	await uploadTemplateTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+				// 	break
+				// case "list_templates":
+				// 	await listTemplatesTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+				// 	break
+				// case "activate_template":
+				// 	await activateTemplateTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+				// 	break
+				// case "deactivate_template":
+				// 	await deactivateTemplateTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+				// 	break
+				// case "delete_template":
+				// 	await deleteTemplateTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+				// 	break
 				case "apply_diff": {
 					// Get the provider and state to check experiment settings
 					const provider = cline.providerRef.deref()
@@ -545,6 +601,43 @@ export async function presentAssistantMessage(cline: Task, recursionDepth: numbe
 				case "execute_command":
 					await executeCommandTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
 					break
+				case "execute_sql":
+					await executeSqlTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+					break
+				case "list_bigquery_connections":
+					await listBigqueryConnectionsTool(
+						cline,
+						block,
+						askApproval,
+						handleError,
+						pushToolResult,
+						removeClosingTag,
+					)
+					break
+				case "list_datasets":
+					await listDatasetsTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+					break
+				case "list_tables":
+					await listTablesTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+					break
+				case "get_table_schema":
+					await getTableSchemaTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+					break
+				case "create_sql_worksheet":
+					await createSqlWorksheetTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+					break
+				case "list_sql_worksheets":
+					await listSqlWorksheetsTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+					break
+				case "read_sql_worksheet":
+					await readSqlWorksheetTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+					break
+				case "write_sql_worksheet":
+					await writeSqlWorksheetTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+					break
+				case "execute_sql_worksheet":
+					await executeSqlWorksheetTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+					break
 				case "use_mcp_tool":
 					await useMcpToolTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
 					break
@@ -595,6 +688,9 @@ export async function presentAssistantMessage(cline: Task, recursionDepth: numbe
 					break
 				case "condense":
 					await condenseTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
+					break
+				case "exit_plan_mode":
+					await exitPlanModeTool(cline, block, askApproval, handleError, pushToolResult, removeClosingTag)
 					break
 				// oacode_change end
 			}

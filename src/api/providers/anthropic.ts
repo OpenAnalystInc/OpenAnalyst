@@ -18,6 +18,10 @@ import { getModelParams } from "../transform/model-params"
 import { BaseProvider } from "./base-provider"
 import type { SingleCompletionHandler, ApiHandlerCreateMessageMetadata } from "../index"
 import { calculateApiCostAnthropic } from "../../shared/cost"
+import { getCapturedHttpData } from "../../core/debug/httpInterceptor"
+
+// Compile-time flag provided by bundler (see esbuild define)
+declare const __DEV__: boolean
 
 export class AnthropicHandler extends BaseProvider implements SingleCompletionHandler {
 	private options: ApiHandlerOptions
@@ -41,6 +45,15 @@ export class AnthropicHandler extends BaseProvider implements SingleCompletionHa
 		messages: Anthropic.Messages.MessageParam[],
 		metadata?: ApiHandlerCreateMessageMetadata,
 	): ApiStream {
+		// Debug: Prepare request tracking data
+		let requestStartTime: string | undefined
+		let rawRequestData: any = undefined
+
+		if (__DEV__) {
+			requestStartTime = new Date().toISOString()
+			console.log(`[DEBUG] AnthropicHandler: Starting API request at ${requestStartTime}`)
+		}
+
 		let stream: AnthropicStream<Anthropic.Messages.RawMessageStreamEvent>
 		const cacheControl: CacheControlEphemeral = { type: "ephemeral" }
 		let { id: modelId, betas = [], maxTokens, temperature, reasoning: thinking } = this.getModel()
@@ -71,6 +84,30 @@ export class AnthropicHandler extends BaseProvider implements SingleCompletionHa
 
 				const lastUserMsgIndex = userMsgIndices[userMsgIndices.length - 1] ?? -1
 				const secondLastMsgUserIndex = userMsgIndices[userMsgIndices.length - 2] ?? -1
+
+				// Debug: Capture raw request data
+				if (__DEV__) {
+					rawRequestData = {
+						url: this.client.baseURL || 'https://api.anthropic.com/v1/messages',
+						method: 'POST',
+						headers: {
+							'content-type': 'application/json',
+							'anthropic-version': '2023-06-01',
+							'authorization': `Bearer ${this.options.apiKey?.slice(0, 12)}...`,
+							...(betas.length > 0 ? { 'anthropic-beta': betas.join(',') } : {})
+						},
+						body: JSON.stringify({
+							model: modelId,
+							max_tokens: maxTokens ?? ANTHROPIC_DEFAULT_MAX_TOKENS,
+							temperature,
+							thinking,
+							system: [{ text: systemPrompt, type: "text", cache_control: cacheControl }],
+							messages: messages,
+							stream: true
+						}, null, 2)
+					}
+					console.log(`[DEBUG] AnthropicHandler: Raw request data prepared for ${modelId}`)
+				}
 
 				stream = await this.client.messages.create(
 					{
@@ -123,6 +160,28 @@ export class AnthropicHandler extends BaseProvider implements SingleCompletionHa
 				break
 			}
 			default: {
+				// Debug: Capture raw request data for default case
+				if (__DEV__) {
+					rawRequestData = {
+						url: this.client.baseURL || 'https://api.anthropic.com/v1/messages',
+						method: 'POST',
+						headers: {
+							'content-type': 'application/json',
+							'anthropic-version': '2023-06-01',
+							'authorization': `Bearer ${this.options.apiKey?.slice(0, 12)}...`
+						},
+						body: JSON.stringify({
+							model: modelId,
+							max_tokens: maxTokens ?? ANTHROPIC_DEFAULT_MAX_TOKENS,
+							temperature,
+							system: [{ text: systemPrompt, type: "text" }],
+							messages: messages,
+							stream: true
+						}, null, 2)
+					}
+					console.log(`[DEBUG] AnthropicHandler: Raw request data prepared for default case ${modelId}`)
+				}
+
 				stream = (await this.client.messages.create({
 					model: modelId,
 					max_tokens: maxTokens ?? ANTHROPIC_DEFAULT_MAX_TOKENS,

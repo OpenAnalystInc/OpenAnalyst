@@ -16,7 +16,7 @@ import { GlobalFileNames } from "../../shared/globalFileNames"
 import { ensureSettingsDirectoryExists } from "../../utils/globalContext"
 import { t } from "../../i18n"
 
-const ROOMODES_FILENAME = ".oacodemodes"
+const AGENTS_FILENAME = "agents.yaml"
 
 // Type definitions for import/export functionality
 interface RuleFile {
@@ -29,7 +29,7 @@ interface ExportedModeConfig extends ModeConfig {
 }
 
 interface ImportData {
-	customModes: ExportedModeConfig[]
+	Agents: ExportedModeConfig[]
 }
 
 interface ExportResult {
@@ -89,7 +89,7 @@ export class CustomModesManager {
 		}
 	}
 
-	private async getWorkspaceRoomodes(): Promise<string | undefined> {
+	private async getWorkspaceAgents(): Promise<string | undefined> {
 		const workspaceFolders = vscode.workspace.workspaceFolders
 
 		if (!workspaceFolders || workspaceFolders.length === 0) {
@@ -97,9 +97,9 @@ export class CustomModesManager {
 		}
 
 		const workspaceRoot = getWorkspacePath()
-		const roomodesPath = path.join(workspaceRoot, ROOMODES_FILENAME)
-		const exists = await fileExistsAtPath(roomodesPath)
-		return exists ? roomodesPath : undefined
+		const agentsPath = path.join(workspaceRoot, ".oacode", AGENTS_FILENAME)
+		const exists = await fileExistsAtPath(agentsPath)
+		return exists ? agentsPath : undefined
 	}
 
 	/**
@@ -153,8 +153,8 @@ export class CustomModesManager {
 			// Ensure we never return null or undefined
 			return parsed ?? {}
 		} catch (yamlError) {
-			// For .roomodes files, try JSON as fallback
-			if (filePath.endsWith(ROOMODES_FILENAME)) {
+			// For .agents files, try JSON as fallback
+			if (filePath.endsWith(AGENTS_FILENAME)) {
 				try {
 					// Try parsing the original content as JSON (not the cleaned content)
 					return JSON.parse(content)
@@ -172,7 +172,7 @@ export class CustomModesManager {
 				}
 			}
 
-			// For non-.roomodes files, just log and return empty object
+			// For non-.agents files, just log and return empty object
 			const errorMsg = yamlError instanceof Error ? yamlError.message : String(yamlError)
 			console.error(`[CustomModesManager] Failed to parse YAML from ${filePath}:`, errorMsg)
 			return {}
@@ -184,8 +184,8 @@ export class CustomModesManager {
 			const content = await fs.readFile(filePath, "utf-8")
 			const settings = this.parseYamlSafely(content, filePath)
 
-			// Ensure settings has customModes property
-			if (!settings || typeof settings !== "object" || !settings.customModes) {
+			// Ensure settings has Agents property
+			if (!settings || typeof settings !== "object" || !settings.Agents) {
 				return []
 			}
 
@@ -194,8 +194,8 @@ export class CustomModesManager {
 			if (!result.success) {
 				console.error(`[CustomModesManager] Schema validation failed for ${filePath}:`, result.error)
 
-				// Show user-friendly error for .roomodes files
-				if (filePath.endsWith(ROOMODES_FILENAME)) {
+				// Show user-friendly error for .agents files
+				if (filePath.endsWith(AGENTS_FILENAME)) {
 					const issues = result.error.issues
 						.map((issue) => `• ${issue.path.join(".")}: ${issue.message}`)
 						.join("\n")
@@ -207,11 +207,11 @@ export class CustomModesManager {
 			}
 
 			// Determine source based on file path
-			const isRoomodes = filePath.endsWith(ROOMODES_FILENAME)
-			const source = isRoomodes ? ("project" as const) : ("global" as const)
+			const isWorkspaceAgents = filePath.includes(".oacode") && filePath.endsWith(AGENTS_FILENAME)
+			const source = isWorkspaceAgents ? ("project" as const) : ("global" as const)
 
 			// Add source to each mode
-			return result.data.customModes.map((mode) => ({ ...mode, source }))
+			return result.data.Agents.map((mode) => ({ ...mode, source }))
 		} catch (error) {
 			// Only log if the error wasn't already handled in parseYamlSafely
 			if (!(error as any).alreadyHandled) {
@@ -247,7 +247,7 @@ export class CustomModesManager {
 
 	public async getCustomModesFilePath(): Promise<string> {
 		const settingsDir = await ensureSettingsDirectoryExists(this.context)
-		const filePath = path.join(settingsDir, GlobalFileNames.customModes)
+		const filePath = path.join(settingsDir, GlobalFileNames.agents)
 		const fileExists = await fileExistsAtPath(filePath)
 
 		if (!fileExists) {
@@ -293,12 +293,12 @@ export class CustomModesManager {
 					return
 				}
 
-				// Get modes from .oacodemodes if it exists (takes precedence)
-				const roomodesPath = await this.getWorkspaceRoomodes()
-				const roomodesModes = roomodesPath ? await this.loadModesFromFile(roomodesPath) : []
+				// Get modes from .oacode/agents.yaml if it exists (takes precedence)
+				const agentsPath = await this.getWorkspaceAgents()
+				const agentsModes = agentsPath ? await this.loadModesFromFile(agentsPath) : []
 
-				// Merge modes from both sources (.oacodemodes takes precedence)
-				const mergedModes = await this.mergeCustomModes(roomodesModes, result.data.customModes)
+				// Merge modes from both sources (.oacode/agents.yaml takes precedence)
+				const mergedModes = await this.mergeCustomModes(agentsModes, result.data.Agents)
 				await this.context.globalState.update("customModes", mergedModes)
 				this.clearCache()
 				await this.onUpdate()
@@ -312,19 +312,19 @@ export class CustomModesManager {
 		this.disposables.push(settingsWatcher.onDidDelete(handleSettingsChange))
 		this.disposables.push(settingsWatcher)
 
-		// Watch .roomodes file - watch the path even if it doesn't exist yet
+		// Watch .oacode/agents.yaml file - watch the path even if it doesn't exist yet
 		const workspaceFolders = vscode.workspace.workspaceFolders
 		if (workspaceFolders && workspaceFolders.length > 0) {
 			const workspaceRoot = getWorkspacePath()
-			const roomodesPath = path.join(workspaceRoot, ROOMODES_FILENAME)
-			const roomodesWatcher = vscode.workspace.createFileSystemWatcher(roomodesPath)
+			const agentsPath = path.join(workspaceRoot, ".oacode", AGENTS_FILENAME)
+			const agentsWatcher = vscode.workspace.createFileSystemWatcher(agentsPath)
 
-			const handleRoomodesChange = async () => {
+			const handleAgentsChange = async () => {
 				try {
 					const settingsModes = await this.loadModesFromFile(settingsPath)
-					const roomodesModes = await this.loadModesFromFile(roomodesPath)
-					// .roomodes takes precedence
-					const mergedModes = await this.mergeCustomModes(roomodesModes, settingsModes)
+					const agentsModes = await this.loadModesFromFile(agentsPath)
+					// .agents takes precedence
+					const mergedModes = await this.mergeCustomModes(agentsModes, settingsModes)
 					await this.context.globalState.update("customModes", mergedModes)
 					this.clearCache()
 					await this.onUpdate()
@@ -333,22 +333,22 @@ export class CustomModesManager {
 				}
 			}
 
-			this.disposables.push(roomodesWatcher.onDidChange(handleRoomodesChange))
-			this.disposables.push(roomodesWatcher.onDidCreate(handleRoomodesChange))
+			this.disposables.push(agentsWatcher.onDidChange(handleAgentsChange))
+			this.disposables.push(agentsWatcher.onDidCreate(handleAgentsChange))
 			this.disposables.push(
-				roomodesWatcher.onDidDelete(async () => {
-					// When .roomodes is deleted, refresh with only settings modes
+				agentsWatcher.onDidDelete(async () => {
+					// When .agents is deleted, refresh with only settings modes
 					try {
 						const settingsModes = await this.loadModesFromFile(settingsPath)
 						await this.context.globalState.update("customModes", settingsModes)
 						this.clearCache()
 						await this.onUpdate()
 					} catch (error) {
-						console.error(`[CustomModesManager] Error handling .roomodes file deletion:`, error)
+						console.error(`[CustomModesManager] Error handling .agents file deletion:`, error)
 					}
 				}),
 			)
-			this.disposables.push(roomodesWatcher)
+			this.disposables.push(agentsWatcher)
 		}
 	}
 
@@ -364,16 +364,16 @@ export class CustomModesManager {
 		const settingsPath = await this.getCustomModesFilePath()
 		const settingsModes = await this.loadModesFromFile(settingsPath)
 
-		// Get modes from .oacodemodes if it exists
-		const roomodesPath = await this.getWorkspaceRoomodes()
-		const roomodesModes = roomodesPath ? await this.loadModesFromFile(roomodesPath) : []
+		// Get modes from .oacode/agents.yaml if it exists
+		const agentsPath = await this.getWorkspaceAgents()
+		const agentsModes = agentsPath ? await this.loadModesFromFile(agentsPath) : []
 
 		// Create maps to store modes by source.
 		const projectModes = new Map<string, ModeConfig>()
 		const globalModes = new Map<string, ModeConfig>()
 
 		// Add project modes (they take precedence).
-		for (const mode of roomodesModes) {
+		for (const mode of agentsModes) {
 			projectModes.set(mode.slug, { ...mode, source: "project" as const })
 		}
 
@@ -386,7 +386,7 @@ export class CustomModesManager {
 
 		// Combine modes in the correct order: project modes first, then global modes.
 		const mergedModes = [
-			...roomodesModes.map((mode) => ({ ...mode, source: "project" as const })),
+			...agentsModes.map((mode) => ({ ...mode, source: "project" as const })),
 			...settingsModes
 				.filter((mode) => !projectModes.has(mode.slug))
 				.map((mode) => ({ ...mode, source: "global" as const })),
@@ -426,10 +426,10 @@ export class CustomModesManager {
 				}
 
 				const workspaceRoot = getWorkspacePath()
-				targetPath = path.join(workspaceRoot, ROOMODES_FILENAME)
+				targetPath = path.join(workspaceRoot, AGENTS_FILENAME)
 				const exists = await fileExistsAtPath(targetPath)
 
-				logger.info(`${exists ? "Updating" : "Creating"} project mode in ${ROOMODES_FILENAME}`, {
+				logger.info(`${exists ? "Updating" : "Creating"} project mode in ${AGENTS_FILENAME}`, {
 					slug,
 					workspace: workspaceRoot,
 				})
@@ -479,25 +479,25 @@ export class CustomModesManager {
 			settings = { customModes: [] }
 		}
 
-		// Ensure settings is an object and has customModes property
+		// Ensure settings is an object and has Agents property
 		if (!settings || typeof settings !== "object") {
-			settings = { customModes: [] }
+			settings = { Agents: [] }
 		}
-		if (!settings.customModes) {
-			settings.customModes = []
+		if (!settings.Agents) {
+			settings.Agents = []
 		}
 
-		settings.customModes = operation(settings.customModes)
+		settings.Agents = operation(settings.Agents)
 		await fs.writeFile(filePath, yaml.stringify(settings, { lineWidth: 0 }), "utf-8")
 	}
 
 	private async refreshMergedState(): Promise<void> {
 		const settingsPath = await this.getCustomModesFilePath()
-		const roomodesPath = await this.getWorkspaceRoomodes()
+		const agentsPath = await this.getWorkspaceAgents()
 
 		const settingsModes = await this.loadModesFromFile(settingsPath)
-		const roomodesModes = roomodesPath ? await this.loadModesFromFile(roomodesPath) : []
-		const mergedModes = await this.mergeCustomModes(roomodesModes, settingsModes)
+		const agentsModes = agentsPath ? await this.loadModesFromFile(agentsPath) : []
+		const mergedModes = await this.mergeCustomModes(agentsModes, settingsModes)
 
 		await this.context.globalState.update("customModes", mergedModes)
 
@@ -509,13 +509,13 @@ export class CustomModesManager {
 	public async deleteCustomMode(slug: string, fromMarketplace = false): Promise<void> {
 		try {
 			const settingsPath = await this.getCustomModesFilePath()
-			const roomodesPath = await this.getWorkspaceRoomodes()
+			const agentsPath = await this.getWorkspaceAgents()
 
 			const settingsModes = await this.loadModesFromFile(settingsPath)
-			const roomodesModes = roomodesPath ? await this.loadModesFromFile(roomodesPath) : []
+			const agentsModes = agentsPath ? await this.loadModesFromFile(agentsPath) : []
 
 			// Find the mode in either file
-			const projectMode = roomodesModes.find((m) => m.slug === slug)
+			const projectMode = agentsModes.find((m) => m.slug === slug)
 			const globalMode = settingsModes.find((m) => m.slug === slug)
 
 			if (!projectMode && !globalMode) {
@@ -527,8 +527,8 @@ export class CustomModesManager {
 
 			await this.queueWrite(async () => {
 				// Delete from project first if it exists there
-				if (projectMode && roomodesPath) {
-					await this.updateModesInFile(roomodesPath, (modes) => modes.filter((m) => m.slug !== slug))
+				if (projectMode && agentsPath) {
+					await this.updateModesInFile(agentsPath, (modes) => modes.filter((m) => m.slug !== slug))
 				}
 
 				// Delete from global settings if it exists there
@@ -624,30 +624,30 @@ export class CustomModesManager {
 			const mode = allModes.find((m) => m.slug === slug)
 
 			if (!mode) {
-				// If not in custom modes, check if it's in .roomodes (project-specific)
+				// If not in custom modes, check if it's in .agents (project-specific)
 				const workspacePath = getWorkspacePath()
 				if (!workspacePath) {
 					return false
 				}
 
-				const roomodesPath = path.join(workspacePath, ROOMODES_FILENAME)
+				const agentsPath = path.join(workspacePath, AGENTS_FILENAME)
 				try {
-					const roomodesExists = await fileExistsAtPath(roomodesPath)
-					if (roomodesExists) {
-						const roomodesContent = await fs.readFile(roomodesPath, "utf-8")
-						const roomodesData = yaml.parse(roomodesContent)
-						const roomodesModes = roomodesData?.customModes || []
+					const agentsExists = await fileExistsAtPath(agentsPath)
+					if (agentsExists) {
+						const agentsContent = await fs.readFile(agentsPath, "utf-8")
+						const agentsData = yaml.parse(agentsContent)
+						const agentsModes = agentsData?.Agents || []
 
-						// Check if this specific mode exists in .roomodes
-						const modeInRoomodes = roomodesModes.find((m: any) => m.slug === slug)
-						if (!modeInRoomodes) {
+						// Check if this specific mode exists in .agents
+						const modeInAgents = agentsModes.find((m: any) => m.slug === slug)
+						if (!modeInAgents) {
 							return false // Mode not found anywhere
 						}
 					} else {
-						return false // No .roomodes file and not in custom modes
+						return false // No .agents file and not in custom modes
 					}
 				} catch (error) {
-					return false // Cannot read .roomodes and not in custom modes
+					return false // Cannot read .agents and not in custom modes
 				}
 			}
 
@@ -728,16 +728,16 @@ export class CustomModesManager {
 				// Only check workspace-based modes if workspace is available
 				const workspacePath = getWorkspacePath()
 				if (workspacePath) {
-					const roomodesPath = path.join(workspacePath, ROOMODES_FILENAME)
+					const agentsPath = path.join(workspacePath, AGENTS_FILENAME)
 					try {
-						const roomodesExists = await fileExistsAtPath(roomodesPath)
-						if (roomodesExists) {
-							const roomodesContent = await fs.readFile(roomodesPath, "utf-8")
-							const roomodesData = yaml.parse(roomodesContent)
-							const roomodesModes = roomodesData?.customModes || []
+						const agentsExists = await fileExistsAtPath(agentsPath)
+						if (agentsExists) {
+							const agentsContent = await fs.readFile(agentsPath, "utf-8")
+							const agentsData = yaml.parse(agentsContent)
+							const agentsModes = agentsData?.Agents || []
 
-							// Find the mode in .roomodes
-							mode = roomodesModes.find((m: any) => m.slug === slug)
+							// Find the mode in .agents
+							mode = agentsModes.find((m: any) => m.slug === slug)
 						}
 					} catch (error) {
 						// Continue to check built-in modes
@@ -936,8 +936,8 @@ export class CustomModesManager {
 				const parsed = yaml.parse(yamlContent)
 
 				// Validate the structure
-				if (!parsed?.customModes || !Array.isArray(parsed.customModes) || parsed.customModes.length === 0) {
-					return { success: false, error: "Invalid import format: Expected 'customModes' array in YAML" }
+				if (!parsed?.Agents || !Array.isArray(parsed.Agents) || parsed.Agents.length === 0) {
+					return { success: false, error: "Invalid import format: Expected 'Agents' array in YAML" }
 				}
 
 				importData = parsed as ImportData
@@ -957,7 +957,7 @@ export class CustomModesManager {
 			}
 
 			// Process each mode in the import
-			for (const importMode of importData.customModes) {
+			for (const importMode of importData.Agents) {
 				const { rulesFiles, ...modeConfig } = importMode
 
 				// Validate the mode configuration
