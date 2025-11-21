@@ -12,6 +12,8 @@ export function buildDocLink(path: string, _campaign: string): string {
 		.replace(/^\//, "")
 		.replace("troubleshooting/shell-integration/", "features/shell-integration") // oacode_change
 	const [basePath, hash] = cleanPath.split("#")
-	const baseUrl = `https://oacode.ai/docs/${basePath}`
+	// Default to "start" page if path is empty
+	const finalPath = basePath || "start"
+	const baseUrl = `https://www.openanalyst.com/docs/${finalPath}`
 	return hash ? `${baseUrl}#${hash}` : baseUrl
 }

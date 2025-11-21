@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react"
+import { Trans } from "react-i18next"
 import { Checkbox } from "vscrui"
 import { VSCodeTextField } from "@vscode/webview-ui-toolkit/react"
 
@@ -41,7 +42,14 @@ export const Anthropic = ({ apiConfiguration, setApiConfigurationField }: Anthro
 				<label className="block font-medium mb-1">{t("settings:providers.anthropicApiKey")}</label>
 			</VSCodeTextField>
 			<div className="text-sm text-vscode-descriptionForeground -mt-2">
-				{t("settings:providers.apiKeyStorageNotice")}
+				<Trans
+					i18nKey="settings:providers.apiKeyStorageNotice"
+					components={{
+						SecretStorage: (
+							<span className="bg-[#007ACC]/20 text-[var(--vscode-textLink-foreground)] px-1 rounded" />
+						),
+					}}
+				/>
 			</div>
 			{!apiConfiguration?.apiKey && (
 				<VSCodeButtonLink href="https://console.anthropic.com/settings/keys" appearance="secondary">

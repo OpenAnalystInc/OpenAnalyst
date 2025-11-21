@@ -29,7 +29,7 @@
 		"notifications": "Notifications",
 		"contextManagement": "Context",
 		"terminal": "Terminal",
-		"prompts": "Prompts",
+		"prompts": "Application Prompts",
 		"experimental": "Experimental",
 		"language": "Language",
 		"about": "About OpenAnalyst"
@@ -237,7 +237,7 @@
 		"awsCustomArnDesc": "Make sure the region in the ARN matches your selected AWS Region above.",
 		"openRouterApiKey": "OpenRouter API Key",
 		"getOpenRouterApiKey": "Get OpenRouter API Key",
-		"apiKeyStorageNotice": "API keys are stored securely in VSCode's Secret Storage",
+		"apiKeyStorageNotice": "API keys are stored securely in <SecretStorage>OA-Editor's Secret Storage</SecretStorage>",
 		"glamaApiKey": "Glama API Key",
 		"getGlamaApiKey": "Get Glama API Key",
 		"useCustomBaseUrl": "Use custom base URL",
