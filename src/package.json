@@ -113,8 +113,7 @@
 				{
 					"id": "oa-code-ActivityBar",
 					"title": "%views.activitybar.title%",
-					"icon": "assets/icons/oa.svg",
-					"darkIcon": "assets/icons/oa-dark.svg",
+					"icon": "assets/icons/bot-message-square.svg",
 					"when": "isMac || isLinux || isWindows"
 				}
 			]
