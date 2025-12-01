@@ -18,10 +18,25 @@ export const TemplateUploadModal = ({ isOpen, onClose, onUploadSuccess }: Templa
 	const [isUploading, setIsUploading] = useState(false)
 	const [dragActive, setDragActive] = useState(false)
 
+	// Reset state when modal opens
+	React.useEffect(() => {
+		if (isOpen) {
+			setIsUploading(false)
+			setDragActive(false)
+		}
+	}, [isOpen])
+
 	const handleFileUpload = useCallback(
 		async (file: File) => {
+			// Frontend validation - show error for invalid file types
 			if (!file.name.endsWith(".yaml") && !file.name.endsWith(".yml")) {
 				console.error("Please select a YAML file (.yaml or .yml extension)")
+				// Send error message to backend to show VSCode toast
+				vscode.postMessage({
+					type: "uploadTemplateFile",
+					filename: file.name,
+					content: "File type not supported", // Empty content will trigger backend validation error
+				})
 				return
 			}
 
@@ -29,17 +44,25 @@ export const TemplateUploadModal = ({ isOpen, onClose, onUploadSuccess }: Templa
 			try {
 				const content = await file.text()
 
+				// Send to backend - backend will show VSCode toast notifications
 				vscode.postMessage({
 					type: "uploadTemplateFile",
 					filename: file.name,
 					content: content,
 				})
 
+				// Reset uploading state before closing
+				setIsUploading(false)
 				onUploadSuccess()
 				onClose()
 			} catch (error) {
 				console.error(`Failed to read file: ${error instanceof Error ? error.message : "Unknown error"}`)
-			} finally {
+				// Send error to backend to show toast
+				vscode.postMessage({
+					type: "uploadTemplateFile",
+					filename: file.name,
+					content: "File type not supported", // Will trigger error
+				})
 				setIsUploading(false)
 			}
 		},
@@ -61,13 +84,25 @@ export const TemplateUploadModal = ({ isOpen, onClose, onUploadSuccess }: Templa
 	const handleDragEnter = useCallback((e: React.DragEvent) => {
 		e.preventDefault()
 		e.stopPropagation()
-		setDragActive(true)
+		// Only activate if dragging files (not text or other content)
+		if (e.dataTransfer.types && e.dataTransfer.types.includes('Files')) {
+			setDragActive(true)
+		}
 	}, [])
 
 	const handleDragLeave = useCallback((e: React.DragEvent) => {
 		e.preventDefault()
 		e.stopPropagation()
-		setDragActive(false)
+		// Only deactivate if we're leaving the drop zone itself, not a child element
+		// Check if the mouse position is outside the drop zone's bounding rectangle
+		const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+		const x = e.clientX
+		const y = e.clientY
+
+		// If mouse is outside the drop zone boundaries, deactivate
+		if (x <= rect.left || x >= rect.right || y <= rect.top || y >= rect.bottom) {
+			setDragActive(false)
+		}
 	}, [])
 
 	const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -92,8 +127,24 @@ export const TemplateUploadModal = ({ isOpen, onClose, onUploadSuccess }: Templa
 	if (!isOpen) return null
 
 	return ReactDOM.createPortal(
-		<div className="fixed inset-0 bg-vscode-editor-background bg-opacity-80 flex items-center justify-center">
-			<div className="bg-vscode-input-background border border-vscode-dropdown-border rounded-lg p-6 w-96 max-w-full mx-4 relative">
+		<div
+			className="fixed inset-0 bg-vscode-editor-background bg-opacity-80 flex items-center justify-center"
+			onDragOver={(e) => e.preventDefault()}
+			onDrop={(e) => {
+				e.preventDefault()
+				e.stopPropagation()
+			}}>
+			{/* Entire modal content is now a drop zone */}
+			<div
+				className={`bg-vscode-input-background border rounded-lg p-6 w-96 max-w-full mx-4 relative transition-all ${
+					dragActive
+						? "border-vscode-focusBorder border-2 shadow-lg"
+						: "border-vscode-dropdown-border"
+				}`}
+				onDragEnter={handleDragEnter}
+				onDragLeave={handleDragLeave}
+				onDragOver={handleDragOver}
+				onDrop={handleDrop}>
 				<div className="flex justify-between items-center mb-4">
 					<h3 className="text-lg font-semibold text-vscode-foreground">Upload Template</h3>
 					<Button variant="ghost" size="sm" onClick={onClose} disabled={isUploading} className="p-1">
@@ -122,15 +173,11 @@ export const TemplateUploadModal = ({ isOpen, onClose, onUploadSuccess }: Templa
 						</Button>
 					</div>
 
-					{/* Drag & Drop Area */}
+					{/* Visual drop zone indicator - entire modal is drop zone now */}
 					<div
-						onDragEnter={handleDragEnter}
-						onDragLeave={handleDragLeave}
-						onDragOver={handleDragOver}
-						onDrop={handleDrop}
 						className={`
 							border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer
-							${dragActive ? "border-vscode-focusBorder bg-vscode-input-background" : "border-vscode-dropdown-border"}
+							${dragActive ? "border-vscode-focusBorder bg-vscode-list-hoverBackground" : "border-vscode-dropdown-border"}
 							${isUploading ? "opacity-50 cursor-not-allowed" : "hover:border-vscode-focusBorder"}
 						`}
 						onClick={() => !isUploading && document.getElementById("template-file-input")?.click()}>
