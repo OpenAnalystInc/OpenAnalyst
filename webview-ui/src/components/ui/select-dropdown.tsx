@@ -21,6 +21,7 @@ export interface DropdownOption {
 	value: string
 	label: string
 	codicon?: string // oacode_change
+	customIcon?: React.ReactNode // Custom icon component (e.g., LockIcon)
 	description?: string // oacode_change
 	disabled?: boolean
 	type?: DropdownOptionType
@@ -362,8 +363,12 @@ export const SelectDropdown = React.memo(
 																	slot="start"
 																	style={{ fontSize: "14px" }}
 																	className={cn(
-																		"codicon opacity-80 mr-2",
+																		"codicon mr-2",
 																		option.codicon,
+																		// Yellow color for lock icon with full opacity, normal opacity for others
+																		option.codicon === "codicon-lock"
+																			? "text-yellow-500 opacity-100"
+																			: "opacity-80"
 																	)}
 																/>
 																<div className="flex-1">

@@ -13,6 +13,7 @@ export interface WorkflowOption {
   label: string
   description: string
   icon: string // codicon class name
+  isPremium?: boolean // Premium/locked feature flag
 }
 
 export interface WorkflowButtonProps {
@@ -34,20 +35,24 @@ export const WORKFLOW_MODES: Record<WorkflowMode, WorkflowOption> = {
     id: WorkflowMode.PLAN,
     label: 'Plan',
     description: 'Plan and structure tasks before execution',
-    icon: 'codicon-checklist'
+    icon: 'codicon-checklist',
+    isPremium: true // LOCKED - Premium feature
   },
   [WorkflowMode.CHAT]: {
     id: WorkflowMode.CHAT,
     label: 'Chat',
     description: 'Conversational interactions and discussions',
-    icon: 'codicon-comment-discussion'
+    icon: 'codicon-comment-discussion',
+    isPremium: true // LOCKED - Premium feature
   },
   [WorkflowMode.AGENT]: {
     id: WorkflowMode.AGENT,
     label: 'Agent',
     description: 'Autonomous task execution and problem solving',
-    icon: 'codicon-robot'
+    icon: 'codicon-robot',
+    isPremium: false // UNLOCKED - Free feature
   }
 }
 
-export const DEFAULT_WORKFLOW_MODE = WorkflowMode.CHAT
+// Changed from CHAT to AGENT because CHAT is now a premium/locked feature
+export const DEFAULT_WORKFLOW_MODE = WorkflowMode.AGENT

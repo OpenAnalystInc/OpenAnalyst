@@ -13,6 +13,7 @@
 import React, { useCallback, useState } from "react"
 import { cn } from "@/lib/utils"
 import { SelectDropdown, DropdownOptionType } from "@/components/ui"
+// import { LockIcon } from "@/components/ui/LockIcon" // Not needed - using codicon-lock instead
 import { vscode } from "@/utils/vscode"
 import { WorkflowButtonProps, WorkflowMode, WORKFLOW_MODES, DEFAULT_WORKFLOW_MODE } from "./types"
 import { useExtensionState } from "@/context/ExtensionStateContext"
@@ -42,6 +43,13 @@ export const WorkflowButton: React.FC<WorkflowButtonProps> = ({
 			if (!Object.values(WorkflowMode).includes(newMode)) {
 				console.error("Invalid workflow mode:", value)
 				return
+			}
+
+			// Check if mode is premium/locked
+			const modeConfig = WORKFLOW_MODES[newMode]
+			if (modeConfig?.isPremium) {
+				console.log("Cannot select premium/locked mode:", newMode)
+				return // Prevent selection of locked modes
 			}
 
 			// Update mode
@@ -81,9 +89,13 @@ export const WorkflowButton: React.FC<WorkflowButtonProps> = ({
 		...Object.values(WORKFLOW_MODES).map((mode) => ({
 			value: mode.id,
 			label: mode.label,
-			codicon: mode.icon,
-			description: mode.description,
+			// Show lock codicon for premium modes, otherwise show mode icon
+			codicon: mode.isPremium ? 'codicon-lock' : mode.icon,
+			description: mode.isPremium
+				? "Premium feature - Upgrade to unlock"
+				: mode.description,
 			type: DropdownOptionType.ITEM,
+			disabled: mode.isPremium, // Disable premium modes
 		})),
 	]
 

@@ -14,6 +14,7 @@
 import React, { useCallback, useEffect, useRef } from "react"
 import { cn } from "@/lib/utils"
 import { Check } from "lucide-react"
+// import { LockIcon } from "@/components/ui/LockIcon" // Not needed - using codicon-lock instead
 import { WorkflowPopoverProps, WorkflowMode, WORKFLOW_MODES } from "./types"
 
 /**
@@ -30,6 +31,13 @@ export const WorkflowPopover: React.FC<WorkflowPopoverProps> = ({ currentMode, o
 	 */
 	const handleModeSelect = useCallback(
 		(mode: WorkflowMode) => {
+			// Check if mode is premium/locked
+			const modeConfig = WORKFLOW_MODES[mode]
+			if (modeConfig?.isPremium) {
+				console.log("Cannot select premium/locked mode:", mode)
+				return // Prevent selection of locked modes
+			}
+
 			onModeChange(mode)
 			onClose()
 		},
@@ -109,27 +117,38 @@ export const WorkflowPopover: React.FC<WorkflowPopoverProps> = ({ currentMode, o
 						className={cn(
 							"w-full px-3 py-2 text-left",
 							"flex items-start gap-3",
-							"hover:bg-vscode-list-hoverBackground",
-							"focus:bg-vscode-list-hoverBackground",
 							"transition-colors duration-150",
-							currentMode === mode.id && "bg-vscode-list-activeSelectionBackground",
-							focusedIndex === index && "bg-vscode-list-hoverBackground",
+							// Disabled styles for premium modes
+							mode.isPremium
+								? "opacity-50 cursor-not-allowed"
+								: "hover:bg-vscode-list-hoverBackground focus:bg-vscode-list-hoverBackground",
+							currentMode === mode.id && !mode.isPremium && "bg-vscode-list-activeSelectionBackground",
+							focusedIndex === index && !mode.isPremium && "bg-vscode-list-hoverBackground",
 						)}
 						onClick={() => handleModeSelect(mode.id)}
+						disabled={mode.isPremium}
 						role="menuitem"
-						aria-selected={currentMode === mode.id}>
-						{/* Icon */}
-						<span className={cn("codicon", mode.icon, "mt-0.5 text-base opacity-80")} />
+						aria-selected={currentMode === mode.id}
+						aria-disabled={mode.isPremium}>
+						{/* Icon - Show lock codicon for premium modes */}
+						<span className={cn(
+							"codicon",
+							mode.isPremium ? "codicon-lock" : mode.icon,
+							"mt-0.5 text-base",
+							mode.isPremium ? "text-yellow-500 opacity-100" : "opacity-80"
+						)} />
 
 						{/* Content */}
 						<div className="flex-1">
 							<div className="flex items-center justify-between">
 								<span className="text-sm font-medium">{mode.label}</span>
-								{currentMode === mode.id && (
+								{currentMode === mode.id && !mode.isPremium && (
 									<Check className="w-4 h-4 text-vscode-textLink-foreground" />
 								)}
 							</div>
-							<p className="text-xs text-vscode-descriptionForeground mt-0.5">{mode.description}</p>
+							<p className="text-xs text-vscode-descriptionForeground mt-0.5">
+								{mode.isPremium ? "Premium feature - Upgrade to unlock" : mode.description}
+							</p>
 						</div>
 					</button>
 				))}
