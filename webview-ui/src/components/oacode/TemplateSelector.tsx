@@ -170,7 +170,8 @@ export const TemplateSelector = ({ disabled = false, className }: TemplateSelect
 		})),
 		{
 			value: "upload",
-			label: "📁 Upload New Template...",
+			label: "Upload New Template...",
+			codicon: "codicon-folder-opened",
 			description: "Add a new YAML template file",
 			type: DropdownOptionType.ACTION,
 		},

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useAppTranslation } from "@/i18n/TranslationContext"
 import { vscode } from "@/utils/vscode"
-import { X } from "lucide-react"
+import { X, FolderOpen } from "lucide-react"
 
 interface TemplateUploadModalProps {
 	isOpen: boolean
@@ -182,7 +182,7 @@ export const TemplateUploadModal = ({ isOpen, onClose, onUploadSuccess }: Templa
 						`}
 						onClick={() => !isUploading && document.getElementById("template-file-input")?.click()}>
 						<div className="flex flex-col items-center gap-2 text-sm text-muted-foreground">
-							<div className="text-2xl">📁</div>
+							<FolderOpen className="w-12 h-12 opacity-50" />
 							<div>
 								{isUploading ? (
 									<span>Uploading template...</span>
