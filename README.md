@@ -13,7 +13,7 @@
 
 # 🚀 OpenAnalyst
 
-> Open-source VS Code AI agent specialized in **data analytics** and general coding related tasks. Merged features from [KiloCode](https://github.com/Kilo-Org/kilocode), [Roo Code](https://github.com/RooVetGit/Roo-Code), and [Cline](https://github.com/cline/cline).
+> Open-source VS Code AI agent specialized in **data analytics** and general coding related tasks. Merged features from [KiloCode](https://github.com/Kilo-Org/kilocode), [Roo Code](https://github.com/RooVetGit/Roo-Code) (continued by [Zoo Code](https://github.com/Zoo-Code-Org/Zoo-Code/)), and [Cline](https://github.com/cline/cline).
 
 - ✨ Generate code from natural language
 - 📊 **Data Analytics Mode** - Specialized AI assistance for data analytics tasks
